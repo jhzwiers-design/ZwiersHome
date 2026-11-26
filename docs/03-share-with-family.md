@@ -35,8 +35,14 @@ A password box drawn by the dashboard only **hides** the page. The files behind 
 5. Login method: **One-time PIN** (no passwords to manage).
 6. Save. Then open `https://zwiers-home.pages.dev` in a private browser window: you should see the Cloudflare sign-in page, not the dashboard.
 
+### 2b. Use your own address: `home.johnzwiers.com`
+`johnzwiers.com` is already registered and managed at Cloudflare (checked 25 Nov 2026). The portfolio is served by GitHub Pages through the root and `www` records. **Leave those records alone.**
+1. In the Pages project, go to **Custom domains → Set up a custom domain** and enter `home.johnzwiers.com`. Cloudflare adds the DNS record for you.
+2. In **Zero Trust → Access → Applications**, open the Zwiers Home application and **add `home.johnzwiers.com`** as another domain (keep the `pages.dev` ones too).
+3. In a private window, open `https://home.johnzwiers.com`. You should get the email-code sign-in, then the dashboard. Also check that `johnzwiers.com` (the portfolio) still opens normally.
+
 ### 3. Send your dad the link
-Send him `https://zwiers-home.pages.dev`. He enters his email, gets a 6-digit code, and he's in. On his iPhone he can then **Share → Add to Home Screen** for the Gable icon.
+Send him `https://home.johnzwiers.com` (or the `pages.dev` address). He enters his email, gets a 6-digit code, and he's in. On his iPhone he can then **Share → Add to Home Screen** for the Gable icon.
 
 ### Removing someone
 Edit the Access policy and delete their email. To revoke an active session immediately, use **Zero Trust → My Team → Users → Revoke**.
