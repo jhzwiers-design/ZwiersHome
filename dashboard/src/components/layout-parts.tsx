@@ -1,0 +1,221 @@
+/**
+ * Page-level structure: headers, tiles, metrics, key/value lists, notes.
+ *
+ * Everything sits on rounded "tiles" (see the `tile` utility in index.css).
+ * Each tile has a header row: round icon chip + title, with optional
+ * right-side meta (counts, links, status). Inside tiles, hairline rules
+ * separate rows.
+ */
+import { ArrowUpRight, Info, type LucideIcon } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { Caps, cx } from './primitives';
+
+/** Top of every screen: title, one-line summary, optional right-side actions. */
+export function PageHeader({ title, summary, actions }: { title: string; summary?: ReactNode; actions?: ReactNode }) {
+  return (
+    <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 pb-1">
+      <div className="min-w-0">
+        <h1 className="text-h1 font-medium tracking-[-0.03em] text-fg">{title}</h1>
+        {summary && <p className="mt-1.5 text-lead text-muted">{summary}</p>}
+      </div>
+      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+    </header>
+  );
+}
+
+/** Round icon badge used in tile headers. `active` fills it with the accent. */
+export function IconChip({ icon: Icon, active, className }: { icon: LucideIcon; active?: boolean; className?: string }) {
+  return (
+    <span
+      aria-hidden
+      className={cx(
+        'grid size-10 shrink-0 place-items-center rounded-full border',
+        active ? 'border-transparent bg-accent text-on-accent shadow-[var(--accent-glow)]' : 'border-rule bg-surface-2 text-fg-2',
+        className,
+      )}
+    >
+      <Icon className="size-[18px]" strokeWidth={1.75} />
+    </span>
+  );
+}
+
+/** A plain tile, for custom layouts. */
+export function Tile({ children, className, as: Tag = 'div', ...rest }: { children: ReactNode; className?: string; as?: 'div' | 'section' | 'article' } & Record<string, unknown>) {
+  return (
+    <Tag className={cx('tile p-5 md:p-6', className)} {...rest}>
+      {children}
+    </Tag>
+  );
+}
+
+/**
+ * Section — a titled tile.
+ * `icon` adds a round icon chip; `subtitle` sits under the title;
+ * `meta` sits at the right of the header row.
+ */
+export function Section({
+  title,
+  subtitle,
+  icon,
+  iconActive,
+  meta,
+  children,
+  className,
+  id,
+}: {
+  title: string;
+  subtitle?: ReactNode;
+  icon?: LucideIcon;
+  iconActive?: boolean;
+  meta?: ReactNode;
+  children: ReactNode;
+  className?: string;
+  id?: string;
+}) {
+  const headingId = id ?? `sec-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+  return (
+    <section aria-labelledby={headingId} className={cx('tile flex flex-col p-5 md:p-6', className)}>
+      <div className="mb-4 flex min-h-10 items-center justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3">
+          {icon && <IconChip icon={icon} active={iconActive} />}
+          <div className="min-w-0">
+            <h2 id={headingId} className="truncate text-lead font-medium text-fg">
+              {title}
+            </h2>
+            {subtitle && <p className="truncate text-label text-muted">{subtitle}</p>}
+          </div>
+        </div>
+        {meta && <div className="flex shrink-0 items-center gap-3 text-label text-muted">{meta}</div>}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+/** Small round "open" link used in tile headers. */
+export function TileLink({ href, label }: { href: string; label: string }) {
+  return (
+    <a
+      href={href}
+      aria-label={label}
+      title={label}
+      className="grid size-9 place-items-center rounded-full border border-rule text-muted transition-colors hover:border-rule-strong hover:text-fg"
+    >
+      <ArrowUpRight aria-hidden className="size-4" strokeWidth={1.75} />
+    </a>
+  );
+}
+
+/**
+ * Metric — a primary number with a caption and a supporting line, as a tile.
+ * `stale` dims the value and shows when it was last updated.
+ */
+export function Metric({
+  label,
+  value,
+  sub,
+  stale,
+  staleText,
+  tone = 'neutral',
+  size = 'display',
+  href,
+  icon,
+  tile = true,
+}: {
+  label: string;
+  value: ReactNode;
+  sub?: ReactNode;
+  stale?: boolean;
+  staleText?: string;
+  tone?: 'neutral' | 'accent' | 'cool' | 'danger';
+  size?: 'display' | 'h1' | 'wall';
+  href?: string;
+  icon?: LucideIcon;
+  tile?: boolean;
+}) {
+  const active = !stale && tone === 'accent';
+  const body = (
+    <>
+      <div className="flex items-center justify-between gap-3">
+        <Caps className="block">{label}</Caps>
+        {icon && <IconChip icon={icon} active={active} className="size-9" />}
+      </div>
+      <div
+        className={cx(
+          'num mt-4 font-light',
+          size === 'display' && 'text-[2.75rem] leading-none tracking-[-0.04em] lg:text-[3.5rem]',
+          size === 'h1' && 'text-h1',
+          size === 'wall' && 'text-wall',
+          stale ? 'text-muted' : tone === 'accent' ? 'text-accent' : tone === 'cool' ? 'text-cool' : tone === 'danger' ? 'text-danger' : 'text-fg',
+        )}
+      >
+        {value}
+      </div>
+      {sub && <div className={cx('mt-2 text-body', stale ? 'text-faint' : 'text-fg-2')}>{sub}</div>}
+      {stale && staleText && <div className="mt-1 text-label text-muted italic">{staleText}</div>}
+    </>
+  );
+  const shell = cx(tile && 'tile p-5 md:p-6', 'block');
+  if (href) {
+    return (
+      <a href={href} className={cx(shell, 'transition-colors hover:border-rule-strong hover:bg-surface-hover')}>
+        {body}
+      </a>
+    );
+  }
+  return <div className={shell}>{body}</div>;
+}
+
+export function KeyValueList({
+  items,
+  className,
+  columns = 2,
+}: {
+  items: { k: string; v: ReactNode; hint?: string }[];
+  className?: string;
+  /** 2 = two columns from tablet width up; 1 = always a single column. */
+  columns?: 1 | 2;
+}) {
+  return (
+    <dl className={cx('grid grid-cols-1', columns === 2 && 'sm:grid-cols-2 sm:gap-x-6', className)}>
+      {items.map((it) => (
+        <div key={it.k} className="flex items-baseline justify-between gap-4 border-b border-rule py-2.5">
+          <dt className="text-body text-muted">{it.k}</dt>
+          <dd className="num text-right text-body text-fg" title={it.hint}>
+            {it.v}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/** A clearly-marked limitation of an integration or of the prototype. */
+export function Note({ children, tone = 'neutral', className }: { children: ReactNode; tone?: 'neutral' | 'danger'; className?: string }) {
+  return (
+    <p
+      className={cx(
+        'flex items-start gap-2 rounded-sm px-3 py-2 text-label',
+        tone === 'danger' ? 'bg-danger-soft text-danger' : 'bg-surface-2 text-muted',
+        className,
+      )}
+    >
+      <Info aria-hidden className="mt-px size-3.5 shrink-0" strokeWidth={1.75} />
+      <span>{children}</span>
+    </p>
+  );
+}
+
+/** A row in a list separated by hairlines. */
+export function Row({ children, className, dim }: { children: ReactNode; className?: string; dim?: boolean }) {
+  return (
+    <div className={cx('flex items-center gap-4 border-b border-rule py-3 last:border-b-0', dim && 'opacity-60', className)}>
+      {children}
+    </div>
+  );
+}
+
+/** Vertical stack of tiles with the standard gap. */
+export function Stack({ children, className }: { children: ReactNode; className?: string }) {
+  return <div className={cx('flex flex-col gap-4 md:gap-5', className)}>{children}</div>;
+}

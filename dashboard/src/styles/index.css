@@ -1,0 +1,165 @@
+@import '@fontsource-variable/inter';
+@import 'tailwindcss';
+@import './tokens.css';
+
+/* Map design tokens to Tailwind utilities (bg-bg, text-muted, border-rule, …). */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-fg: var(--fg);
+  --color-fg-2: var(--fg-2);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-surface-hover: var(--surface-hover);
+  --color-on-accent: var(--on-accent);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-cool: var(--cool);
+
+  --font-sans: var(--font-sans);
+}
+
+/* Type scale — 96 / 64 / 40 / 24 / 17 / 14 / 12 */
+@theme {
+  --text-wall: 6rem;
+  --text-wall--line-height: 0.95;
+  --text-wall--letter-spacing: -0.04em;
+  --text-display: 4rem;
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.035em;
+  --text-h1: 2.5rem;
+  --text-h1--line-height: 1.05;
+  --text-h1--letter-spacing: -0.025em;
+  --text-h2: 1.5rem;
+  --text-h2--line-height: 1.2;
+  --text-h2--letter-spacing: -0.015em;
+  --text-lead: 1.0625rem;
+  --text-lead--line-height: 1.45;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.45;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.3;
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.2;
+
+  /* Shape: soft, consistent rounding. Tiles use --radius-lg. */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  --breakpoint-md: 48rem; /* 768  tablet portrait */
+  --breakpoint-lg: 64rem; /* 1024 tablet landscape */
+  --breakpoint-xl: 80rem; /* 1280 desktop */
+}
+
+/* Small uppercase label used for section and metric captions. */
+@utility caps {
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Tile: the primary container — rounded surface on the page background. */
+@utility tile {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--tile-shadow);
+}
+
+@utility num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1, 'cv11' 1;
+}
+
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'cv11' 1, 'ss01' 1;
+  }
+  body {
+    background: var(--bg);
+    min-height: 100dvh;
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+  ::selection {
+    background: var(--accent-soft);
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* Wall display night dimming */
+[data-dimmed='true'] .wall-content {
+  filter: brightness(0.42) saturate(0.6);
+  transition: filter 600ms var(--ease);
+}
+
+@keyframes zh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes zh-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes zh-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+.animate-zh-spin {
+  animation: zh-spin 0.9s linear infinite;
+}
+.animate-zh-in {
+  animation: zh-fade-in var(--dur) var(--ease);
+}
+.animate-zh-pulse {
+  animation: zh-pulse 1.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-zh-spin {
+    animation-duration: 2.4s;
+  }
+  .animate-zh-in,
+  .animate-zh-pulse {
+    animation: none;
+  }
+}

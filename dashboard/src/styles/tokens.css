@@ -1,0 +1,101 @@
+/*
+ * Zwiers Home — design tokens
+ * ---------------------------------------------------------------
+ * The single source of truth for colour, shape, type, spacing and motion.
+ * Components never use raw hex values; they use these tokens via
+ * Tailwind utilities (see index.css @theme mapping).
+ *
+ * Colour rules
+ *  - Neutral tiles on a slightly darker/lighter page. A healthy home is calm.
+ *  - --accent = something is ON / ACTIVE / HEATING / SELECTED.
+ *      dark mode  → bright electric red
+ *      light mode → crimson
+ *  - --danger = an actual problem (offline, failed command, alert).
+ *      Amber, deliberately NOT red, so "on" and "problem" never look alike.
+ *      Problems also always carry an icon or wording.
+ *  - --cool = cooling only, used on the Climate screen.
+ */
+
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b0909;
+  --surface: #171212;
+  --surface-2: #221b1b;
+  --surface-hover: #1d1717;
+  --rule: #2a2121;
+  --rule-strong: #3b302f;
+  --fg: #f4f2ef;
+  --fg-2: #c9c2bf;
+  --muted: #958b88;
+  --faint: #615654;
+  --accent: #ff2d4f;
+  --accent-strong: #ff5470;
+  --accent-soft: rgb(255 45 79 / 0.14);
+  --accent-glow: 0 0 0 1px rgb(255 45 79 / 0.35), 0 6px 24px rgb(255 45 79 / 0.22);
+  --on-accent: #ffffff;
+  --danger: #f5a524;
+  --danger-soft: rgb(245 165 36 / 0.13);
+  --cool: #7fb1ff;
+  --scrim: rgb(4 4 6 / 0.72);
+  --shadow: 0 16px 40px rgb(0 0 0 / 0.5);
+  --tile-shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 1px 2px rgb(0 0 0 / 0.4);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #efebe7;
+  --surface: #ffffff;
+  --surface-2: #f5f1ee;
+  --surface-hover: #faf9f7;
+  --rule: #e8e2dd;
+  --rule-strong: #d3cec7;
+  --fg: #18181b;
+  --fg-2: #3d3d42;
+  --muted: #6c6a67;
+  --faint: #a8a5a0;
+  --accent: #c8102e;
+  --accent-strong: #a50d26;
+  --accent-soft: rgb(200 16 46 / 0.09);
+  --accent-glow: 0 0 0 1px rgb(200 16 46 / 0.25), 0 6px 20px rgb(200 16 46 / 0.14);
+  --on-accent: #ffffff;
+  --danger: #b45309;
+  --danger-soft: rgb(180 83 9 / 0.1);
+  --cool: #2563c9;
+  --scrim: rgb(24 24 27 / 0.35);
+  --shadow: 0 16px 40px rgb(24 24 27 / 0.14);
+  --tile-shadow: 0 1px 2px rgb(24 24 27 / 0.05), 0 1px 1px rgb(24 24 27 / 0.03);
+}
+
+:root {
+  /* Type */
+  --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Camera frame — always dark, like video, in both themes */
+  --video-bg: #0d0e10;
+  --video-frame: #101114;
+  --video-line: #1f2125;
+  --video-line-2: #25272c;
+  --video-fg: #bdb9b2;
+  --video-muted: #8c8e94;
+  --video-accent: #ff2d4f;
+
+  /* Layout */
+  --rail-w: 232px;
+  --rail-w-compact: 76px;
+  --content-max: 1360px;
+  --nav-pill-w: 76px;
+  --bottom-nav-h: 64px;
+
+  /* Motion — restrained */
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 120ms;
+  --dur: 180ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur: 0ms;
+  }
+}

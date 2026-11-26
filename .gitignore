@@ -1,0 +1,16 @@
+# Dependencies and builds
+node_modules/
+dist/
+
+# Secrets and local config (never commit)
+.env
+.env.*
+!.env.example
+*.local
+.claude/settings.local.json
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+*.tsbuildinfo
