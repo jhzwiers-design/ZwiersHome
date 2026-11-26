@@ -19,7 +19,7 @@ Pay once. No monthly fees.
 | Hayward OmniLogic (local integration) | Pool and spa control over your home network | $0 | None |
 | Ring (official integration) | Doorbell events, live view, chime | $0 | Live view is free. **Only recorded clips** need Ring Protect, which is optional. |
 
-**Typical total: about $250–350 once**, depending on whether your lights need one adapter or both (your SmartThings device list will tell us).
+**Typical total: about $250–350 once.** Update 25 Nov 2026: Living Room Lights reports **Z-Wave** (Honeywell in-wall dimmer), so the likely list is **Home Assistant Green ($199) + Connect ZWA-2 (~$69) ≈ $268**, pending a check of one or two more devices.
 
 ### The trade-off you're choosing
 Avoiding the SmartThings fee means **re-pairing each light** onto Home Assistant's own adapter, roughly 5–10 minutes per light, and rebuilding any SmartThings automations in Home Assistant. In return, the lights become local: faster, and they keep working when the internet is down. Lights that are Wi‑Fi, Matter or Philips Hue (with a Hue Bridge) don't need an adapter at all.

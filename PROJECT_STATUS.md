@@ -100,7 +100,8 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 - [ ] **Floor plan scan.** It replaces the approximate room shapes on the home map.
 - [ ] **Room names.** Some SmartThings labels were cut off in the screenshots (e.g. "Alli… Room", "…n's room"); they're placeholders "Bedroom 2–4" for now.
 - [x] SmartThings device list received
-- [ ] **Light protocols**: in the SmartThings app, open a light → ⋮ → Information and note "Zigbee" or "Z-Wave" (and brand/model if shown). This decides which adapter(s) to buy.
+- [x] Light protocol: **Living Room Lights is Z-Wave** (manufacturer code 0039 = Honeywell; 0039-4944-3038 appears to be their Z-Wave Plus in-wall dimmer). Adapter needed: **Connect ZWA-2 (~$69)**; Zigbee adapter likely unnecessary.
+- [ ] Confirm one more device (an outdoor light and a fan) also says "Hub (Z-Wave)"
 - [ ] Confirm map rooms: which of the two cut-off bedrooms is Lauren’s and which is Tim’s
 - [ ] Carrier app name
 - [ ] OmniLogic controller model, firmware/MSP version, connection type, equipment list (any dual-speed pumps?)
