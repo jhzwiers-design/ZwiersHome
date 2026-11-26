@@ -105,7 +105,7 @@ export function CameraView({ camera, compact }: { camera: Camera; compact?: bool
 
       {isSample && (
         <div className="absolute right-3 bottom-3">
-          <SampleTag className="border-[var(--video-line-2)] text-[var(--video-muted)]">{stand}</SampleTag>
+          <SampleTag className="border-[var(--video-line-2)] bg-[var(--video-bg)]/70 text-[var(--video-fg)] backdrop-blur">{stand}</SampleTag>
         </div>
       )}
     </figure>
