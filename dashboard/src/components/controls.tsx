@@ -179,7 +179,9 @@ export function Stepper({
           tone === 'cool' && 'text-cool',
         )}
       >
-        {display}
+        <span key={display} className="inline-block animate-zh-tick">
+          {display}
+        </span>
       </output>
       <button type="button" className={btn} onClick={() => onStep(1)} disabled={disabled || !canIncrease} aria-label={`Raise ${label}`}>
         <Plus className="size-4" strokeWidth={1.5} />

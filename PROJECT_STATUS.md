@@ -76,13 +76,18 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 - 2026-11-25: **Micro-interactions**: staggered tile entrance, value tick, hover lift, button press, springy switches and selectors, gliding dials, sliding toasts, theme cross-fade, page fade. All respect "reduce motion".
 - 2026-11-25: Brand canvas recoloured to the new palette, plus a "Colour and accessibility" board with measured ratios.
 
+- 2026-11-25: **Phone polish**: compact sticky app bar, smaller titles, short status pill, swipeable rails for rooms and scenes, a solid camera button.
+- 2026-11-25: **Tap feedback**: ripples from the finger on every button, link, chip and switch; navigation icons pop; values tick; light haptic tick on supported phones. Respects "reduce motion".
+- 2026-11-25: **Go-live plan with one-time purchases only**: [docs/02-go-live-plan.md](docs/02-go-live-plan.md) (Home Assistant Green + adapters instead of the SmartThings plan; Tailscale for remote access; old iPad as a wall hub).
+- 2026-11-25: Code pushed to the private GitHub repo `jhzwiers-design/ZwiersHome` (by you).
+
 ## Next milestone
 **M2: data-source layer + Home Assistant connection (code only).** Build `HomeAssistantSource` behind the existing interface: login flow, token storage per §3.1a, registry discovery by areas/labels, live state, command mapping, reconnects. It can be developed and unit-tested without a running Home Assistant. A real connection waits for M3, the optional Home Assistant trial on this Mac, **which needs your approval to install**.
 
 ## Waiting on you
 - [ ] **Design review of round 1** (tiles, new palette, home map).
 - [ ] **Pick a monogram direction** from the brand canvas.
-- [ ] **Make the GitHub repo private**, then I push.
+- [ ] **Old iPad: model and iPadOS version** (decides whether it runs the dashboard as-is).
 - [ ] **Floor plan scan.** It replaces the approximate room shapes on the home map.
 - [ ] **Room names.** Some SmartThings labels were cut off in the screenshots (e.g. "Alli… Room", "…n's room"); they're placeholders "Bedroom 2–4" for now.
 - [ ] SmartThings device list (decides the Zigbee/Z-Wave adapter vs. none)
@@ -90,7 +95,7 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 - [ ] OmniLogic controller model, firmware/MSP version, connection type, equipment list (any dual-speed pumps?)
 - [ ] Ring Protect plan
 - [ ] Users / wall tablet model
-- [ ] Later: hosting (Home Assistant Green $199 vs. other) and lighting path (SmartThings ~$4.99/mo vs. migration)
+- [x] Direction chosen: **one-time purchases, no subscriptions** (Home Assistant Green + Zigbee/Z-Wave adapters; see go-live plan)
 - [ ] Later: Dolphin model number
 
 ## Outstanding issues (prototype)

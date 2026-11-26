@@ -71,9 +71,9 @@ export function Lighting({ s }: { s: HomeSnapshot }) {
       </div>
 
       <Section title="Scenes" subtitle="SmartThings lights only" icon={Sparkles}>
-        <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <ul className="rail sm:grid sm:grid-cols-2 sm:gap-3 xl:grid-cols-4">
           {s.scenes.map((sc) => (
-            <li key={sc.id} className="flex flex-col items-start gap-3 rounded-md border border-rule bg-surface-2 p-4">
+            <li key={sc.id} className="flex w-[72%] shrink-0 snap-start flex-col items-start gap-3 rounded-md border border-rule bg-surface-2 p-4 sm:w-auto">
               <SceneButton id={sc.id} name={sc.name} disabled={!connected} />
               <p className="text-label text-muted">{sc.description}</p>
             </li>

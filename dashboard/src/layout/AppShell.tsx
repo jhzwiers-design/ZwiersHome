@@ -69,21 +69,35 @@ function TopBar() {
   const now = useNow(10_000);
 
   return (
-    <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 py-5 md:py-6">
-      <div className="flex min-w-0 items-center gap-3">
-        <Mark />
-        <span className="truncate text-lead font-semibold tracking-[-0.01em] text-fg">{name}</span>
+    <header
+      className={cx(
+        // Phones: a compact sticky app bar with a frosted background.
+        'sticky top-0 z-20 -mx-4 flex items-center justify-between gap-3 bg-bg/80 px-4 pt-[max(env(safe-area-inset-top),12px)] pb-3 backdrop-blur-xl',
+        'sm:-mx-6 sm:px-6 md:static md:mx-0 md:flex-wrap md:gap-x-4 md:gap-y-3 md:bg-transparent md:px-0 md:py-6 md:backdrop-blur-none',
+      )}
+    >
+      <div className="flex min-w-0 items-center gap-2.5 md:gap-3">
+        <Mark className="max-md:size-8" />
+        <span className="truncate text-body font-semibold tracking-[-0.01em] text-fg md:text-lead">{name}</span>
+        {isSample && (
+          <span
+            role="note"
+            title="Prototype: sample data only. No commands are sent to real devices."
+            className="shrink-0 rounded-full border border-dashed border-control px-2 py-0.5 text-micro font-semibold tracking-[0.08em] text-fg-2 uppercase md:hidden"
+          >
+            Prototype<span className="sr-only">: sample data only. No commands are sent to real devices.</span>
+          </span>
+        )}
       </div>
 
       {isSample && (
         <p
           role="note"
-          className="order-last flex w-full items-center gap-2 rounded-full border border-dashed border-rule-strong px-3.5 py-1.5 text-label text-muted sm:order-none sm:w-auto"
+          className="hidden items-center gap-2 rounded-full border border-dashed border-control px-3.5 py-1.5 text-label text-muted md:flex"
         >
           <span className="caps text-fg-2">Prototype</span>
-          <span className="max-sm:hidden lg:hidden">Sample data</span>
+          <span className="lg:hidden">Sample data</span>
           <span className="max-lg:hidden">Sample data only. No commands are sent to real devices.</span>
-          <span className="sm:hidden">Sample data only. Nothing is sent to real devices.</span>
         </p>
       )}
 
@@ -120,7 +134,7 @@ export function ThemeSwitch() {
       title={label}
       onClick={() => set('theme', value)}
       className={cx(
-        'grid size-9 place-items-center rounded-full transition-colors duration-[var(--dur)]',
+        'grid size-8 place-items-center rounded-full transition-colors duration-[var(--dur)] md:size-9',
         current === value ? 'bg-fg text-bg' : 'text-muted hover:text-fg',
       )}
     >
@@ -145,7 +159,7 @@ function PillNav({ route }: { route: Route }) {
       <ul className="tile flex flex-col items-center gap-2 rounded-full! px-2 py-4">
         {NAV.map((item) => (
           <li key={item.id}>
-            <NavButton href={`#/${item.id}`} label={item.label} icon={item.icon} active={item.id === route} tone={ROUTE_TONE[item.id]} />
+            <NavButton key={item.id === route ? 'on' : 'off'} href={`#/${item.id}`} label={item.label} icon={item.icon} active={item.id === route} tone={ROUTE_TONE[item.id]} />
           </li>
         ))}
         <li aria-hidden className="my-1 h-px w-8 bg-rule" />
@@ -166,7 +180,7 @@ function NavButton({ href, label, icon: Icon, active, tone }: { href: string; la
       data-tone={tone}
       className={cx(
         'group relative grid size-12 place-items-center rounded-full transition-[background-color,color,box-shadow,transform] duration-[var(--dur)] ease-[var(--ease-spring)]',
-        active ? 'scale-105 border border-accent-ink bg-accent text-on-accent shadow-[var(--accent-glow)]' : 'text-muted hover:scale-105 hover:bg-accent-soft hover:text-accent-ink',
+        active ? 'animate-zh-pop scale-105 border border-accent-ink bg-accent text-on-accent shadow-[var(--accent-glow)]' : 'text-muted hover:scale-105 hover:bg-accent-soft hover:text-accent-ink',
       )}
     >
       <Icon aria-hidden className="size-5" strokeWidth={active ? 2 : 1.6} />
@@ -184,7 +198,7 @@ function NavButton({ href, label, icon: Icon, active, tone }: { href: string; la
 function BottomNav({ route }: { route: Route }) {
   return (
     <nav aria-label="Primary" className="fixed inset-x-3 bottom-3 z-30 pb-[env(safe-area-inset-bottom)] md:hidden">
-      <ul className="tile grid h-[var(--bottom-nav-h)] grid-cols-7 rounded-full! px-1.5 shadow-[var(--shadow)]">
+      <ul className="tile grid h-[var(--bottom-nav-h)] grid-cols-7 rounded-full! bg-surface/90! px-1.5 shadow-[var(--shadow)] backdrop-blur-xl">
         {NAV.map((item) => {
           const active = item.id === route;
           const Icon = item.icon;
@@ -197,7 +211,7 @@ function BottomNav({ route }: { route: Route }) {
                 data-tone={ROUTE_TONE[item.id]}
                 className={cx(
                   'grid size-11 place-items-center rounded-full transition-[background-color,color,transform] duration-[var(--dur)] ease-[var(--ease-spring)]',
-                  active ? 'scale-105 border border-accent-ink bg-accent text-on-accent' : 'text-muted',
+                  active ? 'animate-zh-pop scale-105 border border-accent-ink bg-accent text-on-accent shadow-[var(--accent-glow)]' : 'text-muted active:bg-accent-soft',
                 )}
               >
                 <Icon aria-hidden className="size-5" strokeWidth={active ? 2 : 1.6} />

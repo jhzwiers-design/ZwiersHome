@@ -116,14 +116,14 @@ export function deviceDisplayStatus(s: HomeSnapshot, d: Device): DisplayStatus {
 }
 
 /** One-sentence home status for the top of the Overview. */
-export function statusSentence(s: HomeSnapshot): { tone: 'ok' | 'attention'; text: string } {
+export function statusSentence(s: HomeSnapshot): { tone: 'ok' | 'attention'; text: string; short: string } {
   const alerts = deriveAlerts(s).filter((a) => a.severity === 'error');
-  if (s.connection.status !== 'connected') return { tone: 'attention', text: 'Not connected. Showing last known values.' };
-  if (alerts.length === 0) return { tone: 'ok', text: 'All systems normal' };
+  if (s.connection.status !== 'connected') return { tone: 'attention', text: 'Not connected. Showing last known values.', short: 'Not connected' };
+  if (alerts.length === 0) return { tone: 'ok', text: 'All systems normal', short: 'All systems normal' };
   const offline = s.devices.filter((d) => d.availability === 'offline').length;
   const unavailable = alerts.length - offline;
   const parts: string[] = [];
   if (offline) parts.push(`${offline} device${offline > 1 ? 's' : ''} offline`);
   if (unavailable > 0) parts.push(`${unavailable} unavailable`);
-  return { tone: 'attention', text: `Home online · ${parts.join(', ')}` };
+  return { tone: 'attention', text: `Home online · ${parts.join(', ')}`, short: `${alerts.length} need${alerts.length === 1 ? 's' : ''} attention` };
 }

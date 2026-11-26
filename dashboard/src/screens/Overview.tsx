@@ -66,10 +66,10 @@ function Greeting({ s }: { s: HomeSnapshot }) {
   return (
     <header className="flex flex-wrap items-end justify-between gap-x-8 gap-y-3 pb-1">
       <div>
-        <p className="text-lead text-muted">
+        <p className="text-body text-muted md:text-lead">
           {formatDate(now)} · <span className="num">{formatTime(now, clock)}</span>
         </p>
-        <h1 className="mt-1 text-h1 font-medium tracking-[-0.03em] text-fg">{greeting}</h1>
+        <h1 className="mt-1 text-[2rem] leading-tight font-medium tracking-[-0.03em] text-fg md:text-h1">{greeting}</h1>
       </div>
       <a
         href="#/devices"
@@ -79,7 +79,8 @@ function Greeting({ s }: { s: HomeSnapshot }) {
         )}
       >
         {status.tone === 'ok' ? <StatusDot status="online" /> : <AlertTriangle aria-hidden className="size-4 text-danger" strokeWidth={1.75} />}
-        {status.text}
+        <span className="max-sm:hidden">{status.text}</span>
+        <span className="sm:hidden">{status.short}</span>
         {status.tone !== 'ok' && <ArrowRight aria-hidden className="size-3.5 text-muted" strokeWidth={1.75} />}
       </a>
     </header>
@@ -186,14 +187,14 @@ function LightingModule({ s }: { s: HomeSnapshot }) {
       <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-surface-2" aria-hidden>
         <div className="h-full rounded-full bg-accent shadow-[0_0_10px_var(--accent)] transition-all" style={{ width: `${pct}%` }} />
       </div>
-      <ul className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
+      <ul className="rail mt-5 sm:grid sm:grid-cols-3 sm:gap-2">
         {groups.map(({ area, lights }) => {
           const on = lights.filter((l) => l.on).length;
           return (
             <li
               key={area.id}
               className={cx(
-                'flex items-center justify-between gap-2 rounded-sm border px-3 py-2.5',
+                'flex min-w-[9.5rem] shrink-0 snap-start items-center justify-between gap-2 rounded-sm border px-3 py-2.5 sm:min-w-0',
                 on ? 'border-accent/30 bg-accent-soft' : 'border-rule bg-surface-2',
               )}
             >
@@ -205,7 +206,7 @@ function LightingModule({ s }: { s: HomeSnapshot }) {
           );
         })}
       </ul>
-      <div className="mt-auto flex flex-wrap gap-2 pt-5">
+      <div className="rail mt-auto pt-5 sm:flex sm:flex-wrap sm:gap-2">
         {scenes.map((sc) => (
           <SceneButton key={sc.id} id={sc.id} name={sc.name} disabled={disabled} />
         ))}

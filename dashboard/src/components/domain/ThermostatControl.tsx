@@ -95,7 +95,7 @@ export function ThermostatControl({
         <ArcGauge value={value} min={minF} max={maxF} tone={isHeat ? 'accent' : 'cool'} dim={!connected} className={size === 'md' ? 'max-w-[200px]' : undefined}>
           <span className="caps text-muted">{isHeat ? 'Heat to' : 'Cool to'}</span>
           <output aria-live="polite" className={size === 'md' ? 'num text-[2.75rem] leading-none font-light' : 'num text-[3.5rem] leading-none font-light'}>
-            {formatTemp(value, unit)}
+            <span key={value} className="inline-block animate-zh-tick">{formatTemp(value, unit)}</span>
           </output>
           <span className="mt-1 text-label text-muted">Now {formatTemp(zone.currentTemp, unit, { decimals: true })}</span>
         </ArcGauge>

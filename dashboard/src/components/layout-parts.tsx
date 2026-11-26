@@ -16,7 +16,7 @@ export function PageHeader({ title, summary, actions }: { title: string; summary
   return (
     <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3 pb-1">
       <div className="min-w-0">
-        <h1 className="text-h1 font-medium tracking-[-0.03em] text-fg">{title}</h1>
+        <h1 className="text-[2rem] leading-tight font-medium tracking-[-0.03em] text-fg md:text-h1">{title}</h1>
         {summary && <p className="mt-1.5 text-lead text-muted">{summary}</p>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}

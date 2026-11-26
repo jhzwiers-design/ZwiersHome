@@ -52,7 +52,7 @@ export function CameraView({ camera, compact }: { camera: Camera; compact?: bool
 
       <div className="absolute inset-0 grid place-items-center p-4 text-center">
         {state === 'idle' && (
-          <Button variant="primary" size={compact ? 'sm' : 'md'} icon={<Play className="size-4" strokeWidth={1.75} />} onClick={start} className="border-accent bg-accent text-on-accent shadow-[var(--accent-glow)] hover:bg-accent-strong hover:text-on-accent">
+          <Button variant="solid" size={compact ? 'sm' : 'md'} icon={<Play className="size-4" strokeWidth={1.75} />} onClick={start}>
             Start live view
           </Button>
         )}

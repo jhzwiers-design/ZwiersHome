@@ -114,6 +114,12 @@
   button {
     cursor: pointer;
   }
+  /* Feel like an app on phones: no grey tap flash, no double-tap zoom delay. */
+  a, button, label, [role='button'], [role='switch'] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  html { scroll-padding-top: 72px; }
   button:disabled {
     cursor: not-allowed;
   }
@@ -179,6 +185,25 @@ button:not(:disabled), a[role='button'], label:has(> input[type='radio']) {
 }
 button:not(:disabled):active { transform: scale(0.96); }
 
+/* Tap ripple (see lib/touch.ts) */
+.zh-ripple-clip {
+  position: absolute; inset: 0; overflow: hidden; border-radius: inherit; pointer-events: none;
+}
+.zh-ripple {
+  position: absolute; border-radius: 50%; background: currentColor; opacity: 0.22;
+  transform: scale(0); animation: zh-ripple 600ms var(--ease) forwards;
+}
+@keyframes zh-ripple { to { transform: scale(1); opacity: 0; } }
+
+/* Horizontal swipe rail for chips/cards on phones (grid again from sm up). */
+.rail {
+  display: flex; gap: 0.5rem; overflow-x: auto; scroll-snap-type: x mandatory;
+  margin-inline: -1.25rem; padding-inline: 1.25rem; padding-bottom: 2px;
+  scrollbar-width: none; overscroll-behavior-x: contain;
+}
+.rail::-webkit-scrollbar { display: none; }
+@media (min-width: 40rem) { .rail { margin-inline: 0; padding-inline: 0; overflow: visible; } }
+
 /* Theme change: cross-fade colours for a moment (class added by useApplyTheme). */
 html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *::after {
   transition: background-color 420ms var(--ease), border-color 420ms var(--ease), color 420ms var(--ease),
@@ -187,7 +212,8 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
 
 @media (prefers-reduced-motion: reduce) {
   .animate-zh-spin { animation-duration: 2.4s; }
-  .animate-zh-in, .animate-zh-rise, .animate-zh-tick, .animate-zh-pulse, .animate-zh-pop, .animate-zh-slide-in { animation: none; }
+  .animate-zh-in, .animate-zh-rise, .animate-zh-tick, .animate-zh-pulse, .animate-zh-pop, .animate-zh-slide-in, .zh-ripple { animation: none; }
+  .zh-ripple { display: none; }
   .lift:hover, .lift:active, button:not(:disabled):active { transform: none; }
   html.theme-fade * { transition: none !important; }
 }
