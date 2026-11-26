@@ -157,7 +157,7 @@ export function Settings({ s }: { s: HomeSnapshot }) {
             ]}
           />
         </SettingRow>
-        <SettingRow title="Dim at night" hint="Lowers brightness on the wall display between these times.">
+        <SettingRow title="Dim at night" hint="Between these times the wall display switches to the dark theme and lowers its brightness. Alerts stay bright.">
           <Toggle checked={p.wall.dimAtNight} onChange={(v) => p.setWall({ dimAtNight: v })} label="Dim at night" />
           <label className="flex items-center gap-2 text-label text-muted">
             From

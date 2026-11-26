@@ -117,7 +117,7 @@ export function Wall({ s }: { s: HomeSnapshot }) {
           )}
           {night && (
             <p className="mt-auto inline-flex items-center gap-1.5 pt-3 text-label text-muted">
-              <Moon aria-hidden className="size-3.5" strokeWidth={1.6} /> Night dimming on
+              <Moon aria-hidden className="size-3.5" strokeWidth={1.6} /> Night mode until {clockLabel(prefs.wall.dimUntil, prefs.clock)}
             </p>
           )}
         </section>
@@ -303,4 +303,11 @@ export function WallFrame({ s, calm, night, onWake, children }: { s: HomeSnapsho
       )}
     </div>
   );
+}
+
+/** "06:30" → "6:30 AM" (12-hour clock) or "06:30". */
+function clockLabel(hhmm: string, clock: '12h' | '24h') {
+  if (clock === '24h') return hhmm;
+  const [h = 0, m = 0] = hhmm.split(':').map(Number);
+  return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`;
 }

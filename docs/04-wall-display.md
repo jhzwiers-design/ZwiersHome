@@ -40,7 +40,7 @@ Settings is reached from the gear icon. Devices opens from the alert links. To t
 |---|---|---|
 | Calm look | When idle | After 2 minutes untouched on the Home display, colours are muted. Alerts stay bright. The first touch only wakes the screen; it never presses a button. "Always" keeps it calm; "Off" disables it. |
 | Return to Home display | **Never** | After 1, 2, 5 or 10 minutes untouched, go back to the Home display and close any open question. **It only changes the screen; it never turns anything on or off.** Leave it off until it has been tried on the iPad. |
-| Dim at night | On, 22:00–06:30 | Lowers the brightness of everything except alerts. |
+| Dim at night | On, 22:00–06:30 | Switches the wall display to the dark theme (even if this device is set to light) and dims the Home display. Alerts stay bright. |
 | Quick controls | On | Shows the scene buttons on the Home display. |
 
 ## Setting up the iPad (when ready)

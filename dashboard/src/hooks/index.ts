@@ -55,8 +55,12 @@ export function useIdle(minutes: number, onIdle: () => void) {
   }, [minutes]);
 }
 
-/** Resolves the theme preference ("system" follows the OS) and applies it to <html>. */
-export function useApplyTheme() {
+/**
+ * Resolves the theme preference ("system" follows the OS) and applies it to <html>.
+ * `forceDark` overrides it (the wall display uses dark at night: a dimmed light
+ * screen just turns grey and still lights up the room).
+ */
+export function useApplyTheme(forceDark = false) {
   const pref = usePreferences((p) => p.theme);
   const density = usePreferences((p) => p.density);
   const first = useRef(true);
@@ -64,7 +68,7 @@ export function useApplyTheme() {
     const mq = window.matchMedia('(prefers-color-scheme: light)');
     const root = document.documentElement;
     const apply = () => {
-      const theme = pref === 'system' ? (mq.matches ? 'light' : 'dark') : pref;
+      const theme = forceDark ? 'dark' : pref === 'system' ? (mq.matches ? 'light' : 'dark') : pref;
       if (root.dataset.theme === theme) return;
       // Cross-fade colours on a real change (not on first paint).
       if (!first.current) {
@@ -77,7 +81,7 @@ export function useApplyTheme() {
     first.current = false;
     mq.addEventListener('change', apply);
     return () => mq.removeEventListener('change', apply);
-  }, [pref]);
+  }, [pref, forceDark]);
   useEffect(() => {
     document.documentElement.dataset.density = density;
   }, [density]);

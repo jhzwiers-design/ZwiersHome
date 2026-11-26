@@ -7,7 +7,7 @@ import { cancelConfirm, ConfirmHost } from '@/components/ConfirmDialog';
 import { Toaster } from '@/components/Toaster';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Skeleton } from '@/components/primitives';
-import { useApplyTheme, useIdle, useRoute, type Route } from '@/hooks';
+import { inTimeWindow, useApplyTheme, useIdle, useNow, useRoute, type Route } from '@/hooks';
 import { usePreferences } from '@/store/preferences';
 import { AppShell } from '@/layout/AppShell';
 import { useHome } from '@/store/home';
@@ -43,13 +43,16 @@ const TITLES: Record<Route, string> = {
 };
 
 export function App() {
-  useApplyTheme();
   const route = useRoute();
+  const wallMode = usePreferences((p) => p.wallMode);
+  const wallPrefs = usePreferences((p) => p.wall);
+  const now = useNow(30_000);
+  // Wall display at night: dark theme (then dimmed on the Home display).
+  useApplyTheme(wallMode && wallPrefs.dimAtNight && inTimeWindow(now, wallPrefs.dimFrom, wallPrefs.dimUntil));
   const snapshot = useHome((s) => s.snapshot);
   const configError = useHome((s) => s.configError);
   const config = useHome((s) => s.config);
   const ready = !!config && snapshot && snapshot.connection.status !== 'connecting';
-  const wallMode = usePreferences((p) => p.wallMode);
   const setPref = usePreferences((p) => p.set);
   const ambient = usePreferences((p) => p.wall.ambient);
   const idleMinutes = usePreferences((p) => p.wall.idleMinutes);
