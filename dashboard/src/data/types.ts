@@ -214,11 +214,17 @@ export interface PoolSystem {
 
 // ── Security ────────────────────────────────────────────────────────────────
 
+/** Which illustrated placeholder view a camera shows until real video is connected. */
+export type CameraScene = 'front-door' | 'man-door' | 'backyard' | 'front-yard' | 'generic';
+
 export interface Camera {
   id: string;
   deviceId: string;
   name: string;
-  kind: 'doorbell';
+  kind: 'doorbell' | 'spotlight';
+  /** The map room (Home Assistant Area) this camera watches. */
+  areaId: string;
+  scene: CameraScene;
   motionDetection: boolean;
   wifiSignalDbm: number | null;
   liveView: 'supported' | 'unsupported';

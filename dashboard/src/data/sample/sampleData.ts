@@ -34,6 +34,7 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       { id: 'outside', name: 'Outside' },
       // Exterior door off the garage.
       { id: 'mandoor', name: 'Man Door' },
+      { id: 'frontyard', name: 'Front Yard' },
       { id: 'westwing', name: 'West Wing (downstairs)' },
       { id: 'eastwing', name: 'East Wing (upstairs + downstairs)' },
       { id: 'garage', name: 'Garage' },
@@ -127,6 +128,9 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       dev('d-waterfall', 'Waterfall Valve', 'backyard', 'pool', 'omnilogic', 'Hayward', 'Valve actuator (sample)', 'Ethernet', 'online', ago(0.1 * MIN), 120),
       // Security
       dev('d-doorbell', 'Front Door', 'porch', 'security', 'ring', 'Ring', __PUBLIC__ ? 'Video doorbell' : 'Wired Doorbell Plus (2nd Gen)', 'Wi-Fi', 'online', ago(0.3 * MIN), 600),
+      dev('d-doorbell-man', 'Man Door Doorbell', 'mandoor', 'security', 'ring', 'Ring', 'Video doorbell (model to confirm)', 'Wi-Fi', 'online', ago(0.4 * MIN), 600),
+      dev('d-cam-backyard', 'Backyard Floodlight Cam', 'outside', 'security', 'ring', 'Ring', 'Spotlight Cam (2nd Gen)', 'Wi-Fi', 'online', ago(0.5 * MIN), 600),
+      dev('d-cam-frontyard', 'Front Yard Floodlight Cam', 'frontyard', 'security', 'ring', 'Ring', 'Spotlight Cam (2nd Gen)', 'Wi-Fi', 'online', ago(0.5 * MIN), 600),
       dev('d-chime', 'Chime', 'kitchen', 'security', 'ring', 'Ring', 'Chime', 'Wi-Fi', 'online', ago(1 * MIN), 600),
       // Cleaner
       dev('d-dolphin', 'Pool Cleaner', 'backyard', 'cleaner', 'dolphin', 'Maytronics', 'Dolphin Nautilus (model to confirm)', 'Cloud', 'unavailable', null, 3600, 'Integration not configured yet'),
@@ -385,11 +389,17 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
           deviceId: 'd-doorbell',
           name: 'Front Door',
           kind: 'doorbell',
+          areaId: 'porch',
+          scene: 'front-door',
           motionDetection: true,
           wifiSignalDbm: -54,
           liveView: 'supported',
           hasRecordingPlan: null,
         },
+        // Placed from your camera sketch on the floor plan (26 Nov 2026).
+        { id: 'cam-mandoor', deviceId: 'd-doorbell-man', name: 'Man Door', kind: 'doorbell', areaId: 'mandoor', scene: 'man-door', motionDetection: true, wifiSignalDbm: -61, liveView: 'supported', hasRecordingPlan: null },
+        { id: 'cam-backyard', deviceId: 'd-cam-backyard', name: 'Backyard', kind: 'spotlight', areaId: 'outside', scene: 'backyard', motionDetection: true, wifiSignalDbm: -63, liveView: 'supported', hasRecordingPlan: null },
+        { id: 'cam-frontyard', deviceId: 'd-cam-frontyard', name: 'Front Yard', kind: 'spotlight', areaId: 'frontyard', scene: 'front-yard', motionDetection: true, wifiSignalDbm: -58, liveView: 'supported', hasRecordingPlan: null },
       ],
       chimes: [{ id: 'chime-entry', deviceId: 'd-chime', name: 'Chime', volume: 6 }],
       events: [
@@ -402,6 +412,10 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
         { id: 'ev-7', cameraId: 'cam-front', kind: 'motion', at: ago(21 * HOUR) },
         { id: 'ev-8', cameraId: 'cam-front', kind: 'ding', at: ago(26 * HOUR) },
         { id: 'ev-9', cameraId: 'cam-front', kind: 'motion', at: ago(27 * HOUR) },
+        { id: 'ev-10', cameraId: 'cam-mandoor', kind: 'motion', at: ago(52 * MIN) },
+        { id: 'ev-11', cameraId: 'cam-backyard', kind: 'motion', at: ago(1.7 * HOUR) },
+        { id: 'ev-12', cameraId: 'cam-frontyard', kind: 'motion', at: ago(3.2 * HOUR) },
+        { id: 'ev-13', cameraId: 'cam-mandoor', kind: 'ding', at: ago(7.5 * HOUR) },
       ],
     },
   };

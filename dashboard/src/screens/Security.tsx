@@ -55,8 +55,17 @@ export function Security({ s }: { s: HomeSnapshot }) {
       />
 
       <div className="grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-12">
-        <Section title="Camera" subtitle={`${cam.name} · Ring`} icon={Video} className="lg:col-span-8">
+        <Section title={s.security.cameras.length > 1 ? 'Cameras' : 'Camera'} subtitle={s.security.cameras.length > 1 ? `${s.security.cameras.length} Ring cameras` : `${cam.name} · Ring`} icon={Video} className="lg:col-span-8">
           <CameraView camera={cam} />
+          {s.security.cameras.length > 1 && (
+            <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {s.security.cameras
+                .filter((c) => c.id !== cam.id)
+                .map((c) => (
+                  <CameraView key={c.id} camera={c} compact />
+                ))}
+            </div>
+          )}
           <div className="mt-4 grid grid-cols-1 gap-2 md:grid-cols-2">
             <Note>Live view: supported by the official Ring integration (no two-way audio). To be tested on your doorbell.</Note>
             <Note>

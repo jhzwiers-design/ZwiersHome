@@ -4,6 +4,7 @@
  */
 import { useState } from 'react';
 import { FanRow } from '@/components/domain/FanRow';
+import { CameraView } from '@/components/domain/SecurityParts';
 import { LightRow } from '@/components/domain/LightRow';
 import { Segmented } from '@/components/controls';
 import { Lightbulb, Map, Sparkles } from 'lucide-react';
@@ -154,6 +155,7 @@ function RoomPanel({ s, areaId, className }: { s: HomeSnapshot; areaId: string |
   }
   const lights = s.lights.filter((l) => l.areaId === area.id);
   const roomFans = s.fans.filter((f) => f.areaId === area.id);
+  const roomCams = s.security.cameras.filter((c) => c.areaId === area.id);
   const st = roomStats(s, area.id);
   return (
     <Section
@@ -161,7 +163,9 @@ function RoomPanel({ s, areaId, className }: { s: HomeSnapshot; areaId: string |
       subtitle={
         lights.length || roomFans.length
           ? `${roomSubtitle(st.on, lights.length, roomFans)}${st.unreachable ? ` · ${st.unreachable} unreachable` : ''}`
-          : 'No lights'
+          : roomCams.length
+            ? `${roomCams.length === 1 ? 'Camera' : `${roomCams.length} cameras`} · no lights`
+            : 'No lights'
       }
       icon={Lightbulb}
       iconActive={st.on > 0}
@@ -169,8 +173,18 @@ function RoomPanel({ s, areaId, className }: { s: HomeSnapshot; areaId: string |
       className={className}
     >
       <div aria-live="polite">
+        {/* Camera preview first, then the room's lights and fans. */}
+        {roomCams.length > 0 && (
+          <div key={area.id} className="animate-zh-in mb-3 space-y-3">
+            {roomCams.map((c) => (
+              <CameraView key={c.id} camera={c} compact />
+            ))}
+          </div>
+        )}
         {lights.length + roomFans.length === 0 ? (
+          roomCams.length ? null : (
           <p className="text-body text-muted">No lights are assigned to this room yet. In Home Assistant, assign a light to the “{area.name}” area and it will appear here.</p>
+          )
         ) : (
           <>
             {lights.map((l) => (

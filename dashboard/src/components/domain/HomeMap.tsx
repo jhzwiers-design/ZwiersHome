@@ -8,7 +8,7 @@
  * Isometric projection is done in JS for points, so labels stay upright and
  * readable in both modes.
  */
-import { AlertTriangle, Box, Square } from 'lucide-react';
+import { AlertTriangle, BellRing, Box, Square, Video } from 'lucide-react';
 import { useMemo, useState, type KeyboardEvent } from 'react';
 import { floorPlan, type FloorPlan } from '@/config/floorplan';
 import type { HomeSnapshot } from '@/data/types';
@@ -66,7 +66,24 @@ export function HomeMap({
 
   const geo = useMemo(() => {
     const outline = plan.outline.map((p) => project(p, mode));
-    const all = [...outline, ...(mode === '3d' ? outline.map(([x, y]) => [x, y + SLAB] as Pt) : [])];
+    const rooms = plan.rooms.map((r) => ({ ...r, pts: r.points.map((p) => project(p, mode)), center: project(r.label ?? centroid(r.points), mode) }));
+    // View cone: a wedge in plan space (±26° around the camera's angle), then projected.
+    const cameras = plan.cameras.map((c) => {
+      const R = 78;
+      const wedge: Pt[] = [c.at];
+      for (let d = -26; d <= 26; d += 13) {
+        const a = ((c.angle + d) * Math.PI) / 180;
+        wedge.push([c.at[0] + Math.cos(a) * R, c.at[1] + Math.sin(a) * R]);
+      }
+      return { ...c, pt: project(c.at, mode), cone: wedge.map((p) => project(p, mode)) };
+    });
+    // Bounds include rooms and camera cones outside the house so nothing is clipped.
+    const all = [
+      ...outline,
+      ...(mode === '3d' ? outline.map(([x, y]) => [x, y + SLAB] as Pt) : []),
+      ...rooms.flatMap((r) => r.pts),
+      ...cameras.flatMap((c) => c.cone),
+    ];
     const xs = all.map((p) => p[0]);
     const ys = all.map((p) => p[1]);
     const pad = 24;
@@ -75,8 +92,9 @@ export function HomeMap({
     return {
       outline,
       viewBox: `${minX} ${minY} ${Math.max(...xs) - minX + pad} ${Math.max(...ys) - minY + pad}`,
-      rooms: plan.rooms.map((r) => ({ ...r, pts: r.points.map((p) => project(p, mode)), center: project(r.label ?? centroid(r.points), mode) })),
+      rooms,
       spaces: plan.spaces.map((sp) => ({ pts: sp.points.map((p) => project(p, mode)), label: sp.label, center: project(centroid(sp.points), mode) })),
+      cameras,
     };
   }, [plan, mode]);
 
@@ -220,6 +238,40 @@ export function HomeMap({
             </g>
           );
         })}
+        {/* Cameras: view cone + clickable marker. Selecting one opens its room (camera preview first). */}
+        {geo.cameras.map((c) => {
+          const cam = s.security.cameras.find((x) => x.id === c.cameraId);
+          if (!cam) return null;
+          const online = s.devices.find((d) => d.id === cam.deviceId)?.availability === 'online';
+          const isSel = selected === cam.areaId;
+          const Icon = cam.kind === 'doorbell' ? BellRing : Video;
+          return (
+            <g
+              key={c.cameraId}
+              role="button"
+              tabIndex={0}
+              aria-pressed={isSel}
+              aria-label={`${cam.name} ${cam.kind === 'doorbell' ? 'doorbell camera' : 'camera'}${online ? '' : ', offline'}. Show its view and lights.`}
+              onClick={() => onSelect(cam.areaId)}
+              onKeyDown={(e) => onKey(e, cam.areaId)}
+              className="cursor-pointer outline-none [&:focus-visible>circle]:stroke-[var(--accent)]"
+            >
+              <polygon
+                points={toPath(c.cone)}
+                fill="var(--security-fill)"
+                opacity={isSel ? 0.32 : 0.16}
+                stroke="var(--security-fill)"
+                strokeOpacity={0.5}
+                strokeWidth={1.5}
+                strokeDasharray="4 4"
+                style={{ transition: 'opacity var(--dur)' }}
+              />
+              <circle cx={c.pt[0]} cy={c.pt[1]} r={14} fill="var(--surface)" stroke={isSel ? 'var(--accent-ink)' : 'var(--security-fill)'} strokeWidth={isSel ? 3.5 : 2.5} />
+              <Icon x={c.pt[0] - 8} y={c.pt[1] - 8} width={16} height={16} color={online ? 'var(--security-ink)' : 'var(--muted)'} strokeWidth={2} aria-hidden />
+              <title>{cam.name}</title>
+            </g>
+          );
+        })}
       </svg>
       </div>
 
@@ -232,6 +284,9 @@ export function HomeMap({
         </span>
         <span className="inline-flex items-center gap-1.5">
           <AlertTriangle aria-hidden className="size-3 text-danger" strokeWidth={2} /> Unreachable light
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <Video aria-hidden className="size-3.5 text-[var(--security-ink)]" strokeWidth={2} /> Camera (tap for view)
         </span>
         <span className="ml-auto italic">
           {plan.name} · {plan.note}

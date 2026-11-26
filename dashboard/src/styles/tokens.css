@@ -160,6 +160,9 @@
   --video-frame: #0a0f16;
   --video-line: #18202b;
   --video-line-2: #222c3a;
+  /* Illustrated camera placeholders: a dim night-vision line drawing. */
+  --video-sketch: #4b5b72;
+  --video-sketch-2: #71839c;
   --video-fg: #e5e7eb;
   --video-muted: #9aa4b4;
   --video-accent: #ff4d55;

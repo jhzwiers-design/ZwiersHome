@@ -36,6 +36,13 @@ export interface PlanSpace {
   label?: string;
 }
 
+/** A camera on the map: where it is and which way it looks (degrees, 0 = east, 90 = south). */
+export interface PlanCamera {
+  cameraId: string;
+  at: Pt;
+  angle: number;
+}
+
 export interface FloorPlan {
   name: string;
   /** Shown under the map, e.g. "Traced from the architect's plan". */
@@ -46,6 +53,7 @@ export interface FloorPlan {
   outline: Pt[];
   rooms: PlanRoom[];
   spaces: PlanSpace[];
+  cameras: PlanCamera[];
 }
 
 const rect = (x: number, y: number, w: number, h: number): Pt[] => [
@@ -66,7 +74,7 @@ function tracedPlan(): FloorPlan {
     name: 'First floor',
     note: "Traced from the architect's plan",
     width: Math.round(1050 * S),
-    height: Math.round(905 * S),
+    height: Math.round(945 * S),
     outline: poly([
       [660, 52], [1020, 52], [1020, 490], [1055, 490], [1055, 842], [985, 842], [985, 870], [790, 870], [790, 800],
       [570, 800], [570, 937], [430, 937], [430, 842], [215, 842], [215, 800], [108, 800], [108, 660], [105, 660],
@@ -82,11 +90,12 @@ function tracedPlan(): FloorPlan {
       { areaId: 'bedroom2', points: box(875, 295, 145, 113) },
       { areaId: 'bedroom1', points: box(255, 722, 105, 120) }, // plan Bedroom 4
       { areaId: 'bedroom4', points: box(105, 548, 133, 112) }, // plan Bedroom 5
-      { areaId: 'porch', points: box(215, 845, 215, 65) },
+      { areaId: 'porch', points: box(215, 845, 215, 65), label: P([282, 880]) },
       { areaId: 'garage', points: poly([[830, 490], [1055, 490], [1055, 842], [790, 842], [790, 620], [830, 620]]) },
       // Drawn after the garage so its label sits on top.
-      { areaId: 'mandoor', points: box(1058, 495, 82, 100) },
+      { areaId: 'mandoor', points: box(1058, 495, 82, 100), label: P([1101, 568]) },
       { areaId: 'upstairs', points: box(125, 95, 150, 115), detached: true },
+      { areaId: 'frontyard', points: box(830, 875, 225, 60) },
     ],
     spaces: [
       { points: box(660, 52, 180, 123), label: 'Master bath' },
@@ -110,6 +119,13 @@ function tracedPlan(): FloorPlan {
       { points: box(495, 790, 75, 10) },
       { points: box(430, 790, 140, 147), label: 'Dining' },
     ],
+    // From the camera sketch drawn on the architect's plan (26 Nov 2026).
+    cameras: [
+      { cameraId: 'cam-backyard', at: P([303, 460]), angle: -55 },
+      { cameraId: 'cam-mandoor', at: P([1062, 503]), angle: 30 },
+      { cameraId: 'cam-front', at: P([360, 852]), angle: 85 },
+      { cameraId: 'cam-frontyard', at: P([1053, 862]), angle: 88 },
+    ],
   };
 }
 
@@ -118,7 +134,7 @@ const DEMO_PLAN: FloorPlan = {
   name: 'Demo home',
   note: 'Example layout',
   width: 640,
-  height: 420,
+  height: 460,
   outline: [[10, 10], [630, 10], [630, 410], [10, 410]],
   rooms: [
     { areaId: 'living', points: rect(10, 10, 200, 160) },
@@ -134,8 +150,15 @@ const DEMO_PLAN: FloorPlan = {
     { areaId: 'bedroom4', points: rect(85, 300, 75, 110) },
     { areaId: 'porch', points: rect(160, 300, 120, 110) },
     { areaId: 'garage', points: rect(280, 300, 230, 110) },
+    { areaId: 'frontyard', points: rect(280, 410, 230, 40) },
   ],
   spaces: [],
+  cameras: [
+    { cameraId: 'cam-front', at: [220, 410], angle: 90 },
+    { cameraId: 'cam-mandoor', at: [570, 330], angle: 0 },
+    { cameraId: 'cam-backyard', at: [570, 60], angle: -30 },
+    { cameraId: 'cam-frontyard', at: [500, 440], angle: 90 },
+  ],
 };
 
 export const floorPlan: FloorPlan = __PUBLIC__ ? DEMO_PLAN : tracedPlan();
