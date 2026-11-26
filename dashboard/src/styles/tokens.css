@@ -26,6 +26,20 @@
 
 :root,
 :root[data-theme='dark'] {
+  /* Home map */
+  --map-floor: #0f151d;
+  --map-room: #18212d;
+  --map-room-hover: #1f2a38;
+  --map-space: #131a23;
+  --map-wall: #2d3a4c;
+  --map-label: #e9edf3;
+  --map-sub: #9aa4b4;
+  --map-lit: #ffc35a;
+  --map-lit-opacity: 0.4;
+  --map-cam: #b39dff;
+  --map-cam-ink: #0a0f16;
+  --map-water: #4aa3e8;
+  --map-paving: #232d3a;
   color-scheme: dark;
   --switch-off: transparent;
   --switch-off-border: var(--control);
@@ -73,6 +87,20 @@
 }
 
 :root[data-theme='light'] {
+  /* Home map */
+  --map-floor: #e6e6ec;
+  --map-room: #ffffff;
+  --map-room-hover: #f6f6f9;
+  --map-space: #ececf1;
+  --map-wall: #c4c4cc;
+  --map-label: #1d1d1f;
+  --map-sub: #5f5f66;
+  --map-lit: #ffcd5e;
+  --map-lit-opacity: 0.6;
+  --map-cam: #6a4bd6;
+  --map-cam-ink: #ffffff;
+  --map-water: #3a8fd6;
+  --map-paving: #dadae1;
   color-scheme: light;
   /* Neutral, Apple-style greys (no warm cast): white cards on a soft grey page. */
   --bg: #f2f2f5;

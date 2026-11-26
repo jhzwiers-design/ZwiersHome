@@ -5,7 +5,8 @@ import { useState } from 'react';
 import { CameraView, EventList } from '@/components/domain/SecurityParts';
 import { Button } from '@/components/primitives';
 import { RangeSlider, Segmented } from '@/components/controls';
-import { Bell, BellRing, History, Video } from 'lucide-react';
+import { Bell, BellRing, History, Map as MapIcon, Video } from 'lucide-react';
+import { HomeMap } from '@/components/domain/HomeMap';
 import { KeyValueList, Note, PageHeader, Section, Stack } from '@/components/layout-parts';
 import { StatusIndicator } from '@/components/Status';
 import type { HomeSnapshot, SecurityEvent } from '@/data/types';
@@ -26,6 +27,7 @@ export function Security({ s }: { s: HomeSnapshot }) {
   const clock = usePreferences((p) => p.clock);
   const now = useNow(30_000);
   const [filter, setFilter] = useState<EventFilter>('all');
+  const [mapArea, setMapArea] = useState<string | null>(() => s.security.cameras[0]?.areaId ?? null);
   const cam = s.security.cameras[0];
   const chime = s.security.chimes[0];
 
@@ -53,6 +55,8 @@ export function Security({ s }: { s: HomeSnapshot }) {
           </>
         }
       />
+
+      <CameraMap s={s} area={mapArea} onArea={setMapArea} />
 
       <div className="grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-12">
         <Section title={s.security.cameras.length > 1 ? 'Cameras' : 'Camera'} subtitle={s.security.cameras.length > 1 ? `${s.security.cameras.length} Ring cameras` : `${cam.name} · Ring`} icon={Video} className="lg:col-span-8">
@@ -151,5 +155,37 @@ function ChimeControls({ s, chimeId }: { s: HomeSnapshot; chimeId: string }) {
         Play test sound
       </Button>
     </Section>
+  );
+}
+
+/** Camera map: the home map on its Cameras layer, with the selected camera's view and activity. */
+function CameraMap({ s, area, onArea }: { s: HomeSnapshot; area: string | null; onArea: (a: string) => void }) {
+  const cams = s.security.cameras.filter((c) => c.areaId === area);
+  const areaName = s.areas.find((a) => a.id === area)?.name ?? 'Select a camera';
+  const events = s.security.events.filter((e) => cams.some((c) => c.id === e.cameraId)).sort((a, b) => b.at - a.at);
+  return (
+    <div className="grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-12">
+      <Section title="Camera map" subtitle="Tap a camera to see its view" icon={MapIcon} className="lg:col-span-8">
+        <HomeMap s={s} selected={area} onSelect={onArea} defaultLayer="cameras" />
+      </Section>
+      <Section title={areaName} subtitle={cams.length ? cams.map((c) => (c.kind === 'doorbell' ? 'Doorbell' : 'Spotlight Cam')).join(' · ') : 'No camera here yet'} icon={Video} className="lg:col-span-4">
+        <div key={area ?? 'none'} className="animate-zh-in space-y-3" aria-live="polite">
+          {cams.length === 0 ? (
+            <p className="text-body text-muted">Pick a camera on the map to see what it covers.</p>
+          ) : (
+            <>
+              {cams.map((c) => (
+                <CameraView key={c.id} camera={c} compact />
+              ))}
+              {events.length > 0 ? (
+                <EventList events={events} cameras={s.security.cameras} limit={4} groupByDay={false} />
+              ) : (
+                <p className="text-label text-muted">No recent activity.</p>
+              )}
+            </>
+          )}
+        </div>
+      </Section>
+    </div>
   );
 }

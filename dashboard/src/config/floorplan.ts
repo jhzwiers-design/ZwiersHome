@@ -1,7 +1,10 @@
 /**
  * Floor plan — room shapes for the interactive home map (Lights & fans screen).
  *
- * Traced from the architect's first-floor plan (Design Studio, "Zwiers
+ * Traced from the architect's first-floor plan; grounds from the satellite view
+ * and the original landscape plan. The pool shape is provisional until the pool plan arrives.
+ *
+ * (Earlier note:) Traced from the architect's first-floor plan (Design Studio, "Zwiers
  * Residence", sheet 4) on 26 Nov 2026, so proportions follow the real walls.
  * Coordinates are written in pixels of that drawing and scaled by `P()`.
  *
@@ -104,7 +107,7 @@ function tracedPlan(): FloorPlan {
       { areaId: 'garage', points: poly([[830, 490], [1055, 490], [1055, 842], [790, 842], [790, 620], [830, 620]]) },
       // Drawn after the garage so its label sits on top.
       { areaId: 'mandoor', points: box(1058, 495, 82, 100), label: P([1101, 568]) },
-      { areaId: 'upstairs', points: box(1090, 60, 150, 115), detached: true },
+      { areaId: 'upstairs', points: box(-80, 690, 150, 115), detached: true },
       // Pool deck behind the back porch (from the satellite view; approximate).
       { areaId: 'backyard', points: poly([[200, 40], [550, 40], [550, 318], [200, 318]]), label: P([300, 285]) },
       { areaId: 'frontyard', points: box(830, 875, 225, 60) },
@@ -119,10 +122,13 @@ function tracedPlan(): FloorPlan {
       { points: box(905, 408, 115, 82), label: 'Storage' },
       { points: box(790, 440, 40, 180), label: 'Stairs' },
       { points: box(660, 408, 130, 107), label: 'Office' },
-      { points: box(660, 515, 65, 105), label: 'Powder' },
-      { points: box(725, 515, 65, 105), label: 'Mud room' },
-      { points: box(660, 620, 130, 80), label: 'Pantry' },
-      { points: box(660, 700, 130, 100), label: 'Laundry' },
+      // Utility wing, corrected from the owner's marked-up close-up (26 Nov 2026).
+      { points: box(660, 515, 65, 67), label: 'Powder' },
+      { points: box(660, 582, 65, 36) }, // hall below the powder room
+      { points: box(725, 515, 65, 145), label: 'Mud room' },
+      { points: poly([[660, 618], [709, 618], [709, 662], [725, 662], [725, 704], [660, 704]]), label: 'Pantry' },
+      { points: box(709, 618, 16, 44) }, // soap station
+      { points: poly([[660, 704], [725, 704], [725, 660], [790, 660], [790, 800], [660, 800]]), label: 'Laundry' },
       { points: box(495, 488, 165, 112), label: 'Keeping' },
       { points: box(238, 548, 52, 174) },
       { points: box(108, 660, 147, 140), label: 'Bath 3' },
@@ -144,6 +150,8 @@ function tracedPlan(): FloorPlan {
     // the barn is drawn closer than it really is so the map stays readable.
     grounds: [
       { kind: 'paving', points: poly([[1065, 380], [1150, 380], [1150, 990], [560, 990], [560, 945], [1065, 945]]), label: 'Driveway' },
+      // Limestone drive from the north, curving down to the garage (landscape plan).
+      { kind: 'paving', points: poly([[1078, 380], [1148, 380], [1168, 230], [1210, 90], [1262, -40], [1196, -60], [1140, 80], [1100, 225]]), label: 'Limestone drive' },
       { kind: 'water', points: poly([[245, 105], [495, 105], [495, 235], [245, 235]]), label: 'Pool' },
       { kind: 'water', points: poly(Array.from({ length: 16 }, (_, i) => [522 + 30 * Math.cos((i / 16) * 2 * Math.PI), 82 + 30 * Math.sin((i / 16) * 2 * Math.PI)] as Pt)), label: 'Spa' },
       { kind: 'building', points: box(560, 55, 92, 190), label: 'Pool house' },

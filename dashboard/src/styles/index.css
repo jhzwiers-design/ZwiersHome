@@ -193,6 +193,9 @@
 @keyframes zh-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 @keyframes zh-rise { from { opacity: 0; transform: translateY(10px) scale(0.985); } to { opacity: 1; transform: none; } }
 @keyframes zh-tick { from { opacity: 0.2; transform: translateY(0.18em); filter: blur(2px); } to { opacity: 1; transform: none; filter: none; } }
+/* Map: a soft ring around cameras that saw motion recently */
+@keyframes zh-map-ping { 0% { transform: scale(1); opacity: 0.55; } 80%, 100% { transform: scale(2.1); opacity: 0; } }
+.map-ping { transform-box: fill-box; transform-origin: center; animation: zh-map-ping 2.4s var(--ease-out) infinite; }
 @keyframes zh-pulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
 @keyframes zh-pop { 0% { transform: scale(0.92); } 60% { transform: scale(1.04); } 100% { transform: scale(1); } }
 @keyframes zh-slide-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
@@ -276,6 +279,7 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
   .animate-zh-spin { animation-duration: 2.4s; }
   .animate-zh-in, .animate-zh-rise, .animate-zh-tick, .animate-zh-pulse, .animate-zh-pop, .animate-zh-slide-in, .animate-zh-slide-out, .animate-zh-page, .animate-zh-done, .zh-dialog, .zh-overlay, .zh-ripple { animation: none !important; }
   .zh-ripple { display: none; }
+  .map-ping { animation: none; opacity: 0.35; }
   .lift:hover, .lift:active, button:not(:disabled):active { transform: none; }
   html.theme-fade * { transition: none !important; }
 }
