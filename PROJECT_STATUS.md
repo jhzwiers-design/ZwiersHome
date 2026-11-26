@@ -101,7 +101,7 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 - [ ] **Room names.** Some SmartThings labels were cut off in the screenshots (e.g. "Alli… Room", "…n's room"); they're placeholders "Bedroom 2–4" for now.
 - [x] SmartThings device list received
 - [x] Light protocol: **Living Room Lights is Z-Wave** (manufacturer code 0039 = Honeywell; 0039-4944-3038 appears to be their Z-Wave Plus in-wall dimmer). Adapter needed: **Connect ZWA-2 (~$69)**; Zigbee adapter likely unnecessary.
-- [ ] Confirm one more device (an outdoor light and a fan) also says "Hub (Z-Wave)"
+- [x] Confirmed: Master Bedroom fan is also **Honeywell Z-Wave** (0039-4944-3131). **Shopping list final: Home Assistant Green + Connect ZWA-2 ≈ $268 once.** No Zigbee adapter needed.
 - [ ] Confirm map rooms: which of the two cut-off bedrooms is Lauren’s and which is Tim’s
 - [ ] Carrier app name
 - [ ] OmniLogic controller model, firmware/MSP version, connection type, equipment list (any dual-speed pumps?)
