@@ -493,13 +493,13 @@ function PoolGlance({ s }: { s: HomeSnapshot }) {
   return (
     <section aria-label="At a glance" className="tile p-4 sm:p-5">
       <h2 className="caps mb-3 text-muted">At a glance</h2>
-      <dl className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4 lg:grid-cols-7">
+      <dl className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4 2xl:grid-cols-7">
         {items.map((it) => (
           <div key={it.k} className="min-w-0">
             <dt className="text-label text-muted">{it.k}</dt>
             <dd className="mt-0.5 flex items-center gap-1.5 text-body font-medium text-fg">
               {it.on !== undefined && <StatusDot status={it.on ? 'online' : 'off'} />}
-              <span className="truncate">{it.v}</span>
+              <span>{it.v}</span>
             </dd>
           </div>
         ))}

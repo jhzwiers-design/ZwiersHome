@@ -158,6 +158,11 @@
   background: color-mix(in oklab, var(--tone-fill, var(--surface)) 7%, var(--surface));
   border: 1px solid var(--rule);
 }
+:root[data-theme='light'] .wall-surface {
+  background: color-mix(in oklab, var(--tone-fill, var(--surface)) 3.5%, var(--surface));
+  border-color: transparent;
+  box-shadow: var(--tile-shadow);
+}
 /* Calm presentation: quieter colour and contrast — alerts stay full strength. */
 [data-ambient='calm'] .wall-surface,
 [data-ambient='calm'] .wall-hero > :not(.wall-alerts) {

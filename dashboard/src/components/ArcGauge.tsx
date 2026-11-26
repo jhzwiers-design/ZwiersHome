@@ -49,7 +49,7 @@ export function ArcGauge({
   const gid = `arc-${useId().replace(/:/g, '')}`;
   const accent = !dim && tone === 'accent';
   // Accent arcs run crimson → bright crimson; others are flat.
-  const color = dim ? 'var(--faint)' : tone === 'neutral' ? 'var(--muted)' : tone === 'cool' ? 'var(--cool)' : 'var(--accent-ink)';
+  const color = dim ? 'var(--faint)' : tone === 'neutral' ? 'var(--gauge-neutral)' : tone === 'cool' ? 'var(--cool)' : 'var(--accent-ink)';
   const stroke = accent ? `url(#${gid})` : color;
   const glow = accent ? 'var(--accent)' : color;
   const tick = marker !== undefined ? START + SWEEP * frac(marker) : null;

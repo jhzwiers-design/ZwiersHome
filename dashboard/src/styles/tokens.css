@@ -27,6 +27,10 @@
 :root,
 :root[data-theme='dark'] {
   color-scheme: dark;
+  --switch-off: transparent;
+  --switch-off-border: var(--control);
+  --switch-thumb-off: var(--control);
+  --gauge-neutral: var(--muted);
   --bg: #0a0f16;
   --surface: #141b25;
   --surface-2: #1d2633;
@@ -70,35 +74,41 @@
 
 :root[data-theme='light'] {
   color-scheme: light;
-  --bg: #f4f1ec;
+  /* Neutral, Apple-style greys (no warm cast): white cards on a soft grey page. */
+  --bg: #f2f2f5;
   --surface: #ffffff;
-  --surface-2: #f6f3ee;
-  --surface-3: #ece7df;
-  --surface-hover: #fbfaf8;
-  --rule: #e9e3da;
-  --rule-strong: #d6cec2;
-  --control: #7c7c82;
+  --surface-2: #f4f4f7;
+  --surface-3: #e8e8ed;
+  --surface-hover: #fafafc;
+  --rule: #e5e5ea;
+  --rule-strong: #d1d1d6;
+  --control: #808086;
   --fg: #1d1d1f;
   --fg-2: #3a3a3c;
   --muted: #636366;
-  --faint: #a1a1a6;
+  --faint: #aeaeb2;
   --accent: #a71930;
   --accent-strong: #8a1427;
   --accent-ink: #a71930;
   --accent-solid: #a71930;
-  --accent-soft: rgb(167 25 48 / 0.08);
-  --accent-glow: 0 0 0 1px rgb(167 25 48 / 0.18), 0 6px 18px rgb(167 25 48 / 0.16);
+  --accent-soft: rgb(167 25 48 / 0.07);
+  --accent-glow: 0 0 0 1px rgb(167 25 48 / 0.14), 0 4px 12px rgb(167 25 48 / 0.18);
   --on-accent: #ffffff;
   --danger: #9a5b00;
-  --danger-soft: rgb(220 140 20 / 0.12);
+  --danger-soft: rgb(255 159 10 / 0.12);
   --positive: #1e7a4f;
-  --positive-soft: rgb(30 122 79 / 0.1);
+  --positive-soft: rgb(52 199 89 / 0.12);
   --info: #2f5bb7;
   --cool: #2f5bb7;
-  --scrim: rgb(29 29 31 / 0.32);
-  --shadow: 0 18px 44px rgb(29 29 31 / 0.14);
-  --tile-shadow: 0 1px 2px rgb(29 29 31 / 0.05), 0 0 0 1px rgb(29 29 31 / 0.02);
-  --tile-shadow-raised: 0 12px 30px rgb(29 29 31 / 0.1), 0 1px 2px rgb(29 29 31 / 0.05);
+  --scrim: rgb(0 0 0 / 0.28);
+  --shadow: 0 18px 44px rgb(0 0 0 / 0.14);
+  --tile-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px rgb(0 0 0 / 0.04);
+  --tile-shadow-raised: 0 12px 30px rgb(0 0 0 / 0.08), 0 1px 3px rgb(0 0 0 / 0.05);
+  /* Off switches: a filled grey track with a white knob, outlined for 3:1 contrast. */
+  --switch-off: #e9e9ee;
+  --switch-off-border: #808086;
+  --switch-thumb-off: #ffffff;
+  --gauge-neutral: #808086;
 
   --sig-on: #ffffff;
   --lighting-fill: #f2b705; --lighting-ink: #8a6100; --lighting-tint: #f7c948;
@@ -124,10 +134,14 @@
   --lit-opacity: 0.3;
 }
 :root[data-theme='light'] [data-tone] {
-  --band: color-mix(in srgb, var(--tone-tint) 22%, var(--surface));
+  --band: color-mix(in srgb, var(--tone-tint) 11%, var(--surface));
+  --chip-bg: color-mix(in srgb, var(--tone-tint) 22%, transparent);
   --lit: var(--tone-tint);
-  --lit-opacity: 0.72;
+  --lit-opacity: 0.5;
+  --gauge-neutral: var(--tone-ink);
 }
+/* Gold is too light for a white icon: use dark ink on it in light mode. */
+:root[data-theme='light'] [data-tone='lighting'] { --chip-on: #3d2a00; }
 [data-tone='lighting'] { --tone-fill: var(--lighting-fill); --tone-ink: var(--lighting-ink); --tone-tint: var(--lighting-tint); }
 [data-tone='climate']  { --tone-fill: var(--climate-fill);  --tone-ink: var(--climate-ink);  --tone-tint: var(--climate-tint); }
 [data-tone='pool']     { --tone-fill: var(--pool-fill);     --tone-ink: var(--pool-ink);     --tone-tint: var(--pool-tint); }

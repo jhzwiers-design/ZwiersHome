@@ -40,13 +40,13 @@ export function Toggle({
         className={cx(
           'relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border transition-all duration-[var(--dur)]',
           'disabled:cursor-not-allowed disabled:opacity-40',
-          checked ? 'border-accent-ink bg-accent shadow-[var(--accent-glow)]' : 'border-control bg-transparent',
+          checked ? 'border-accent-ink bg-accent shadow-[var(--accent-glow)]' : 'border-[var(--switch-off-border)] bg-[var(--switch-off)]',
         )}
       >
         <RadixSwitch.Thumb
           className={cx(
             'block size-[22px] rounded-full shadow-sm transition-[transform,background-color] duration-[260ms] ease-[var(--ease-spring)]',
-            checked ? 'translate-x-[22px] bg-on-accent' : 'translate-x-[2px] bg-control',
+            checked ? 'translate-x-[22px] bg-on-accent' : 'translate-x-[2px] bg-[var(--switch-thumb-off)]',
           )}
         />
       </RadixSwitch.Root>
