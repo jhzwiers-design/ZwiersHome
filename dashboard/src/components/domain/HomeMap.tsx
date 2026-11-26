@@ -162,15 +162,18 @@ export function HomeMap({
               onPointerLeave={() => setHover(null)}
               className="cursor-pointer outline-none [&:focus-visible>polygon]:stroke-[var(--accent)]"
             >
-              {lit && <polygon points={toPath(r.pts)} fill="var(--accent-ink)" opacity="0.3" filter="url(#room-glow)" />}
+              {lit && <polygon points={toPath(r.pts)} fill="var(--lit, var(--accent-ink))" opacity="0.35" filter="url(#room-glow)" />}
               <polygon
                 points={toPath(r.pts)}
-                fill={lit ? 'var(--accent-ink)' : 'var(--surface)'}
-                fillOpacity={lit ? (isSel ? 0.42 : 0.26) : isHover ? 0.85 : 1}
+                fill={lit ? 'var(--lit, var(--accent-ink))' : 'var(--surface)'}
+                fillOpacity={lit ? undefined : isHover ? 0.85 : 1}
                 stroke={isSel ? 'var(--accent-ink)' : 'var(--rule-strong)'}
                 strokeWidth={isSel ? 5 : 3}
                 strokeLinejoin="round"
-                style={{ transition: 'fill-opacity var(--dur), stroke var(--dur)' }}
+                style={{
+                  transition: 'fill-opacity var(--dur-slow), fill var(--dur-slow), stroke var(--dur)',
+                  fillOpacity: lit ? (isSel ? 'calc(var(--lit-opacity, 0.28) + 0.15)' : 'var(--lit-opacity, 0.28)') : undefined,
+                }}
               />
               <text
                 x={r.center[0]}

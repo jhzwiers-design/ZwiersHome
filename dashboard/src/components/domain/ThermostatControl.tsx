@@ -75,7 +75,7 @@ export function ThermostatControl({
       ) : draft ? (
         <span className="text-muted">Release to send…</span>
       ) : (
-        <span className="text-faint">
+        <span className="text-muted">
           Limits {formatTemp(minF, unit)}–{formatTemp(maxF, unit)}
         </span>
       )}

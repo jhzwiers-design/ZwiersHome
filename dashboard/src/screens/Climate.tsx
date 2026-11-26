@@ -55,7 +55,7 @@ export function Climate({ s }: { s: HomeSnapshot }) {
             : 'Idle: at setpoint';
 
   return (
-    <Stack>
+    <Stack tone="climate">
       <PageHeader
         title="Climate"
         summary={`${sys.name} · ${zone.name}`}

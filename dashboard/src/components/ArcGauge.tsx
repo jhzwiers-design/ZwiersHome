@@ -46,12 +46,10 @@ export function ArcGauge({
   className?: string;
 }) {
   const frac = (v: number) => Math.min(1, Math.max(0, (v - min) / (max - min)));
-  const end = START + SWEEP * frac(value);
-  const knob = polar(end);
   const gid = `arc-${useId().replace(/:/g, '')}`;
   const accent = !dim && tone === 'accent';
-  // Accent arcs run crimson → peach (the brand palette); others are flat.
-  const color = dim || tone === 'neutral' ? 'var(--fg-2)' : tone === 'cool' ? 'var(--cool)' : 'var(--accent-ink)';
+  // Accent arcs run crimson → bright crimson; others are flat.
+  const color = dim ? 'var(--faint)' : tone === 'neutral' ? 'var(--muted)' : tone === 'cool' ? 'var(--cool)' : 'var(--accent-ink)';
   const stroke = accent ? `url(#${gid})` : color;
   const glow = accent ? 'var(--accent)' : color;
   const tick = marker !== undefined ? START + SWEEP * frac(marker) : null;
@@ -67,16 +65,20 @@ export function ArcGauge({
         </defs>
         <path d={arcPath(START, START + SWEEP)} fill="none" stroke="var(--surface-2)" strokeWidth="14" strokeLinecap="round" />
         <path d={arcPath(START, START + SWEEP)} fill="none" stroke="var(--rule)" strokeWidth="1" strokeDasharray="1 6" />
-        {frac(value) > 0.001 && (
-          <path
-            d={arcPath(START, end)}
-            fill="none"
-            stroke={stroke}
-            strokeWidth="14"
-            strokeLinecap="round"
-            style={{ filter: dim ? undefined : `drop-shadow(0 0 6px ${glow})`, transition: 'all var(--dur) var(--ease)' }}
-          />
-        )}
+        {/* Value arc: the full arc, revealed with a dash so changes animate smoothly. */}
+        <path
+          d={arcPath(START, START + SWEEP)}
+          pathLength={100}
+          fill="none"
+          stroke={stroke}
+          strokeWidth="14"
+          strokeLinecap="round"
+          strokeDasharray={`${Math.max(0.001, frac(value) * 100)} 100`}
+          style={{
+            filter: dim ? undefined : `drop-shadow(0 0 6px ${glow})`,
+            transition: 'stroke-dasharray 520ms var(--ease), stroke 320ms var(--ease)',
+          }}
+        />
         {tick !== null && (
           <line
             x1={polar(tick, R - 13).x}
@@ -88,7 +90,10 @@ export function ArcGauge({
             strokeLinecap="round"
           />
         )}
-        <circle cx={knob.x} cy={knob.y} r="9" fill="var(--surface)" stroke={color} strokeWidth="4" />
+        {/* Knob rides the arc by rotating around the centre. */}
+        <g style={{ transform: `rotate(${SWEEP * frac(value)}deg)`, transformOrigin: '100px 100px', transition: 'transform 520ms var(--ease)' }}>
+          <circle cx={polar(START).x} cy={polar(START).y} r="9" fill="var(--surface)" stroke={color} strokeWidth="4" />
+        </g>
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">{children}</div>
     </div>

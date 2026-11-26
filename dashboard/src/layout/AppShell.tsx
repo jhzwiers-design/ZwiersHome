@@ -14,6 +14,7 @@ import { cx } from '@/components/primitives';
 import type { Route } from '@/hooks';
 import { useNow } from '@/hooks';
 import { formatTime } from '@/lib/format';
+import { ROUTE_TONE } from '@/lib/tones';
 import { useHome } from '@/store/home';
 import { usePreferences } from '@/store/preferences';
 
@@ -144,7 +145,7 @@ function PillNav({ route }: { route: Route }) {
       <ul className="tile flex flex-col items-center gap-2 rounded-full! px-2 py-4">
         {NAV.map((item) => (
           <li key={item.id}>
-            <NavButton href={`#/${item.id}`} label={item.label} icon={item.icon} active={item.id === route} />
+            <NavButton href={`#/${item.id}`} label={item.label} icon={item.icon} active={item.id === route} tone={ROUTE_TONE[item.id]} />
           </li>
         ))}
         <li aria-hidden className="my-1 h-px w-8 bg-rule" />
@@ -156,15 +157,16 @@ function PillNav({ route }: { route: Route }) {
   );
 }
 
-function NavButton({ href, label, icon: Icon, active }: { href: string; label: string; icon: LucideIcon; active: boolean }) {
+function NavButton({ href, label, icon: Icon, active, tone }: { href: string; label: string; icon: LucideIcon; active: boolean; tone?: string }) {
   return (
     <a
       href={href}
       aria-current={active ? 'page' : undefined}
       aria-label={label}
+      data-tone={tone}
       className={cx(
-        'group relative grid size-12 place-items-center rounded-full transition-colors duration-[var(--dur)]',
-        active ? 'bg-fg text-bg shadow-[0_4px_14px_rgb(0_0_0/0.25)]' : 'text-muted hover:bg-surface-2 hover:text-fg',
+        'group relative grid size-12 place-items-center rounded-full transition-[background-color,color,box-shadow,transform] duration-[var(--dur)] ease-[var(--ease-spring)]',
+        active ? 'scale-105 border border-accent-ink bg-accent text-on-accent shadow-[var(--accent-glow)]' : 'text-muted hover:scale-105 hover:bg-accent-soft hover:text-accent-ink',
       )}
     >
       <Icon aria-hidden className="size-5" strokeWidth={active ? 2 : 1.6} />
@@ -192,9 +194,10 @@ function BottomNav({ route }: { route: Route }) {
                 href={`#/${item.id}`}
                 aria-current={active ? 'page' : undefined}
                 aria-label={item.label}
+                data-tone={ROUTE_TONE[item.id]}
                 className={cx(
-                  'grid size-11 place-items-center rounded-full transition-colors',
-                  active ? 'bg-fg text-bg' : 'text-muted',
+                  'grid size-11 place-items-center rounded-full transition-[background-color,color,transform] duration-[var(--dur)] ease-[var(--ease-spring)]',
+                  active ? 'scale-105 border border-accent-ink bg-accent text-on-accent' : 'text-muted',
                 )}
               >
                 <Icon aria-hidden className="size-5" strokeWidth={active ? 2 : 1.6} />

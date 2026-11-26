@@ -40,7 +40,7 @@ function ToastItem({ toast, onDismiss, sample }: { toast: Toast; onDismiss: (id:
     <div
       role={toast.tone === 'error' ? 'alert' : 'status'}
       className={cx(
-        'pointer-events-auto flex w-full items-start gap-3 rounded-md border bg-surface px-4 py-3 shadow-[var(--shadow)] animate-zh-in',
+        'pointer-events-auto flex w-full items-start gap-3 rounded-md border bg-surface px-4 py-3 shadow-[var(--shadow)] animate-zh-slide-in',
         toast.tone === 'error' ? 'border-danger' : toast.tone === 'event' ? 'border-accent' : 'border-rule-strong',
       )}
     >
@@ -55,7 +55,7 @@ function ToastItem({ toast, onDismiss, sample }: { toast: Toast; onDismiss: (id:
       <div className="min-w-0 flex-1">
         <p className="text-body font-medium text-fg">{toast.title}</p>
         {toast.detail && <p className="mt-0.5 text-label text-muted">{toast.detail}</p>}
-        {sample && <p className="mt-1 text-micro uppercase tracking-[0.1em] text-faint">Prototype · sample data</p>}
+        {sample && <p className="mt-1 text-micro uppercase tracking-[0.1em] text-muted">Prototype · sample data</p>}
       </div>
       <button
         type="button"

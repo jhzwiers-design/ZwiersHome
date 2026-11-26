@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { usePreferences, type RouteId } from '@/store/preferences';
 
 /** Current time, re-rendered every `intervalMs`. Aligned to the minute when ≥ 60 s. */
@@ -34,13 +34,22 @@ export function useRoute(): Route {
 export function useApplyTheme() {
   const pref = usePreferences((p) => p.theme);
   const density = usePreferences((p) => p.density);
+  const first = useRef(true);
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: light)');
+    const root = document.documentElement;
     const apply = () => {
       const theme = pref === 'system' ? (mq.matches ? 'light' : 'dark') : pref;
-      document.documentElement.dataset.theme = theme;
+      if (root.dataset.theme === theme) return;
+      // Cross-fade colours on a real change (not on first paint).
+      if (!first.current) {
+        root.classList.add('theme-fade');
+        window.setTimeout(() => root.classList.remove('theme-fade'), 460);
+      }
+      root.dataset.theme = theme;
     };
     apply();
+    first.current = false;
     mq.addEventListener('change', apply);
     return () => mq.removeEventListener('change', apply);
   }, [pref]);

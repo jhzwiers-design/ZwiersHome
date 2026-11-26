@@ -51,13 +51,15 @@ src/
 | | |
 |---|---|
 | Tokens | `src/styles/tokens.css` (dark + light). Components never use raw colour values. |
-| Palette | Navy `#161E2F` · `#242F49` · slate `#384358` · peach `#FFA586` · crimson `#B51A2B` · wine `#541A2E`. |
-| Accent | Crimson fills for on/active/selected. Accent text and lines use `--accent-ink`: **peach on navy (dark)**, **crimson on white (light)**, for contrast. |
-| Problems | Gold `#F2C94C` (dark) / ochre `#946200` (light), always with an icon or wording. Deliberately not red or peach. |
-| Surfaces | Navy page with navy tiles (dark); warm off-white page with white tiles and navy text (light). |
+| Palette | Burnt Umber `#6D120B` · Redwood `#B02A29` · Macadamia `#FBF0D8` · Cool Blue `#113047` · Light Grayish `#739AB9`. |
+| Brand accent | Redwood fills; accent text uses `--accent-ink` (lighter Redwood on navy, Redwood on cream). Redwood controls on navy carry a bright edge so they pass the 3:1 outline rule. |
+| Signature colours | One per system: Lighting gold, Climate ember, Pool sky, Spa sage, Security violet, Devices steel. Put `data-tone="<system>"` on any element and every accent control inside takes that colour (see `src/lib/tones.ts`). Dark mode: pastel fills with navy text. Light mode: deep fills with cream text, pastel tints for header bands. |
+| Problems | Rose red with a warning icon and words, never colour alone. |
+| Accessibility | Every text/background pair is at least 4.5:1, and large text, icons and control outlines at least 3:1 (WCAG 2.2 AA), checked by script. `--faint` is decorative only. |
+| Surfaces | Cool Blue navy tiles with cream text (dark); Macadamia cream with navy text (light). |
 | Shape | Rounded tiles (20 px), pill buttons, chips and option selectors, round icon badges. |
 | Type | Inter Variable (bundled locally), tabular figures for numbers. |
-| Motion | 120–180 ms transitions only; disabled under "reduce motion". |
+| Motion | Tiles rise in with a stagger, values tick when they change, cards lift on hover, buttons press, switches spring, dials glide, toasts slide in, the theme cross-fades. All 120–520 ms and switched off under "reduce motion". |
 
 Key components:
 - **`Section` / `Tile` / `IconChip`**: the rounded tile with an icon-and-title header that every screen is built from.

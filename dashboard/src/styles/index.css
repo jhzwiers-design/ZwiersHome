@@ -22,6 +22,9 @@
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
   --color-cool: var(--cool);
+  --color-control: var(--control);
+  --color-band: var(--band);
+  --color-band-fg: var(--band-fg);
 
   --font-sans: var(--font-sans);
 }
@@ -122,45 +125,69 @@
   transition: filter 600ms var(--ease);
 }
 
-@keyframes zh-spin {
-  to {
-    transform: rotate(360deg);
-  }
+/* ── Motion system ─────────────────────────────────────────────────────────
+ * Small, purposeful, quick. Everything collapses to instant under
+ * "reduce motion" (see the media query at the end).
+ *   --ease        standard deceleration
+ *   --ease-spring a gentle overshoot for toggles and selections
+ */
+:root {
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-slow: 320ms;
 }
-@keyframes zh-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+
+@keyframes zh-spin { to { transform: rotate(360deg); } }
+@keyframes zh-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+@keyframes zh-rise { from { opacity: 0; transform: translateY(10px) scale(0.985); } to { opacity: 1; transform: none; } }
+@keyframes zh-tick { from { opacity: 0.2; transform: translateY(0.18em); filter: blur(2px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes zh-pulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+@keyframes zh-pop { 0% { transform: scale(0.92); } 60% { transform: scale(1.04); } 100% { transform: scale(1); } }
+@keyframes zh-slide-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+@keyframes zh-ring { from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); } to { box-shadow: 0 0 0 12px transparent; } }
+
+.animate-zh-spin { animation: zh-spin 0.9s linear infinite; }
+.animate-zh-in { animation: zh-fade-in var(--dur) var(--ease) both; }
+.animate-zh-rise { animation: zh-rise var(--dur-slow) var(--ease) both; }
+.animate-zh-tick { animation: zh-tick 380ms var(--ease) both; }
+.animate-zh-pulse { animation: zh-pulse 1.6s ease-in-out infinite; }
+.animate-zh-pop { animation: zh-pop 260ms var(--ease-spring) both; }
+.animate-zh-slide-in { animation: zh-slide-in var(--dur-slow) var(--ease) both; }
+
+/* Staggered entrance: direct children of .stagger (and grids inside) rise one after another. */
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 40ms; }
+.stagger > *:nth-child(3) { animation-delay: 80ms; }
+.stagger > *:nth-child(4) { animation-delay: 120ms; }
+.stagger > *:nth-child(5) { animation-delay: 160ms; }
+.stagger > *:nth-child(n + 6) { animation-delay: 200ms; }
+.stagger > * > .animate-zh-rise:nth-child(2), .stagger > * > * > .animate-zh-rise:nth-child(2) { animation-delay: 60ms; }
+.stagger > * > .animate-zh-rise:nth-child(3), .stagger > * > * > .animate-zh-rise:nth-child(3) { animation-delay: 120ms; }
+.stagger > * > .animate-zh-rise:nth-child(4), .stagger > * > * > .animate-zh-rise:nth-child(4) { animation-delay: 180ms; }
+
+/* Hover lift for clickable tiles. */
+.lift {
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur) var(--ease);
 }
-@keyframes zh-pulse {
-  0%,
-  100% {
-    opacity: 0.35;
-  }
-  50% {
-    opacity: 0.7;
-  }
+.lift:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--rule-strong); }
+.lift:active { transform: translateY(-1px) scale(0.995); }
+
+/* Press feedback on every button. */
+button:not(:disabled), a[role='button'], label:has(> input[type='radio']) {
+  transition-property: transform, background-color, color, border-color, box-shadow, opacity;
+  transition-duration: var(--dur-fast);
+  transition-timing-function: var(--ease);
 }
-.animate-zh-spin {
-  animation: zh-spin 0.9s linear infinite;
+button:not(:disabled):active { transform: scale(0.96); }
+
+/* Theme change: cross-fade colours for a moment (class added by useApplyTheme). */
+html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *::after {
+  transition: background-color 420ms var(--ease), border-color 420ms var(--ease), color 420ms var(--ease),
+    fill 420ms var(--ease), stroke 420ms var(--ease), box-shadow 420ms var(--ease) !important;
 }
-.animate-zh-in {
-  animation: zh-fade-in var(--dur) var(--ease);
-}
-.animate-zh-pulse {
-  animation: zh-pulse 1.4s ease-in-out infinite;
-}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-zh-spin {
-    animation-duration: 2.4s;
-  }
-  .animate-zh-in,
-  .animate-zh-pulse {
-    animation: none;
-  }
+  .animate-zh-spin { animation-duration: 2.4s; }
+  .animate-zh-in, .animate-zh-rise, .animate-zh-tick, .animate-zh-pulse, .animate-zh-pop, .animate-zh-slide-in { animation: none; }
+  .lift:hover, .lift:active, button:not(:disabled):active { transform: none; }
+  html.theme-fade * { transition: none !important; }
 }

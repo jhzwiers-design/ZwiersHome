@@ -44,7 +44,7 @@ export function Security({ s }: { s: HomeSnapshot }) {
   const today = s.security.events.filter((e) => now - e.at < 86_400_000);
 
   return (
-    <Stack>
+    <Stack tone="security">
       <PageHeader
         title="Security"
         summary={

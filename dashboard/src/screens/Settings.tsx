@@ -99,7 +99,7 @@ export function Settings({ s }: { s: HomeSnapshot }) {
             id="start-page"
             value={p.startPage}
             onChange={(e) => p.set('startPage', e.target.value as RouteId)}
-            className="h-10 rounded-full border border-rule bg-surface-2 px-4 text-body text-fg"
+            className="h-10 rounded-full border border-control bg-surface-2 px-4 text-body text-fg"
           >
             {NAV.map((n) => (
               <option key={n.id} value={n.id}>
@@ -130,7 +130,7 @@ export function Settings({ s }: { s: HomeSnapshot }) {
               value={p.wall.dimFrom}
               disabled={!p.wall.dimAtNight}
               onChange={(e) => p.setWall({ dimFrom: e.target.value })}
-              className="h-10 rounded-full border border-rule bg-surface-2 px-4 text-body text-fg disabled:opacity-40"
+              className="h-10 rounded-full border border-control bg-surface-2 px-4 text-body text-fg disabled:opacity-40"
             />
           </label>
           <label className="flex items-center gap-2 text-label text-muted">
@@ -140,7 +140,7 @@ export function Settings({ s }: { s: HomeSnapshot }) {
               value={p.wall.dimUntil}
               disabled={!p.wall.dimAtNight}
               onChange={(e) => p.setWall({ dimUntil: e.target.value })}
-              className="h-10 rounded-full border border-rule bg-surface-2 px-4 text-body text-fg disabled:opacity-40"
+              className="h-10 rounded-full border border-control bg-surface-2 px-4 text-body text-fg disabled:opacity-40"
             />
           </label>
         </SettingRow>

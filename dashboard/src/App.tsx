@@ -68,7 +68,15 @@ export function App() {
   const Screen = SCREENS[route];
   return (
     <>
-      <AppShell route={route}>{ready ? <Screen s={snapshot} /> : <LoadingScreen />}</AppShell>
+      <AppShell route={route}>
+        {ready ? (
+          <div key={route} className="animate-zh-in">
+            <Screen s={snapshot} />
+          </div>
+        ) : (
+          <LoadingScreen />
+        )}
+      </AppShell>
       <ConfirmHost />
       <Toaster />
     </>

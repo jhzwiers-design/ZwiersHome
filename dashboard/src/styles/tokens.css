@@ -5,84 +5,147 @@
  * Components never use raw hex values; they use these tokens via
  * Tailwind utilities (see index.css @theme mapping).
  *
- * Palette (brand): navy #161E2F · #242F49 · slate #384358 ·
- *                  peach #FFA586 · crimson #B51A2B · wine #541A2E
+ * Brand palette
+ *   Burnt Umber   #6D120B   deep red: hover/pressed, light-mode depth
+ *   Redwood       #B02A29   the accent: on / active / selected
+ *   Macadamia     #FBF0D8   cream: light-mode page, dark-mode text
+ *   Cool Blue     #113047   navy: dark-mode tiles, light-mode text
+ *   Light Grayish #739AB9   steel blue: secondary text, cooling
+ *
+ * Signature colours — every system has its own (like the reference dashboard):
+ *   Lighting gold · Climate ember · Pool sky · Spa sage · Security violet · Devices steel
+ *   Each comes as  --<sys>-fill (switch/chip/band fill), --<sys>-ink (text/lines on tiles),
+ *   --<sys>-tint (soft wash). Wrap any element in data-tone="<sys>" and every
+ *   accent-coloured control inside it takes that system's colour automatically.
+ *   Outside a tone, the accent is the brand Redwood.
+ *
+ * Accessibility (WCAG 2.2 AA, verified by script — see docs/brand/accessibility):
+ *   text ≥ 4.5:1 on bg/surface/surface-2 · large text, icons, control outlines ≥ 3:1
+ *   --faint is for disabled/decorative only (≥ 3:1). Colour is never the only signal.
  *
  * Colour rules
- *  - Calm navy (dark) / warm off-white (light) tiles. A healthy home is calm.
- *  - --accent      crimson fills: ON / ACTIVE / SELECTED (switches, chips, buttons).
+ *  - --accent      Redwood fills (switches, chips, buttons, lit rooms).
  *  - --accent-ink  accent for TEXT and thin lines, tuned for contrast:
- *                  peach on navy (dark), crimson on white (light).
- *  - --danger      an actual problem. Gold (dark) / ochre (light): deliberately
- *                  not red or peach, and always with an icon or wording.
- *  - --cool        cooling only, used on the Climate screen.
+ *                  a lighter Redwood on navy (dark), Redwood on cream (light).
+ *  - --danger      an actual problem: rose red, ALWAYS with a warning icon and words.
+ *  - --cool        cooling only (Climate), from Light Grayish.
  */
 
 :root,
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #111827;
-  --surface: #161e2f;
-  --surface-2: #242f49;
-  --surface-hover: #1c2539;
-  --rule: #26314a;
-  --rule-strong: #384358;
-  --fg: #f5f2ef;
-  --fg-2: #c9cfdb;
-  --muted: #949db0;
-  --faint: #5d6780;
-  --accent: #b51a2b;
-  --accent-strong: #cc2236;
-  --accent-ink: #ffa586;
-  --accent-soft: rgb(181 26 43 / 0.24);
-  --accent-glow: 0 0 0 1px rgb(255 165 134 / 0.18), 0 6px 24px rgb(181 26 43 / 0.45);
-  --on-accent: #ffffff;
-  --danger: #f2c94c;
-  --danger-soft: rgb(242 201 76 / 0.12);
-  --cool: #8fb3ff;
-  --scrim: rgb(8 12 22 / 0.72);
-  --shadow: 0 16px 40px rgb(4 8 16 / 0.55);
-  --tile-shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 1px 2px rgb(0 0 0 / 0.35);
+  --bg: #0b2133;
+  --surface: #113047;
+  --surface-2: #18405c;
+  --surface-hover: #143853;
+  --rule: #1d4663;
+  --rule-strong: #2b5878;
+  --fg: #fbf0d8;
+  --fg-2: #e2d9c4;
+  --muted: #93b4cc;
+  --faint: #83a0b8;
+  --control: #769fbe;
+  --accent: #b02a29;
+  --accent-strong: #c43532;
+  --accent-ink: #ff857c;
+  --accent-soft: rgb(176 42 41 / 0.28);
+  --accent-glow: 0 0 0 1px rgb(255 106 95 / 0.2), 0 6px 24px rgb(176 42 41 / 0.5);
+  --on-accent: #fbf0d8;
+  --danger: #ff8a95;
+  --danger-soft: rgb(255 138 149 / 0.13);
+  --cool: #a6c6de;
+  --scrim: rgb(5 18 29 / 0.72);
+  --shadow: 0 16px 40px rgb(3 14 24 / 0.55);
+  --tile-shadow: 0 1px 0 rgb(251 240 216 / 0.04) inset, 0 1px 2px rgb(0 0 0 / 0.3);
+
+  /* Signature colours (dark): pastel fills with navy text on top */
+  --sig-on: #113047;
+  --lighting-fill: #f2c66d; --lighting-ink: #f2c66d; --lighting-tint: #f2c66d;
+  --climate-fill: #ef8f5c;  --climate-ink: #ef8f5c;  --climate-tint: #ef8f5c;
+  --pool-fill: #7fb6de;     --pool-ink: #7fb6de;     --pool-tint: #7fb6de;
+  --spa-fill: #74c7b2;      --spa-ink: #74c7b2;      --spa-tint: #74c7b2;
+  --security-fill: #ab9de8; --security-ink: #ab9de8; --security-tint: #ab9de8;
+  --devices-fill: #a9bccd;  --devices-ink: #a9bccd;  --devices-tint: #a9bccd;
+  --brand-fill: #b02a29;    --brand-ink: #ff857c;    --brand-tint: #b02a29;
 }
 
 :root[data-theme='light'] {
   color-scheme: light;
-  --bg: #f3f0ed;
-  --surface: #ffffff;
-  --surface-2: #f6f2ef;
-  --surface-hover: #fbf9f7;
-  --rule: #e6e0db;
-  --rule-strong: #d2cac3;
-  --fg: #161e2f;
-  --fg-2: #242f49;
-  --muted: #5e667a;
-  --faint: #a3a9b6;
-  --accent: #b51a2b;
-  --accent-strong: #541a2e;
-  --accent-ink: #b51a2b;
-  --accent-soft: rgb(181 26 43 / 0.08);
-  --accent-glow: 0 0 0 1px rgb(181 26 43 / 0.22), 0 6px 20px rgb(181 26 43 / 0.16);
-  --on-accent: #ffffff;
-  --danger: #946200;
-  --danger-soft: rgb(148 98 0 / 0.1);
-  --cool: #2f5bb7;
-  --scrim: rgb(22 30 47 / 0.38);
-  --shadow: 0 16px 40px rgb(22 30 47 / 0.14);
-  --tile-shadow: 0 1px 2px rgb(22 30 47 / 0.05), 0 1px 1px rgb(22 30 47 / 0.03);
+  --bg: #f6ecd4;
+  --surface: #fffaf0;
+  --surface-2: #f8eedb;
+  --surface-hover: #fdf6e8;
+  --rule: #eadcbe;
+  --rule-strong: #d8c6a2;
+  --fg: #113047;
+  --fg-2: #1d4663;
+  --muted: #4e6b82;
+  --faint: #71849a;
+  --control: #6f7d8b;
+  --accent: #b02a29;
+  --accent-strong: #6d120b;
+  --accent-ink: #b02a29;
+  --accent-soft: rgb(176 42 41 / 0.09);
+  --accent-glow: 0 0 0 1px rgb(176 42 41 / 0.2), 0 6px 20px rgb(109 18 11 / 0.16);
+  --on-accent: #fbf0d8;
+  --danger: #a3262f;
+  --danger-soft: rgb(163 38 47 / 0.09);
+  --cool: #2f6a95;
+  --scrim: rgb(17 48 71 / 0.35);
+  --shadow: 0 16px 40px rgb(17 48 71 / 0.14);
+  --tile-shadow: 0 1px 2px rgb(17 48 71 / 0.06), 0 1px 1px rgb(17 48 71 / 0.03);
+
+  /* Signature colours (light): deep fills with cream text; pastels become tints */
+  --sig-on: #fbf0d8;
+  --lighting-fill: #7a5400; --lighting-ink: #7a5400; --lighting-tint: #f2c66d;
+  --climate-fill: #a0461a;  --climate-ink: #a0461a;  --climate-tint: #ef8f5c;
+  --pool-fill: #1f5f8c;     --pool-ink: #1f5f8c;     --pool-tint: #7fb6de;
+  --spa-fill: #196a57;      --spa-ink: #196a57;      --spa-tint: #74c7b2;
+  --security-fill: #5a49ad; --security-ink: #5a49ad; --security-tint: #ab9de8;
+  --devices-fill: #4a6780;  --devices-ink: #4a6780;  --devices-tint: #a9bccd;
+  --brand-fill: #b02a29;    --brand-ink: #b02a29;    --brand-tint: #e9a29b;
 }
+
+/* ── Tone scopes: data-tone="<system>" re-points the accent for everything inside ── */
+[data-tone] {
+  --accent: var(--tone-fill);
+  --accent-strong: var(--tone-fill);
+  --accent-ink: var(--tone-ink);
+  --on-accent: var(--sig-on);
+  --accent-soft: color-mix(in srgb, var(--tone-tint) 18%, transparent);
+  --accent-glow: 0 0 0 1px color-mix(in srgb, var(--tone-fill) 45%, transparent), 0 6px 22px color-mix(in srgb, var(--tone-fill) 32%, transparent);
+  /* Header band behind a tile's title (reference style). Text on it is --band-fg. */
+  --band: var(--tone-tint);
+  --band-fg: #113047;
+  /* Lit rooms on the home map */
+  --lit: var(--tone-fill);
+  --lit-opacity: 0.28;
+}
+:root[data-theme='light'] [data-tone] {
+  --band: color-mix(in srgb, var(--tone-tint) 55%, var(--surface));
+  --lit: var(--tone-tint);
+  --lit-opacity: 0.75;
+}
+[data-tone='lighting'] { --tone-fill: var(--lighting-fill); --tone-ink: var(--lighting-ink); --tone-tint: var(--lighting-tint); }
+[data-tone='climate']  { --tone-fill: var(--climate-fill);  --tone-ink: var(--climate-ink);  --tone-tint: var(--climate-tint); }
+[data-tone='pool']     { --tone-fill: var(--pool-fill);     --tone-ink: var(--pool-ink);     --tone-tint: var(--pool-tint); }
+[data-tone='spa']      { --tone-fill: var(--spa-fill);      --tone-ink: var(--spa-ink);      --tone-tint: var(--spa-tint); }
+[data-tone='security'] { --tone-fill: var(--security-fill); --tone-ink: var(--security-ink); --tone-tint: var(--security-tint); }
+[data-tone='devices']  { --tone-fill: var(--devices-fill);  --tone-ink: var(--devices-ink);  --tone-tint: var(--devices-tint); }
+[data-tone='brand']    { --tone-fill: var(--brand-fill);    --tone-ink: var(--brand-ink);    --tone-tint: var(--brand-tint); --sig-on: #fbf0d8; --band-fg: #fbf0d8; }
 
 :root {
   /* Type */
   --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   /* Camera frame — always dark, like video, in both themes */
-  --video-bg: #0b1120;
-  --video-frame: #0f1626;
-  --video-line: #1d2740;
-  --video-line-2: #273352;
-  --video-fg: #bdb9b2;
-  --video-muted: #8c8e94;
-  --video-accent: #b51a2b;
+  --video-bg: #071a29;
+  --video-frame: #0a2234;
+  --video-line: #163a55;
+  --video-line-2: #1f4a6a;
+  --video-fg: #e2d9c4;
+  --video-muted: #93b4cc;
+  --video-accent: #ff6a5f;
 
   /* Layout */
   --rail-w: 232px;

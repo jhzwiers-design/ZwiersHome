@@ -56,7 +56,7 @@ export function Devices({ s }: { s: HomeSnapshot }) {
   const integrationName = (id: IntegrationId) => s.integrations.find((i) => i.id === id)?.name ?? id;
 
   return (
-    <Stack>
+    <Stack tone="devices">
       <PageHeader title="Devices" summary={`${s.devices.length} devices across ${s.integrations.length} integrations`} />
 
       {/* Status counts double as filters */}
@@ -110,13 +110,13 @@ export function Devices({ s }: { s: HomeSnapshot }) {
         <div className="mb-4 flex flex-wrap items-center gap-3">
           <label className="relative min-w-0 flex-1 basis-56">
             <span className="sr-only">Search devices</span>
-            <Search aria-hidden className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-faint" strokeWidth={1.5} />
+            <Search aria-hidden className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted" strokeWidth={1.5} />
             <input
               type="search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search name or model"
-              className="h-10 w-full rounded-full border border-rule bg-surface-2 pr-4 pl-10 text-body text-fg placeholder:text-faint focus:border-accent focus:outline-none"
+              className="h-10 w-full rounded-full border border-control bg-surface-2 pr-4 pl-10 text-body text-fg placeholder:text-muted focus:border-accent focus:outline-none"
             />
           </label>
           <label className="flex items-center gap-2 text-label text-muted">
@@ -124,7 +124,7 @@ export function Devices({ s }: { s: HomeSnapshot }) {
             <select
               value={integration}
               onChange={(e) => setIntegration(e.target.value as IntegrationId | 'all')}
-              className="h-9 rounded-sm border border-rule-strong bg-bg px-2 text-body text-fg"
+              className="h-9 rounded-full border border-control bg-surface-2 px-2 text-body text-fg"
             >
               <option value="all">All</option>
               {s.integrations.map((i) => (
@@ -144,7 +144,7 @@ export function Devices({ s }: { s: HomeSnapshot }) {
         {/* Column headings (tablet and up) */}
         <div className="hidden grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,0.9fr)_20px] gap-4 border-b border-rule-strong pb-2 md:grid">
           {['Device', 'Area · type', 'Integration', 'Status'].map((h) => (
-            <span key={h} className="caps text-faint">
+            <span key={h} className="caps text-muted">
               {h}
             </span>
           ))}
@@ -175,7 +175,7 @@ export function Devices({ s }: { s: HomeSnapshot }) {
                   <span className="justify-self-end md:justify-self-start">
                     <StatusIndicator status={st} label={stale ? 'Stale' : undefined} />
                   </span>
-                  <ChevronRight aria-hidden className={cx('size-4 text-faint transition-transform', expanded && 'rotate-90')} strokeWidth={1.5} />
+                  <ChevronRight aria-hidden className={cx('size-4 text-muted transition-transform', expanded && 'rotate-90')} strokeWidth={1.5} />
                 </button>
                 {expanded && (
                   <dl className="grid grid-cols-1 gap-x-8 pb-4 pl-0 text-body sm:grid-cols-2 md:pl-0 lg:grid-cols-3">

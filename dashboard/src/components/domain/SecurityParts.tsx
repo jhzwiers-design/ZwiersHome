@@ -43,16 +43,16 @@ export function CameraView({ camera, compact }: { camera: Camera; compact?: bool
       </svg>
 
       <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-2 p-3">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-black/45 px-3 py-1 text-label text-[var(--video-fg)] backdrop-blur">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--video-bg)]/70 px-3 py-1 text-label text-[var(--video-fg)] backdrop-blur">
           <span className="size-1.5 rounded-full bg-[var(--video-muted)]" aria-hidden />
           {camera.name}
         </span>
-        <span className="num rounded-full bg-black/45 px-3 py-1 text-label text-[var(--video-muted)] backdrop-blur">{formatTime(now, clock)}</span>
+        <span className="num rounded-full bg-[var(--video-bg)]/70 px-3 py-1 text-label text-[var(--video-muted)] backdrop-blur">{formatTime(now, clock)}</span>
       </div>
 
       <div className="absolute inset-0 grid place-items-center p-4 text-center">
         {state === 'idle' && (
-          <Button variant="primary" size={compact ? 'sm' : 'md'} icon={<Play className="size-4" strokeWidth={1.75} />} onClick={start} className="bg-[var(--video-accent)] text-white shadow-[0_0_24px_rgb(255_45_79/0.45)] hover:bg-[var(--video-accent)] hover:text-white">
+          <Button variant="primary" size={compact ? 'sm' : 'md'} icon={<Play className="size-4" strokeWidth={1.75} />} onClick={start} className="border-accent bg-accent text-on-accent shadow-[var(--accent-glow)] hover:bg-accent-strong hover:text-on-accent">
             Start live view
           </Button>
         )}
@@ -68,7 +68,7 @@ export function CameraView({ camera, compact }: { camera: Camera; compact?: bool
             {!compact && (
               <p className="mt-1 text-label text-[var(--video-muted)]">Live view connects through Home Assistant's Ring integration (WebRTC) in a later milestone.</p>
             )}
-            <button type="button" className="mt-3 text-label text-[#ffa586] underline-offset-4 hover:underline" onClick={() => setState('idle')}>
+            <button type="button" className="mt-3 text-label text-[var(--video-accent)] underline-offset-4 hover:underline" onClick={() => setState('idle')}>
               Close
             </button>
           </div>
@@ -108,7 +108,7 @@ export function EventList({ events, cameras, limit, groupByDay = true }: { event
     <div>
       {groups.map((g) => (
         <div key={g.label || 'all'}>
-          {groupByDay && <p className="caps pt-3 pb-1 text-faint">{g.label}</p>}
+          {groupByDay && <p className="caps pt-3 pb-1 text-muted">{g.label}</p>}
           <ul>
             {g.items.map((e) => {
               const cam = cameras.find((c) => c.id === e.cameraId);

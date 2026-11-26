@@ -104,6 +104,7 @@ function KeyMetrics({ s }: { s: HomeSnapshot }) {
       {zone && (
         <Metric
           href="#/climate"
+          system="climate"
           icon={Thermometer}
           label="Indoor"
           value={formatTemp(zone.currentTemp, unit)}
@@ -116,6 +117,7 @@ function KeyMetrics({ s }: { s: HomeSnapshot }) {
       {pool && (
         <Metric
           href="#/pool"
+          system="pool"
           icon={Waves}
           label="Pool"
           value={formatTemp(pool.waterTemp, unit)}
@@ -128,6 +130,7 @@ function KeyMetrics({ s }: { s: HomeSnapshot }) {
       {spa && (
         <Metric
           href="#/pool"
+          system="spa"
           icon={Bath}
           label="Spa"
           value={formatTemp(spa.waterTemp, unit)}
@@ -138,6 +141,7 @@ function KeyMetrics({ s }: { s: HomeSnapshot }) {
         />
       )}
       <Metric
+        system="devices"
         icon={CloudSun}
         label="Outside"
         value={formatTemp(sys?.outdoorTemp ?? s.pool?.airTemp ?? null, unit)}
@@ -168,7 +172,7 @@ function LightingModule({ s }: { s: HomeSnapshot }) {
   const pct = sum.total ? Math.round((sum.on / sum.total) * 100) : 0;
 
   return (
-    <Section title="Lighting" subtitle={`${groups.length} rooms`} icon={Lightbulb} iconActive={sum.on > 0} meta={<TileLink href="#/lighting" label="Open lighting" />}>
+    <Section tone="lighting" band title="Lighting" subtitle={`${groups.length} rooms`} icon={Lightbulb} iconActive={sum.on > 0} meta={<TileLink href="#/lighting" label="Open lighting" />}>
       <div className="flex items-end justify-between gap-4">
         <p className="text-h1 font-light tracking-[-0.03em] text-fg">
           <span className="num">{sum.on}</span> <span className="text-h2 text-muted">of {sum.total} on</span>
@@ -194,7 +198,7 @@ function LightingModule({ s }: { s: HomeSnapshot }) {
               )}
             >
               <span className="truncate text-body text-fg-2">{area.name}</span>
-              <span className={cx('num text-label font-medium', on ? 'text-accent-ink' : 'text-faint')}>
+              <span className={cx('num text-label font-medium', on ? 'text-accent-ink' : 'text-muted')}>
                 {on}/{lights.length}
               </span>
             </li>
@@ -243,6 +247,8 @@ function ClimateModule({ s }: { s: HomeSnapshot }) {
   const heating = zone.action === 'heating';
   return (
     <Section
+      tone="climate"
+      band
       title="Climate"
       subtitle={zone.name}
       icon={Thermometer}
@@ -276,6 +282,8 @@ function PoolModule({ s }: { s: HomeSnapshot }) {
   const ICONS: Record<string, LucideIcon> = { pool: Waves, spa: Bath };
   return (
     <Section
+      tone="pool"
+      band
       title="Pool & Spa"
       subtitle={s.pool.spaMode ? 'Spa mode' : 'Pool mode'}
       icon={Waves}
@@ -287,10 +295,10 @@ function PoolModule({ s }: { s: HomeSnapshot }) {
           const Icon = ICONS[b.id] ?? Waves;
           const heating = b.heater.state === 'heating';
           return (
-            <div key={b.id} className={cx('rounded-md border p-4', heating ? 'border-accent/30 bg-accent-soft' : 'border-rule bg-surface-2')}>
+            <div key={b.id} data-tone={b.id} className={cx('rounded-md border p-4 transition-colors duration-[var(--dur-slow)]', heating ? 'border-accent-ink/40 bg-accent-soft' : 'border-rule bg-surface-2')}>
               <div className="flex items-center justify-between">
                 <span className="text-body font-medium text-fg">{b.name}</span>
-                <Icon aria-hidden className={cx('size-4', heating ? 'text-accent-ink' : 'text-muted')} strokeWidth={1.75} />
+                <Icon aria-hidden className="size-4 text-accent-ink" strokeWidth={1.75} />
               </div>
               <p className={cx('num mt-3 text-[2.25rem] leading-none font-light tracking-[-0.03em]', heating ? 'text-accent-ink' : 'text-fg')}>
                 {formatTemp(b.waterTemp, unit)}
@@ -335,6 +343,8 @@ function SecurityModule({ s }: { s: HomeSnapshot }) {
 
   return (
     <Section
+      tone="security"
+      band
       title="Security"
       subtitle={`${cam.name} · ${online ? 'Online' : capitalize(dev?.availability ?? 'unavailable')}`}
       icon={ShieldCheck}
@@ -384,7 +394,7 @@ function AlertsModule({ s }: { s: HomeSnapshot }) {
                     {a.since && ` · since ${relativeTime(a.since, now, clock)}`}
                   </span>
                 </span>
-                <ArrowRight aria-hidden className="size-3.5 text-faint group-hover:text-fg" strokeWidth={1.5} />
+                <ArrowRight aria-hidden className="size-3.5 text-muted group-hover:text-fg" strokeWidth={1.5} />
               </a>
             </li>
           ))}

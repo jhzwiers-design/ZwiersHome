@@ -41,8 +41,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         'transition-colors duration-[var(--dur-fast)] disabled:opacity-45',
         size === 'sm' ? 'h-9 px-4 text-label' : 'h-11 px-5 text-body',
         variant === 'primary' && 'border-transparent bg-accent-soft text-accent-ink hover:bg-accent hover:text-on-accent',
-        variant === 'solid' && 'border-accent bg-accent font-semibold text-on-accent shadow-[var(--accent-glow)] hover:bg-accent-strong',
-        variant === 'quiet' && 'border-rule bg-surface-2 text-fg-2 hover:border-rule-strong hover:text-fg',
+        variant === 'solid' && 'border-accent-ink bg-accent font-semibold text-on-accent shadow-[var(--accent-glow)] hover:bg-accent-strong',
+        variant === 'quiet' && 'border-control bg-surface-2 text-fg-2 hover:text-fg',
         variant === 'danger' && 'border-danger bg-danger text-on-accent hover:opacity-90',
         className,
       )}

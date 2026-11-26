@@ -66,9 +66,15 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
   - Sample rooms now mirror your home: Media Room, Patio, Living Room, Kitchen, Front Entry, Kids' Room, Primary Bedroom, Bedrooms 2–4, Garage, plus Backyard for pool equipment.
   - Re-tested at desktop, tablet, phone and wall sizes in both themes; build passes.
 
-- 2026-11-25: **New brand palette** (navy, slate, peach, crimson, wine) applied to the dashboard and the brand canvas. Lit rooms on the map glow peach; dial gauges run crimson → peach.
+- 2026-11-25: **New brand palette** (navy, slate, crimson, wine) applied to the dashboard and the brand canvas; peach dropped at your request. Lit rooms glow crimson; dial gauges run crimson → bright crimson.
 - 2026-11-25: **Brand exploration**: a design canvas (private) with 8 ZH monogram directions, including 3 "Hand Drive" ideas, app-icon and small-size tests, and lockups. Recommended: A "Gable" mark with B "Bridge" below 24 px.
 - 2026-11-25: Local git repository created; remote set to GitHub `jhzwiers-design/ZwiersHome`. **Not pushed yet.** Waiting for the repo to be made private.
+
+- 2026-11-25: **Unified palette** (Burnt Umber, Redwood, Macadamia, Cool Blue, Light Grayish) replaces the earlier navy/peach set.
+- 2026-11-25: **Signature colours per system** (reference: tiles with coloured header bands): Lighting gold, Climate ember, Pool sky, Spa sage, Security violet, Devices steel. Navigation, tiles, switches, dials and the home map take each system's colour.
+- 2026-11-25: **Accessibility pass.** Contrast audited by script for both themes; all text and signature pairs pass WCAG 2.2 AA. Added high-contrast control outlines, bright edges on red controls, and stronger hint text. Problems are rose red with an icon and words.
+- 2026-11-25: **Micro-interactions**: staggered tile entrance, value tick, hover lift, button press, springy switches and selectors, gliding dials, sliding toasts, theme cross-fade, page fade. All respect "reduce motion".
+- 2026-11-25: Brand canvas recoloured to the new palette, plus a "Colour and accessibility" board with measured ratios.
 
 ## Next milestone
 **M2: data-source layer + Home Assistant connection (code only).** Build `HomeAssistantSource` behind the existing interface: login flow, token storage per §3.1a, registry discovery by areas/labels, live state, command mapping, reconnects. It can be developed and unit-tested without a running Home Assistant. A real connection waits for M3, the optional Home Assistant trial on this Mac, **which needs your approval to install**.

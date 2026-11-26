@@ -39,7 +39,7 @@ export function Lighting({ s }: { s: HomeSnapshot }) {
     .filter((g) => g.lights.length > 0);
 
   return (
-    <Stack>
+    <Stack tone="lighting">
       <PageHeader
         title="Lighting"
         summary={

@@ -56,7 +56,7 @@ export function PoolSpa({ s }: { s: HomeSnapshot }) {
   const lastUpdated = Math.max(...pool.bodies.map((b) => b.lastUpdated));
 
   return (
-    <Stack>
+    <Stack tone="pool">
       <PageHeader
         title="Pool & Spa"
         summary={pool.spaMode ? 'Spa mode: valves routed to the spa' : 'Pool mode: normal circulation'}
@@ -88,7 +88,7 @@ export function PoolSpa({ s }: { s: HomeSnapshot }) {
                 <span className="flex-1 text-body text-fg-2">
                   {eq?.name} · {sch.window}
                 </span>
-                <span className={cx('text-label', sch.enabled ? 'text-fg-2' : 'text-faint')}>{sch.enabled ? 'Enabled' : 'Disabled'}</span>
+                <span className={cx('text-label', sch.enabled ? 'text-fg-2' : 'text-muted')}>{sch.enabled ? 'Enabled' : 'Disabled'}</span>
               </li>
             );
           })}
@@ -195,7 +195,7 @@ function BodyColumn({ body, s }: { body: Body; s: HomeSnapshot }) {
   };
 
   return (
-    <section aria-labelledby={`body-${body.id}`} className="tile p-5 md:p-6">
+    <section aria-labelledby={`body-${body.id}`} data-tone={body.id} className="tile animate-zh-rise p-5 md:p-6">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <IconChip icon={body.id === 'spa' ? Bath : Waves} active={heater.state === 'heating'} />
@@ -400,7 +400,7 @@ function EquipmentRow({ eq, s }: { eq: PoolEquipment; s: HomeSnapshot }) {
               onChange={(e) =>
                 run({ type: 'pool.setLightShow', equipmentId: eq.id, show: e.target.value }, { pending: 'Changing show…', success: `${eq.name}: ${e.target.value}` })
               }
-              className="h-8 rounded-sm border border-rule-strong bg-bg px-2 text-body text-fg disabled:opacity-40"
+              className="h-8 rounded-full border border-control bg-surface-2 px-2 text-body text-fg disabled:opacity-40"
             >
               {eq.shows.map((sh) => (
                 <option key={sh} value={sh}>

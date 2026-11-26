@@ -40,13 +40,13 @@ export function Toggle({
         className={cx(
           'relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border transition-all duration-[var(--dur)]',
           'disabled:cursor-not-allowed disabled:opacity-40',
-          checked ? 'border-accent bg-accent shadow-[var(--accent-glow)]' : 'border-rule-strong bg-surface-2',
+          checked ? 'border-accent-ink bg-accent shadow-[var(--accent-glow)]' : 'border-control bg-transparent',
         )}
       >
         <RadixSwitch.Thumb
           className={cx(
-            'block size-[22px] rounded-full shadow-sm transition-transform duration-[var(--dur)]',
-            checked ? 'translate-x-[22px] bg-on-accent' : 'translate-x-[2px] bg-fg-2',
+            'block size-[22px] rounded-full shadow-sm transition-[transform,background-color] duration-[260ms] ease-[var(--ease-spring)]',
+            checked ? 'translate-x-[22px] bg-on-accent' : 'translate-x-[2px] bg-control',
           )}
         />
       </RadixSwitch.Root>
@@ -129,7 +129,7 @@ export function RangeSlider({
         <RadixSlider.Thumb
           aria-label={label}
           aria-valuetext={format(local)}
-          className="block size-5 rounded-full border-2 border-accent bg-on-accent shadow-[0_2px_6px_rgb(0_0_0/0.35)] transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-accent"
+          className="block size-5 rounded-full border-2 border-accent-ink bg-on-accent shadow-[0_2px_6px_rgb(0_0_0/0.35)] transition-transform hover:scale-110 focus-visible:outline-2 focus-visible:outline-accent"
         />
       </RadixSlider.Root>
       {showValue && <span className="num w-12 shrink-0 text-right text-label text-fg-2">{format(local)}</span>}
@@ -160,7 +160,7 @@ export function Stepper({
   tone?: 'neutral' | 'heat' | 'cool';
 }) {
   const btn = cx(
-    'grid shrink-0 place-items-center rounded-full border border-rule bg-surface-2 text-fg-2 transition-colors',
+    'grid shrink-0 place-items-center rounded-full border border-control bg-surface-2 text-fg-2 transition-colors',
     'hover:border-accent hover:text-accent-ink disabled:opacity-30',
     size === 'lg' ? 'size-11' : 'size-9',
   );
@@ -227,7 +227,7 @@ export function Segmented<T extends string>({
                 'relative cursor-pointer rounded-full whitespace-nowrap font-medium transition-all duration-[var(--dur-fast)]',
                 'has-[:focus-visible]:outline-2 has-[:focus-visible]:-outline-offset-2 has-[:focus-visible]:outline-accent',
                 size === 'sm' ? 'px-3 py-1.5 text-label' : 'px-4 py-2 text-body',
-                selected ? 'bg-accent text-on-accent shadow-[var(--accent-glow)]' : 'text-muted hover:bg-surface hover:text-fg',
+                selected ? 'animate-zh-pop bg-accent text-on-accent shadow-[var(--accent-glow)]' : 'text-muted hover:bg-surface hover:text-fg',
                 (o.disabled || disabled) && 'cursor-not-allowed opacity-40',
               )}
             >

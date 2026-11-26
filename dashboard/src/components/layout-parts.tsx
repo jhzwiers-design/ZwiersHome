@@ -8,6 +8,7 @@
  */
 import { ArrowUpRight, Info, type LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
+import type { Tone } from '@/lib/tones';
 import { Caps, cx } from './primitives';
 
 /** Top of every screen: title, one-line summary, optional right-side actions. */
@@ -30,7 +31,8 @@ export function IconChip({ icon: Icon, active, className }: { icon: LucideIcon; 
       aria-hidden
       className={cx(
         'grid size-10 shrink-0 place-items-center rounded-full border',
-        active ? 'border-transparent bg-accent text-on-accent shadow-[var(--accent-glow)]' : 'border-rule bg-surface-2 text-fg-2',
+        'transition-[background-color,box-shadow,color] duration-[var(--dur)]',
+        active ? 'border-accent-ink bg-accent text-on-accent shadow-[var(--accent-glow)]' : 'border-transparent bg-accent-soft text-accent-ink',
         className,
       )}
     >
@@ -62,6 +64,8 @@ export function Section({
   children,
   className,
   id,
+  tone,
+  band,
 }: {
   title: string;
   subtitle?: ReactNode;
@@ -71,21 +75,49 @@ export function Section({
   children: ReactNode;
   className?: string;
   id?: string;
+  /** Signature colour for everything inside this tile. */
+  tone?: Tone;
+  /** Coloured header band (reference style). Needs a tone to look right. */
+  band?: boolean;
 }) {
   const headingId = id ?? `sec-${title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
   return (
-    <section aria-labelledby={headingId} className={cx('tile flex flex-col p-5 md:p-6', className)}>
-      <div className="mb-4 flex min-h-10 items-center justify-between gap-4">
+    <section aria-labelledby={headingId} data-tone={tone} className={cx('tile animate-zh-rise flex flex-col overflow-hidden p-5 md:p-6', className)}>
+      <div
+        className={cx(
+          'flex min-h-10 items-center justify-between gap-4',
+          band ? '-mx-5 -mt-5 mb-5 bg-band px-5 py-3.5 text-band-fg md:-mx-6 md:-mt-6 md:px-6' : 'mb-4',
+        )}
+      >
         <div className="flex min-w-0 items-center gap-3">
-          {icon && <IconChip icon={icon} active={iconActive} />}
+          {icon &&
+            (band ? (
+              <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-band-fg/12">
+                {(() => {
+                  const I = icon;
+                  return <I className="size-[18px]" strokeWidth={1.9} />;
+                })()}
+              </span>
+            ) : (
+              <IconChip icon={icon} active={iconActive} />
+            ))}
           <div className="min-w-0">
-            <h2 id={headingId} className="truncate text-lead font-medium text-fg">
+            <h2 id={headingId} className={cx('truncate text-lead font-medium', band ? 'text-band-fg' : 'text-fg')}>
               {title}
             </h2>
-            {subtitle && <p className="truncate text-label text-muted">{subtitle}</p>}
+            {subtitle && <p className={cx('truncate text-label', band ? 'text-band-fg' : 'text-muted')}>{subtitle}</p>}
           </div>
         </div>
-        {meta && <div className="flex shrink-0 items-center gap-3 text-label text-muted">{meta}</div>}
+        {meta && (
+          <div
+            className={cx(
+              'flex shrink-0 items-center gap-3 text-label',
+              band ? 'text-band-fg [&_a]:border-band-fg/40 [&_a]:text-band-fg [&_a:hover]:bg-band-fg/10' : 'text-muted',
+            )}
+          >
+            {meta}
+          </div>
+        )}
       </div>
       {children}
     </section>
@@ -99,7 +131,7 @@ export function TileLink({ href, label }: { href: string; label: string }) {
       href={href}
       aria-label={label}
       title={label}
-      className="grid size-9 place-items-center rounded-full border border-rule text-muted transition-colors hover:border-rule-strong hover:text-fg"
+      className="grid size-9 place-items-center rounded-full border border-control text-fg-2 transition-[transform,color,background-color] duration-[var(--dur)] hover:-translate-y-0.5 hover:translate-x-0.5 hover:text-fg active:scale-95"
     >
       <ArrowUpRight aria-hidden className="size-4" strokeWidth={1.75} />
     </a>
@@ -121,6 +153,7 @@ export function Metric({
   href,
   icon,
   tile = true,
+  system,
 }: {
   label: string;
   value: ReactNode;
@@ -132,14 +165,24 @@ export function Metric({
   href?: string;
   icon?: LucideIcon;
   tile?: boolean;
+  /** Signature colour: adds a coloured header band with the label and icon. */
+  system?: Tone;
 }) {
   const active = !stale && tone === 'accent';
+  const Icon = icon;
   const body = (
     <>
-      <div className="flex items-center justify-between gap-3">
-        <Caps className="block">{label}</Caps>
-        {icon && <IconChip icon={icon} active={active} className="size-9" />}
-      </div>
+      {system ? (
+        <div className="-mx-5 -mt-5 mb-1 flex items-center justify-between gap-3 bg-band px-5 py-3 text-band-fg md:-mx-6 md:-mt-6 md:px-6">
+          <span className="text-body font-medium">{label}</span>
+          {Icon && <Icon aria-hidden className={cx('size-[18px]', active && 'animate-zh-pulse')} strokeWidth={1.9} />}
+        </div>
+      ) : (
+        <div className="flex items-center justify-between gap-3">
+          <Caps className="block">{label}</Caps>
+          {icon && <IconChip icon={icon} active={active} className="size-9" />}
+        </div>
+      )}
       <div
         className={cx(
           'num mt-4 font-light',
@@ -149,21 +192,28 @@ export function Metric({
           stale ? 'text-muted' : tone === 'accent' ? 'text-accent-ink' : tone === 'cool' ? 'text-cool' : tone === 'danger' ? 'text-danger' : 'text-fg',
         )}
       >
-        {value}
+        {/* Re-keyed on change so new values tick in. */}
+        <span key={typeof value === 'string' || typeof value === 'number' ? String(value) : undefined} className="inline-block animate-zh-tick">
+          {value}
+        </span>
       </div>
-      {sub && <div className={cx('mt-2 text-body', stale ? 'text-faint' : 'text-fg-2')}>{sub}</div>}
+      {sub && <div className={cx('mt-2 text-body', stale ? 'text-muted' : 'text-fg-2')}>{sub}</div>}
       {stale && staleText && <div className="mt-1 text-label text-muted italic">{staleText}</div>}
     </>
   );
-  const shell = cx(tile && 'tile p-5 md:p-6', 'block');
+  const shell = cx(tile && 'tile animate-zh-rise overflow-hidden p-5 md:p-6', 'block');
   if (href) {
     return (
-      <a href={href} className={cx(shell, 'transition-colors hover:border-rule-strong hover:bg-surface-hover')}>
+      <a href={href} data-tone={system} className={cx(shell, 'lift')}>
         {body}
       </a>
     );
   }
-  return <div className={shell}>{body}</div>;
+  return (
+    <div data-tone={system} className={shell}>
+      {body}
+    </div>
+  );
 }
 
 export function KeyValueList({
@@ -216,6 +266,10 @@ export function Row({ children, className, dim }: { children: ReactNode; classNa
 }
 
 /** Vertical stack of tiles with the standard gap. */
-export function Stack({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cx('flex flex-col gap-4 md:gap-5', className)}>{children}</div>;
+export function Stack({ children, className, tone }: { children: ReactNode; className?: string; tone?: Tone }) {
+  return (
+    <div data-tone={tone} className={cx('stagger flex flex-col gap-4 md:gap-5', className)}>
+      {children}
+    </div>
+  );
 }
