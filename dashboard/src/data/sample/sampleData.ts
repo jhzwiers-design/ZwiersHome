@@ -31,7 +31,7 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       { id: 'bedroom3', name: __PUBLIC__ ? 'Bedroom 3' : 'Allie’s Room' },
       { id: 'bedroom4', name: __PUBLIC__ ? 'Bedroom 4' : 'Tim’s Room' },
       { id: 'porch', name: 'Front Porch' },
-      { id: 'outside', name: 'Outside' },
+      { id: 'outside', name: 'Covered Porch' },
       // Exterior door off the garage.
       { id: 'mandoor', name: 'Man Door' },
       { id: 'frontyard', name: 'Front Yard' },

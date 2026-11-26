@@ -7,7 +7,7 @@
  *
  * Room links: each interactive room links to a Home Assistant Area by
  * `areaId`, so lights and fans appear in the right room automatically.
- *  - Rec Room → "Media Room" area; Back Porch → "Outside" area.
+ *  - Rec Room → "Media Room" area; Back Porch → "Covered Porch" area (id "outside").
  *  - Plan Bedroom 2 → Lauren's (bedroom2), Bedroom 3 → Allie's (bedroom3),
  *    Bedroom 4 → John's (bedroom1), Bedroom 5 → Tim's (bedroom4).
  *  - Upstairs (fan + lights) is drawn as a separate dashed tile.
