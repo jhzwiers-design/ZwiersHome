@@ -31,8 +31,13 @@ function cspOnBuild(): Plugin {
   };
 }
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react(), tailwindcss(), cspOnBuild()],
+  define: {
+    // true in production builds (the public site): personal details are replaced
+    // with generic ones and the real names never enter the bundle.
+    __PUBLIC__: JSON.stringify(command === 'build'),
+  },
   build: {
     // Transpile modern syntax for older iPhones/iPads (Safari 15+).
     target: ['es2020', 'safari15', 'chrome100', 'firefox100'],
@@ -46,4 +51,4 @@ export default defineConfig({
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
-});
+}));

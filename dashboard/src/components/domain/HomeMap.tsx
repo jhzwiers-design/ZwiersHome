@@ -220,7 +220,11 @@ export function HomeMap({
         <span className="inline-flex items-center gap-1.5">
           <AlertTriangle aria-hidden className="size-3 text-danger" strokeWidth={2} /> Unreachable light
         </span>
-        {plan.approximate && <span className="ml-auto italic">Layout approximate, traced from the SmartThings map</span>}
+        {plan.approximate ? (
+          <span className="ml-auto italic">Layout approximate</span>
+        ) : (
+          <span className="ml-auto italic">{plan.name}: example layout</span>
+        )}
       </div>
     </div>
   );
