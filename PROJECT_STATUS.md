@@ -18,6 +18,7 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 
 ## Completed
 - 2026-11-26: **Home map redrawn from the architect's first-floor plan** (real proportions, labelled office, foyer, dining, baths, etc.; the Upstairs as a separate dashed tile). Public builds still show the demo layout.
+- 2026-11-26: **All 13 lights are dimmable** (you confirmed every light is on a dimmer); each now has a brightness slider.
 - 2026-11-26: **Rooms corrected:** plan Bedroom 5 = Tim's, Bedroom 4 = John's (John's Room Light moved out of the SmartThings "Kids room" group), Upstairs = Upstairs Fan + Upstairs Lights, Man Door Light shown at its own spot outside the garage.
 - 2026-11-26: **All Off** now also turns off the Upstairs Fan; the Master Bedroom fan is deliberately left alone.
 - 2026-11-26: **Home Assistant Green + Connect ZWA-2 purchased.** Setup guide: [docs/05-setup-green-and-zwa2.md](docs/05-setup-green-and-zwa2.md).
