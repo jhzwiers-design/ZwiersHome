@@ -14,12 +14,13 @@ npm run dev        # http://localhost:5173
 |---|---|
 | `http://localhost:5173/#/overview` | Overview (default) |
 | `#/lighting` `#/climate` `#/pool` `#/security` `#/devices` `#/settings` | Individual sections |
-| `#/wall` | Dedicated wall-display layout (designed for a landscape tablet) |
+| `#/wall` | Home display for the wall iPad (turns on wall mode for that device) |
 
 Other scripts:
 - `npm run dev:lan` serves on your home network so you can try it on a tablet or phone. It binds to all interfaces, so use it only on your home network.
 - `npm run build` runs the type-check and creates a production build in `dist/` (it includes a strict Content-Security-Policy).
 - `npm run typecheck` runs the type-check only.
+- `npm test` runs the unit tests (dial maths) with Node's built-in test runner.
 
 ## Architecture
 
@@ -48,39 +49,68 @@ src/
 
 ## Design system
 
+Apple-inspired: calm surfaces, generous rounding, one accent colour that means "you can touch this".
+
 | | |
 |---|---|
 | Tokens | `src/styles/tokens.css` (dark + light). Components never use raw colour values. |
-| Palette | Burnt Umber `#6D120B` · Redwood `#B02A29` · Macadamia `#FBF0D8` · Cool Blue `#113047` · Light Grayish `#739AB9`. |
-| Brand accent | Redwood fills; accent text uses `--accent-ink` (lighter Redwood on navy, Redwood on cream). Redwood controls on navy carry a bright edge so they pass the 3:1 outline rule. |
-| Signature colours | One per system: Lighting gold, Climate ember, Pool sky, Spa sage, Security violet, Devices steel. Put `data-tone="<system>"` on any element and every accent control inside takes that colour (see `src/lib/tones.ts`). Dark mode: pastel fills with navy text. Light mode: deep fills with cream text, pastel tints for header bands. |
-| Problems | Rose red with a warning icon and words, never colour alone. |
-| Accessibility | Every text/background pair is at least 4.5:1, and large text, icons and control outlines at least 3:1 (WCAG 2.2 AA), checked by script. `--faint` is decorative only. |
-| Surfaces | Cool Blue navy tiles with cream text (dark); Macadamia cream with navy text (light). |
-| Shape | Rounded tiles (20 px), pill buttons, chips and option selectors, round icon badges. |
-| Type | Inter Variable (bundled locally), tabular figures for numbers. |
-| Motion | Tiles rise in with a stagger, values tick when they change, cards lift on hover, buttons press, switches spring, dials glide, toasts slide in, the theme cross-fades. All 120–520 ms and switched off under "reduce motion". |
+| Accent | **Crimson `#A71930`** in light mode, **electric red `#FF303B`** in dark. Used only for interactive things: selected navigation, switches that are on, the thermostat dial and buttons, selected rooms, primary buttons. |
+| Status colours | Amber = needs attention · green = good/confirmed · neutral grey = off/inactive · muted blue = information. Always paired with an icon and words, never colour alone. |
+| Category colours | Lighting gold, Climate coral, Pool sky, Spa teal, Security violet. Identity only (icon chips, faint header tints, the glow of lit rooms), never for controls. `data-tone="<system>"` sets them. |
+| Type | The Apple system font (SF Pro) on Apple devices, Inter elsewhere. Tabular figures for numbers. |
+| Shape | 16–22 px radii: tiles 20 px, dialogs 22 px, scene buttons 18 px; pill buttons and chips. |
+| Theme | Light and dark, remembered per device, with a short cross-fade when switching. |
+| Contrast | Text pairs ≥ 4.5:1, icons and control outlines ≥ 3:1 (WCAG 2.2 AA). |
+
+### Motion
+All motion is 150–420 ms, uses `--ease-out` (deceleration) or `--ease-spring` (a small overshoot), and switches off under "reduce motion".
+- **Navigation:** one shared selection pill slides between items (desktop/iPad side pill, phone bottom bar, wall dock). Icons grow slightly when selected.
+- **Pages:** fade and rise 8 px over 240 ms.
+- **Controls:** buttons press in (scale), switches spring, the dial handle grows while dragged, values tick when they change.
+- **Dialogs:** scale + fade in and out over a soft blurred backdrop. **Toasts** slide in and out.
+- **Feedback:** scenes show a spinner then a green tick; thermostat changes show Adjusting… → Sending… → Set ✓ (or a plain-language failure).
+
+### Thermostat dial (`src/components/Dial.tsx`, maths in `src/lib/dial.ts`)
+- Drag the handle with a finger, mouse or trackpad; tap anywhere on the ring to jump there. 1 °F steps.
+- Grabbing the handle never makes it jump; the gap at the bottom of the ring pins to the nearest end instead of flipping min↔max.
+- Keyboard: arrows ±1, Page Up/Down ±5, Home/End. Screen readers see a slider with "Heat to 71°".
+- The target (red arc + big number) is separate from the room temperature (small tick on the ring + "now 69.6°").
+- Sends 650 ms after you stop. While sending, you can keep adjusting; the newest value wins. If it fails, the target goes back and a message says so. While disconnected, the last known value is shown and controls pause.
 
 Key components:
-- **`Section` / `Tile` / `IconChip`**: the rounded tile with an icon-and-title header that every screen is built from.
-- **`Metric`**: a reading tile (caption, icon, big number, supporting line, stale state).
-- **`ArcGauge`**: round dial for the thermostat setpoint and pool/spa water temperature.
-- **`HomeMap`**: interactive floor plan with a 3D/2D view; rooms glow when their lights are on, and clicking a room opens its lights. The shapes are in `src/config/floorplan.ts`.
-- **`StatusIndicator` / `StatusDot`**: On / Online / Off / Offline / Unavailable, conveyed by shape and wording as well as colour.
-- **`Toggle`, `RangeSlider`, `Stepper`, `Segmented`**: controls with pending/disabled states.
-- **`ConfirmDialog` (`useConfirm`)**, **`Toaster`**.
-- **`ThemeSwitch`**: the moon/sun switch in the top bar.
+- **`Section` / `Tile` / `IconChip` / `Metric`**: the rounded tiles every screen is built from.
+- **`Dial` / `ThermostatControl`**: the draggable thermostat (dial and compact variants).
+- **`ArcGauge`**: read-only round gauge for pool/spa water.
+- **`HomeMap`**: floor plan with a 3D/2D view; rooms glow when their lights are on, and clicking a room opens its lights.
+- **`SceneButton`**: icon, name, description, pending and success states.
+- **`StatusIndicator` / `StatusDot`**: On / Online / Off / Offline / Unavailable, by shape and wording as well as colour.
+- **`Toggle`, `RangeSlider`, `Stepper`, `Segmented`**, **`ConfirmDialog` (`useConfirm`)**, **`Toaster`**, **`ThemeSwitch`**.
+- **`WallDock`**: the wall display's five-item dock.
+
+### Wall display
+See [docs/04-wall-display.md](../docs/04-wall-display.md) for the iPad set-up.
+- `#/wall` is the ambient **Home display**: time, date, both thermostats, pool, spa, lights, front door, alerts and three scene buttons. It never scrolls (landscape or portrait); sizes follow the screen height.
+- Opening it turns on **wall mode** for that device: the full menu is replaced by a dock (Home, Lights, Climate, Pool & Spa, Security). Turn it off in Settings → Wall display.
+- **Calm look** (off / when idle / always) mutes colour after 2 minutes untouched on the Home display; alerts stay bright. The first touch only wakes it.
+- **Return to Home display** after 1–10 minutes untouched. **Off by default.** It only changes the screen and closes any open question; it never sends a command.
+- Night dimming between set times.
 
 ### Floor plan
 `src/config/floorplan.ts` holds the room outlines for the home map. Each room links to a Home Assistant Area by id, so lights appear in the right room automatically. The current shapes are **approximate**, traced from screenshots of the SmartThings 3D map; replace them with measurements from a scanned floor plan.
 
 ## Accessibility
-- Every control is reachable by keyboard: Radix primitives for switches, sliders and dialogs, and native radios for segmented controls.
+- Every control is reachable by keyboard: Radix primitives for switches, sliders and dialogs, native radios for segmented controls, and a keyboard slider on the dial.
+- Touch targets are at least 44 × 44 px (small visual buttons get an invisible larger hit area).
 - There's a skip link, and focus moves to the page on navigation.
-- Focus rings are visible (brass).
+- Focus rings are visible.
 - Every control has a descriptive label (for example "Kitchen recessed brightness").
 - Status is never conveyed by colour alone.
 - Reduced-motion preferences are respected.
+
+## Offline and reliability
+- The connection chip shows Live / Reconnecting / Disconnected. When the connection drops, a banner explains it, the page dims, every reading says "Last known", and controls pause rather than pretend.
+- Each control shows its own state: idle, pending (spinner / "Sending…"), success (tick), failed (amber message, value restored), unavailable (dashed ring).
+- Try it: Settings → Prototype tools → *Disconnect for 8 s*, or *Simulate failures*.
 
 ## Prototype-only behaviour
 - A permanent "Prototype · sample data" banner, plus labels on toasts, dialogs and the camera.

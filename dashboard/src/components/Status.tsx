@@ -28,7 +28,7 @@ export function StatusDot({ status, className }: { status: DisplayStatus; classN
       className={cx(
         'inline-block size-2 shrink-0 rounded-full',
         status === 'on' && 'bg-accent',
-        status === 'online' && 'bg-fg-2',
+        status === 'online' && 'bg-positive',
         status === 'off' && 'border border-muted',
         status === 'offline' && 'bg-danger',
         status === 'unavailable' && 'border border-dashed border-muted',

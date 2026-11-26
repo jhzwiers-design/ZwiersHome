@@ -13,7 +13,7 @@ import { Button } from '@/components/primitives';
 import type { HomeSnapshot } from '@/data/types';
 import { availabilityOf, lightingSummary, lightsByArea } from '@/lib/selectors';
 import { useHome, usePendingKey } from '@/store/home';
-import { SceneButton } from './Overview';
+import { SceneButton } from '@/components/domain/Scenes';
 
 type Filter = 'all' | 'on' | 'unreachable';
 
@@ -70,15 +70,12 @@ export function Lighting({ s }: { s: HomeSnapshot }) {
         <RoomPanel s={s} areaId={room} className="lg:col-span-4" />
       </div>
 
-      <Section title="Scenes" subtitle="SmartThings lights only" icon={Sparkles}>
-        <ul className="rail sm:grid sm:grid-cols-2 sm:gap-3 xl:grid-cols-4">
+      <Section title="Scenes" subtitle="One tap sets several lights" icon={Sparkles}>
+        <div className="rail sm:grid sm:grid-cols-2 sm:gap-3 xl:grid-cols-3">
           {s.scenes.map((sc) => (
-            <li key={sc.id} className="flex w-[72%] shrink-0 snap-start flex-col items-start gap-3 rounded-md border border-rule bg-surface-2 p-4 sm:w-auto">
-              <SceneButton id={sc.id} name={sc.name} disabled={!connected} />
-              <p className="text-label text-muted">{sc.description}</p>
-            </li>
+            <SceneButton key={sc.id} scene={sc} disabled={!connected} showDescription size="lg" />
           ))}
-        </ul>
+        </div>
       </Section>
 
       {groups.length === 0 && <p className="tile p-8 text-center text-body text-muted">No lights match this filter.</p>}

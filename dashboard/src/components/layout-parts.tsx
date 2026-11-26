@@ -32,7 +32,10 @@ export function IconChip({ icon: Icon, active, className }: { icon: LucideIcon; 
       className={cx(
         'grid size-10 shrink-0 place-items-center rounded-full border',
         'transition-[background-color,box-shadow,color] duration-[var(--dur)]',
-        active ? 'border-accent-ink bg-accent text-on-accent shadow-[var(--accent-glow)]' : 'border-transparent bg-accent-soft text-accent-ink',
+        // Category tone when inside data-tone, brand red otherwise.
+        active
+          ? 'border-transparent bg-[var(--chip-solid,var(--accent))] text-[var(--chip-on,var(--on-accent))]'
+          : 'border-transparent bg-[var(--chip-bg,var(--accent-soft))] text-[var(--chip-fg,var(--accent-ink))]',
         className,
       )}
     >
@@ -92,7 +95,7 @@ export function Section({
         <div className="flex min-w-0 items-center gap-3">
           {icon &&
             (band ? (
-              <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-band-fg/12">
+              <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-full bg-[var(--chip-bg)] text-[var(--band-icon,var(--fg))]">
                 {(() => {
                   const I = icon;
                   return <I className="size-[18px]" strokeWidth={1.9} />;
@@ -105,14 +108,14 @@ export function Section({
             <h2 id={headingId} className={cx('truncate text-lead font-medium', band ? 'text-band-fg' : 'text-fg')}>
               {title}
             </h2>
-            {subtitle && <p className={cx('truncate text-label', band ? 'text-band-fg' : 'text-muted')}>{subtitle}</p>}
+            {subtitle && <p className="truncate text-label text-muted">{subtitle}</p>}
           </div>
         </div>
         {meta && (
           <div
             className={cx(
               'flex shrink-0 items-center gap-3 text-label',
-              band ? 'text-band-fg [&_a]:border-band-fg/40 [&_a]:text-band-fg [&_a:hover]:bg-band-fg/10' : 'text-muted',
+              'text-muted',
             )}
           >
             {meta}
@@ -131,7 +134,7 @@ export function TileLink({ href, label }: { href: string; label: string }) {
       href={href}
       aria-label={label}
       title={label}
-      className="grid size-9 place-items-center rounded-full border border-control text-fg-2 transition-[transform,color,background-color] duration-[var(--dur)] hover:-translate-y-0.5 hover:translate-x-0.5 hover:text-fg active:scale-95"
+      className="hit-44 grid size-9 place-items-center rounded-full border border-control text-fg-2 transition-[transform,color,background-color] duration-[var(--dur)] hover:-translate-y-0.5 hover:translate-x-0.5 hover:text-fg active:scale-95"
     >
       <ArrowUpRight aria-hidden className="size-4" strokeWidth={1.75} />
     </a>
@@ -175,7 +178,7 @@ export function Metric({
       {system ? (
         <div className="-mx-5 -mt-5 mb-1 flex items-center justify-between gap-3 bg-band px-5 py-3 text-band-fg md:-mx-6 md:-mt-6 md:px-6">
           <span className="text-body font-medium">{label}</span>
-          {Icon && <Icon aria-hidden className={cx('size-[18px]', active && 'animate-zh-pulse')} strokeWidth={1.9} />}
+          {Icon && <Icon aria-hidden className="size-[18px] text-[var(--band-icon,var(--fg))]" strokeWidth={1.9} />}
         </div>
       ) : (
         <div className="flex items-center justify-between gap-3">

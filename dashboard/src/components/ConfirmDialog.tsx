@@ -37,6 +37,11 @@ const useConfirmStore = create<ConfirmState>((set, get) => ({
   },
 }));
 
+/** Cancel any open confirmation (used when the wall display returns home). */
+export function cancelConfirm() {
+  useConfirmStore.getState().close(false);
+}
+
 export function useConfirm() {
   return useConfirmStore((s) => s.open);
 }
@@ -49,9 +54,9 @@ export function ConfirmHost() {
   return (
     <AlertDialog.Root open={!!request} onOpenChange={(o) => !o && close(false)}>
       <AlertDialog.Portal>
-        <AlertDialog.Overlay className="fixed inset-0 z-50 bg-[var(--scrim)] animate-zh-in" />
+        <AlertDialog.Overlay className="zh-overlay fixed inset-0 z-50 bg-[var(--scrim)] backdrop-blur-[2px]" />
         <AlertDialog.Content
-          className="fixed top-1/2 left-1/2 z-50 w-[min(440px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 rounded-md border border-rule-strong bg-surface p-6 shadow-[var(--shadow)] animate-zh-in"
+          className="zh-dialog fixed top-1/2 left-1/2 z-50 max-h-[calc(100dvh-32px)] w-[min(460px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-[22px] border border-rule bg-surface p-6 shadow-[var(--shadow)]"
           onEscapeKeyDown={() => close(false)}
         >
           {request && (

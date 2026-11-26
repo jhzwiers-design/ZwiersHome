@@ -3,11 +3,12 @@
  * configuration errors, the initial connection (loading), and dialogs/toasts.
  */
 import { useEffect } from 'react';
-import { ConfirmHost } from '@/components/ConfirmDialog';
+import { cancelConfirm, ConfirmHost } from '@/components/ConfirmDialog';
 import { Toaster } from '@/components/Toaster';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Skeleton } from '@/components/primitives';
-import { useApplyTheme, useRoute, type Route } from '@/hooks';
+import { useApplyTheme, useIdle, useRoute, type Route } from '@/hooks';
+import { usePreferences } from '@/store/preferences';
 import { AppShell } from '@/layout/AppShell';
 import { useHome } from '@/store/home';
 import type { HomeSnapshot } from '@/data/types';
@@ -18,7 +19,7 @@ import { PoolSpa } from '@/screens/PoolSpa';
 import { Security } from '@/screens/Security';
 import { Devices } from '@/screens/Devices';
 import { Settings } from '@/screens/Settings';
-import { Wall } from '@/screens/Wall';
+import { useWallCalm, Wall } from '@/screens/Wall';
 
 const SCREENS: Record<Exclude<Route, 'wall'>, (p: { s: HomeSnapshot }) => React.ReactNode> = {
   overview: Overview,
@@ -48,6 +49,25 @@ export function App() {
   const configError = useHome((s) => s.configError);
   const config = useHome((s) => s.config);
   const ready = !!config && snapshot && snapshot.connection.status !== 'connecting';
+  const wallMode = usePreferences((p) => p.wallMode);
+  const setPref = usePreferences((p) => p.set);
+  const ambient = usePreferences((p) => p.wall.ambient);
+  const idleMinutes = usePreferences((p) => p.wall.idleMinutes);
+  const setCalm = useWallCalm((w) => w.setCalm);
+
+  // Opening the Home display makes this device a wall display (until turned off).
+  useEffect(() => {
+    if (route === 'wall' && !wallMode) setPref('wallMode', true);
+  }, [route, wallMode, setPref]);
+
+  // Optional: return to the Home display after inactivity. Only navigates and
+  // closes open questions — it never sends a command.
+  useIdle(wallMode ? idleMinutes : 0, () => {
+    cancelConfirm();
+    if (location.hash !== '#/wall') location.hash = '#/wall';
+  });
+  // Calm presentation after 2 minutes untouched on the Home display.
+  useIdle(wallMode && route === 'wall' && ambient === 'idle' ? 2 : 0, () => setCalm(true));
 
   useEffect(() => {
     document.title = `${TITLES[route]} · Zwiers Home`;
@@ -62,6 +82,7 @@ export function App() {
     return (
       <>
         <ErrorBoundary resetKey={route}>{ready ? <Wall s={snapshot} /> : <LoadingScreen />}</ErrorBoundary>
+        <ConfirmHost />
         <Toaster placement="top" />
       </>
     );
@@ -70,9 +91,9 @@ export function App() {
   const Screen = SCREENS[route];
   return (
     <>
-      <AppShell route={route}>
+      <AppShell route={route} wall={wallMode}>
         {ready ? (
-          <div key={route} className="animate-zh-in">
+          <div key={route} className="animate-zh-page">
             <ErrorBoundary resetKey={route}>
               <Screen s={snapshot} />
             </ErrorBoundary>

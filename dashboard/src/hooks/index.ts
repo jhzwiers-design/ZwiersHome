@@ -27,7 +27,32 @@ const subscribeHash = (cb: () => void) => {
 /** Minimal hash router: #/overview, #/lighting, … #/wall */
 export function useRoute(): Route {
   const start = usePreferences((p) => p.startPage);
-  return useSyncExternalStore(subscribeHash, () => readHash(start));
+  const wallMode = usePreferences((p) => p.wallMode);
+  // A wall display opens on its Home display.
+  return useSyncExternalStore(subscribeHash, () => readHash(wallMode ? 'wall' : start));
+}
+
+/**
+ * Calls `onIdle` once after `minutes` without touch, mouse or keyboard input
+ * (0 disables). Any input re-arms it. Never triggers device commands itself.
+ */
+export function useIdle(minutes: number, onIdle: () => void) {
+  const cb = useRef(onIdle);
+  cb.current = onIdle;
+  useEffect(() => {
+    if (!minutes) return;
+    let t = window.setTimeout(() => cb.current(), minutes * 60_000);
+    const reset = () => {
+      window.clearTimeout(t);
+      t = window.setTimeout(() => cb.current(), minutes * 60_000);
+    };
+    const events = ['pointerdown', 'keydown', 'wheel', 'touchstart'] as const;
+    events.forEach((e) => window.addEventListener(e, reset, { passive: true }));
+    return () => {
+      window.clearTimeout(t);
+      events.forEach((e) => window.removeEventListener(e, reset));
+    };
+  }, [minutes]);
 }
 
 /** Resolves the theme preference ("system" follows the OS) and applies it to <html>. */

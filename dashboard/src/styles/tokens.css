@@ -1,130 +1,132 @@
 /*
- * Zwiers Home — design tokens
+ * Zwiers Home — design tokens (Milestone 2 redesign)
  * ---------------------------------------------------------------
- * The single source of truth for colour, shape, type, spacing and motion.
- * Components never use raw hex values; they use these tokens via
- * Tailwind utilities (see index.css @theme mapping).
+ * Single source of truth for colour, shape, type and motion. Components use
+ * these through Tailwind utilities (index.css) and never hard-code values.
  *
- * Brand palette
- *   Burnt Umber   #6D120B   deep red: hover/pressed, light-mode depth
- *   Redwood       #B02A29   the accent: on / active / selected
- *   Macadamia     #FBF0D8   cream: light-mode page, dark-mode text
- *   Cool Blue     #113047   navy: dark-mode tiles, light-mode text
- *   Light Grayish #739AB9   steel blue: secondary text, cooling
+ * Direction: Apple-inspired calm. Neutral graphite (dark) / warm paper (light)
+ * surfaces, ONE red accent for everything interactive, restrained category tints.
  *
- * Signature colours — every system has its own (like the reference dashboard):
- *   Lighting gold · Climate ember · Pool sky · Spa sage · Security violet · Devices steel
- *   Each comes as  --<sys>-fill (switch/chip/band fill), --<sys>-ink (text/lines on tiles),
- *   --<sys>-tint (soft wash). Wrap any element in data-tone="<sys>" and every
- *   accent-coloured control inside it takes that system's colour automatically.
- *   Outside a tone, the accent is the brand Redwood.
+ * Colour roles
+ *   --accent        red. Selected navigation, active switches, sliders, the
+ *                   thermostat dial, selected rooms. Graphics/fills (≥ 3:1).
+ *   --accent-ink    red for TEXT on surfaces (≥ 4.5:1).
+ *   --accent-solid  red behind white button text (≥ 4.5:1).
+ *   --danger        amber. Warnings and problems, always with an icon + words.
+ *   --positive      green. Healthy / online / success.
+ *   --info, --cool  muted blue. Informational, cooling.
+ *   tones           category identity only (icons, the map's warm light glow):
+ *                   lighting yellow · climate coral · pool sky · spa teal ·
+ *                   security violet · devices steel. They never colour controls.
  *
- * Accessibility (WCAG 2.2 AA, verified by script — see docs/brand/accessibility):
- *   text ≥ 4.5:1 on bg/surface/surface-2 · large text, icons, control outlines ≥ 3:1
- *   --faint is for disabled/decorative only (≥ 3:1). Colour is never the only signal.
- *
- * Colour rules
- *  - --accent      Redwood fills (switches, chips, buttons, lit rooms).
- *  - --accent-ink  accent for TEXT and thin lines, tuned for contrast:
- *                  a lighter Redwood on navy (dark), Redwood on cream (light).
- *  - --danger      an actual problem: rose red, ALWAYS with a warning icon and words.
- *  - --cool        cooling only (Climate), from Light Grayish.
+ * Accessibility (WCAG 2.2 AA, checked by script): text ≥ 4.5:1 on bg, surface
+ * and surface-2; icons and control outlines ≥ 3:1. --faint is decorative or
+ * disabled only. State is never shown by colour alone.
  */
 
 :root,
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #0b2133;
-  --surface: #113047;
-  --surface-2: #18405c;
-  --surface-hover: #143853;
-  --rule: #1d4663;
-  --rule-strong: #2b5878;
-  --fg: #fbf0d8;
-  --fg-2: #e2d9c4;
-  --muted: #93b4cc;
-  --faint: #83a0b8;
-  --control: #769fbe;
-  --accent: #b02a29;
-  --accent-strong: #c43532;
-  --accent-ink: #ff857c;
-  --accent-soft: rgb(176 42 41 / 0.28);
-  --accent-glow: 0 0 0 1px rgb(255 106 95 / 0.2), 0 6px 24px rgb(176 42 41 / 0.5);
-  --on-accent: #fbf0d8;
-  --danger: #ff8a95;
-  --danger-soft: rgb(255 138 149 / 0.13);
-  --cool: #a6c6de;
-  --scrim: rgb(5 18 29 / 0.72);
-  --shadow: 0 16px 40px rgb(3 14 24 / 0.55);
-  --tile-shadow: 0 1px 0 rgb(251 240 216 / 0.04) inset, 0 1px 2px rgb(0 0 0 / 0.3);
+  --bg: #0a0f16;
+  --surface: #141b25;
+  --surface-2: #1d2633;
+  --surface-3: #263142;
+  --surface-hover: #18212d;
+  --rule: #222c3a;
+  --rule-strong: #303d50;
+  --control: #66789a;
+  --fg: #f5f5f7;
+  --fg-2: #c9ced8;
+  --muted: #9aa4b4;
+  --faint: #77839a;
+  --accent: #ff303b;
+  --accent-strong: #ff5a62;
+  --accent-ink: #ff4d55;
+  --accent-solid: #d41f2b;
+  --accent-soft: rgb(255 48 59 / 0.16);
+  --accent-glow: 0 0 0 1px rgb(255 48 59 / 0.28), 0 6px 22px rgb(255 48 59 / 0.28);
+  --on-accent: #ffffff;
+  --danger: #ffb340;
+  --danger-soft: rgb(255 179 64 / 0.13);
+  --positive: #3ecf8e;
+  --positive-soft: rgb(62 207 142 / 0.14);
+  --info: #8fb3ff;
+  --cool: #8fb3ff;
+  --scrim: rgb(2 5 9 / 0.66);
+  --shadow: 0 18px 44px rgb(0 0 0 / 0.5);
+  --tile-shadow: 0 1px 0 rgb(255 255 255 / 0.035) inset, 0 1px 2px rgb(0 0 0 / 0.35);
+  --tile-shadow-raised: 0 1px 0 rgb(255 255 255 / 0.05) inset, 0 10px 30px rgb(0 0 0 / 0.38);
 
-  /* Signature colours (dark): pastel fills with navy text on top */
-  --sig-on: #113047;
-  --lighting-fill: #f2c66d; --lighting-ink: #f2c66d; --lighting-tint: #f2c66d;
-  --climate-fill: #ef8f5c;  --climate-ink: #ef8f5c;  --climate-tint: #ef8f5c;
-  --pool-fill: #7fb6de;     --pool-ink: #7fb6de;     --pool-tint: #7fb6de;
-  --spa-fill: #74c7b2;      --spa-ink: #74c7b2;      --spa-tint: #74c7b2;
-  --security-fill: #ab9de8; --security-ink: #ab9de8; --security-tint: #ab9de8;
-  --devices-fill: #a9bccd;  --devices-ink: #a9bccd;  --devices-tint: #a9bccd;
-  --brand-fill: #b02a29;    --brand-ink: #ff857c;    --brand-tint: #b02a29;
+  /* Category tones: fill (icons/glow), ink (text), tint (washes) */
+  --sig-on: #0a0f16;
+  --lighting-fill: #f7c948; --lighting-ink: #f7c948; --lighting-tint: #f7c948;
+  --climate-fill: #ff6b5e;  --climate-ink: #ff6b5e;  --climate-tint: #ff6b5e;
+  --pool-fill: #64b5f6;     --pool-ink: #64b5f6;     --pool-tint: #64b5f6;
+  --spa-fill: #4fd1c5;      --spa-ink: #4fd1c5;      --spa-tint: #4fd1c5;
+  --security-fill: #a78bfa; --security-ink: #a78bfa; --security-tint: #a78bfa;
+  --devices-fill: #9fb3c8;  --devices-ink: #9fb3c8;  --devices-tint: #9fb3c8;
+  --brand-fill: #ff303b;    --brand-ink: #ff4d55;    --brand-tint: #ff303b;
 }
 
 :root[data-theme='light'] {
   color-scheme: light;
-  --bg: #f6ecd4;
-  --surface: #fffaf0;
-  --surface-2: #f8eedb;
-  --surface-hover: #fdf6e8;
-  --rule: #eadcbe;
-  --rule-strong: #d8c6a2;
-  --fg: #113047;
-  --fg-2: #1d4663;
-  --muted: #4e6b82;
-  --faint: #71849a;
-  --control: #6f7d8b;
-  --accent: #b02a29;
-  --accent-strong: #6d120b;
-  --accent-ink: #b02a29;
-  --accent-soft: rgb(176 42 41 / 0.09);
-  --accent-glow: 0 0 0 1px rgb(176 42 41 / 0.2), 0 6px 20px rgb(109 18 11 / 0.16);
-  --on-accent: #fbf0d8;
-  --danger: #a3262f;
-  --danger-soft: rgb(163 38 47 / 0.09);
-  --cool: #2f6a95;
-  --scrim: rgb(17 48 71 / 0.35);
-  --shadow: 0 16px 40px rgb(17 48 71 / 0.14);
-  --tile-shadow: 0 1px 2px rgb(17 48 71 / 0.06), 0 1px 1px rgb(17 48 71 / 0.03);
+  --bg: #f4f1ec;
+  --surface: #ffffff;
+  --surface-2: #f6f3ee;
+  --surface-3: #ece7df;
+  --surface-hover: #fbfaf8;
+  --rule: #e9e3da;
+  --rule-strong: #d6cec2;
+  --control: #7c7c82;
+  --fg: #1d1d1f;
+  --fg-2: #3a3a3c;
+  --muted: #636366;
+  --faint: #a1a1a6;
+  --accent: #a71930;
+  --accent-strong: #8a1427;
+  --accent-ink: #a71930;
+  --accent-solid: #a71930;
+  --accent-soft: rgb(167 25 48 / 0.08);
+  --accent-glow: 0 0 0 1px rgb(167 25 48 / 0.18), 0 6px 18px rgb(167 25 48 / 0.16);
+  --on-accent: #ffffff;
+  --danger: #9a5b00;
+  --danger-soft: rgb(220 140 20 / 0.12);
+  --positive: #1e7a4f;
+  --positive-soft: rgb(30 122 79 / 0.1);
+  --info: #2f5bb7;
+  --cool: #2f5bb7;
+  --scrim: rgb(29 29 31 / 0.32);
+  --shadow: 0 18px 44px rgb(29 29 31 / 0.14);
+  --tile-shadow: 0 1px 2px rgb(29 29 31 / 0.05), 0 0 0 1px rgb(29 29 31 / 0.02);
+  --tile-shadow-raised: 0 12px 30px rgb(29 29 31 / 0.1), 0 1px 2px rgb(29 29 31 / 0.05);
 
-  /* Signature colours (light): deep fills with cream text; pastels become tints */
-  --sig-on: #fbf0d8;
-  --lighting-fill: #7a5400; --lighting-ink: #7a5400; --lighting-tint: #f2c66d;
-  --climate-fill: #a0461a;  --climate-ink: #a0461a;  --climate-tint: #ef8f5c;
-  --pool-fill: #1f5f8c;     --pool-ink: #1f5f8c;     --pool-tint: #7fb6de;
-  --spa-fill: #196a57;      --spa-ink: #196a57;      --spa-tint: #74c7b2;
-  --security-fill: #5a49ad; --security-ink: #5a49ad; --security-tint: #ab9de8;
-  --devices-fill: #4a6780;  --devices-ink: #4a6780;  --devices-tint: #a9bccd;
-  --brand-fill: #b02a29;    --brand-ink: #b02a29;    --brand-tint: #e9a29b;
+  --sig-on: #ffffff;
+  --lighting-fill: #f2b705; --lighting-ink: #8a6100; --lighting-tint: #f7c948;
+  --climate-fill: #d93a2b;  --climate-ink: #b3261e;  --climate-tint: #ff8f80;
+  --pool-fill: #2f80c8;     --pool-ink: #1f63a3;     --pool-tint: #8cc5f2;
+  --spa-fill: #17998b;      --spa-ink: #11766b;      --spa-tint: #7fdcd2;
+  --security-fill: #7b5ce0; --security-ink: #6145c8; --security-tint: #c3b2fb;
+  --devices-fill: #5d7896;  --devices-ink: #4a6380;  --devices-tint: #b9c8d8;
+  --brand-fill: #a71930;    --brand-ink: #a71930;    --brand-tint: #e9a0aa;
 }
 
-/* ── Tone scopes: data-tone="<system>" re-points the accent for everything inside ── */
+/* ── Tone scopes: data-tone="<system>" sets category identity for icons,
+      header washes and the map's light glow. Controls stay red. ── */
 [data-tone] {
-  --accent: var(--tone-fill);
-  --accent-strong: var(--tone-fill);
-  --accent-ink: var(--tone-ink);
-  --on-accent: var(--sig-on);
-  --accent-soft: color-mix(in srgb, var(--tone-tint) 18%, transparent);
-  --accent-glow: 0 0 0 1px color-mix(in srgb, var(--tone-fill) 45%, transparent), 0 6px 22px color-mix(in srgb, var(--tone-fill) 32%, transparent);
-  /* Header band behind a tile's title (reference style). Text on it is --band-fg. */
-  --band: var(--tone-tint);
-  --band-fg: #113047;
-  /* Lit rooms on the home map */
+  --chip-bg: color-mix(in srgb, var(--tone-fill) 16%, transparent);
+  --chip-fg: var(--tone-ink);
+  --chip-solid: var(--tone-fill);
+  --chip-on: var(--sig-on);
+  --band: color-mix(in srgb, var(--tone-fill) 12%, var(--surface));
+  --band-fg: var(--fg);
+  --band-icon: var(--tone-ink);
   --lit: var(--tone-fill);
-  --lit-opacity: 0.28;
+  --lit-opacity: 0.3;
 }
 :root[data-theme='light'] [data-tone] {
-  --band: color-mix(in srgb, var(--tone-tint) 55%, var(--surface));
+  --band: color-mix(in srgb, var(--tone-tint) 22%, var(--surface));
   --lit: var(--tone-tint);
-  --lit-opacity: 0.75;
+  --lit-opacity: 0.72;
 }
 [data-tone='lighting'] { --tone-fill: var(--lighting-fill); --tone-ink: var(--lighting-ink); --tone-tint: var(--lighting-tint); }
 [data-tone='climate']  { --tone-fill: var(--climate-fill);  --tone-ink: var(--climate-ink);  --tone-tint: var(--climate-tint); }
@@ -132,20 +134,21 @@
 [data-tone='spa']      { --tone-fill: var(--spa-fill);      --tone-ink: var(--spa-ink);      --tone-tint: var(--spa-tint); }
 [data-tone='security'] { --tone-fill: var(--security-fill); --tone-ink: var(--security-ink); --tone-tint: var(--security-tint); }
 [data-tone='devices']  { --tone-fill: var(--devices-fill);  --tone-ink: var(--devices-ink);  --tone-tint: var(--devices-tint); }
-[data-tone='brand']    { --tone-fill: var(--brand-fill);    --tone-ink: var(--brand-ink);    --tone-tint: var(--brand-tint); --sig-on: #fbf0d8; --band-fg: #fbf0d8; }
+[data-tone='brand']    { --tone-fill: var(--brand-fill);    --tone-ink: var(--brand-ink);    --tone-tint: var(--brand-tint); }
 
 :root {
   /* Type */
-  --font-sans: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Native system type on Apple devices (SF Pro), Inter elsewhere. */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter Variable', 'Inter', system-ui, 'Segoe UI', sans-serif;
 
   /* Camera frame — always dark, like video, in both themes */
-  --video-bg: #071a29;
-  --video-frame: #0a2234;
-  --video-line: #163a55;
-  --video-line-2: #1f4a6a;
-  --video-fg: #e2d9c4;
-  --video-muted: #93b4cc;
-  --video-accent: #ff6a5f;
+  --video-bg: #05080c;
+  --video-frame: #0a0f16;
+  --video-line: #18202b;
+  --video-line-2: #222c3a;
+  --video-fg: #e5e7eb;
+  --video-muted: #9aa4b4;
+  --video-accent: #ff4d55;
 
   /* Layout */
   --rail-w: 232px;
@@ -157,12 +160,17 @@
   /* Motion — restrained */
   --ease: cubic-bezier(0.2, 0, 0, 1);
   --dur-fast: 120ms;
-  --dur: 180ms;
+  --dur: 200ms;
+  --dur-page: 240ms;
+  /* Springy settle for selections and indicators */
+  --ease-spring: cubic-bezier(0.32, 1.35, 0.5, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
     --dur-fast: 0ms;
     --dur: 0ms;
+    --dur-page: 0ms;
   }
 }

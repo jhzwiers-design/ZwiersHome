@@ -120,7 +120,43 @@ export function Settings({ s }: { s: HomeSnapshot }) {
         </SettingRow>
       </Section>
 
-      <Section title="Wall display" icon={MonitorSmartphone} meta={<a href="#/wall" className="text-label text-accent-ink hover:underline">Open wall display</a>}>
+      <Section title="Wall display" icon={MonitorSmartphone} meta={<a href="#/wall" className="text-label text-accent-ink hover:underline">Open Home display</a>}>
+        <SettingRow title="Use this device as a wall display" hint="Opens on the Home display with a simple dock. Best for the kitchen iPad. Turn off to get the full menu back.">
+          <Toggle
+            checked={p.wallMode}
+            onChange={(v) => {
+              p.set('wallMode', v);
+              location.hash = v ? '#/wall' : '#/overview';
+            }}
+            label="Use this device as a wall display"
+          />
+        </SettingRow>
+        <SettingRow title="Calm look" hint="Quieter colours on the Home display. Alerts always stay bright.">
+          <Segmented
+            label="Calm look"
+            value={p.wall.ambient}
+            onChange={(v) => p.setWall({ ambient: v as 'off' | 'idle' | 'always' })}
+            options={[
+              { value: 'off', label: 'Off' },
+              { value: 'idle', label: 'When idle' },
+              { value: 'always', label: 'Always' },
+            ]}
+          />
+        </SettingRow>
+        <SettingRow title="Return to Home display" hint="After this long untouched, go back to the Home display. It only changes the screen — it never turns anything on or off.">
+          <Segmented
+            label="Return to Home display after"
+            value={String(p.wall.idleMinutes)}
+            onChange={(v) => p.setWall({ idleMinutes: Number(v) })}
+            options={[
+              { value: '0', label: 'Never' },
+              { value: '1', label: '1 min' },
+              { value: '2', label: '2 min' },
+              { value: '5', label: '5 min' },
+              { value: '10', label: '10 min' },
+            ]}
+          />
+        </SettingRow>
         <SettingRow title="Dim at night" hint="Lowers brightness on the wall display between these times.">
           <Toggle checked={p.wall.dimAtNight} onChange={(v) => p.setWall({ dimAtNight: v })} label="Dim at night" />
           <label className="flex items-center gap-2 text-label text-muted">
@@ -144,7 +180,7 @@ export function Settings({ s }: { s: HomeSnapshot }) {
             />
           </label>
         </SettingRow>
-        <SettingRow title="Quick controls" hint="Show scenes and thermostat controls on the wall display.">
+        <SettingRow title="Quick controls" hint="Show scene buttons on the Home display.">
           <Toggle checked={p.wall.showControls} onChange={(v) => p.setWall({ showControls: v })} label="Show quick controls on wall display" />
         </SettingRow>
       </Section>

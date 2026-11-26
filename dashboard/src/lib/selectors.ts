@@ -127,3 +127,31 @@ export function statusSentence(s: HomeSnapshot): { tone: 'ok' | 'attention'; tex
   if (unavailable > 0) parts.push(`${unavailable} unavailable`);
   return { tone: 'attention', text: `Home online · ${parts.join(', ')}`, short: `${alerts.length} need${alerts.length === 1 ? 's' : ''} attention` };
 }
+
+export interface ClimateArea {
+  system: HomeSnapshot['climate'][number];
+  zone: HomeSnapshot['climate'][number]['zones'][number];
+  /** Plain-language area name, e.g. "Main Floor" or "East Wing". */
+  label: string;
+  /** Which thermostat controls it, e.g. "Main thermostat". */
+  sublabel: string;
+}
+
+/**
+ * The home's thermostat areas: the first zone of each thermostat. Extra zones
+ * a thermostat reports are shown inside its area, never invented here.
+ */
+export function climateAreas(s: HomeSnapshot): ClimateArea[] {
+  return s.climate
+    .filter((sys) => sys.zones.length > 0)
+    .map((sys) => {
+      const zone = sys.zones[0]!;
+      return { system: sys, zone, label: zone.name, sublabel: sys.name === zone.name ? 'Thermostat' : sys.name };
+    });
+}
+
+/** Outside temperature from whichever thermostat reports one. */
+export function outdoorTemp(s: HomeSnapshot): number | null {
+  for (const sys of s.climate) if (sys.outdoorTemp !== null) return sys.outdoorTemp;
+  return s.pool?.airTemp ?? null;
+}

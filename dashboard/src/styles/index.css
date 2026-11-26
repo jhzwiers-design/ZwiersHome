@@ -18,6 +18,11 @@
   --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
   --color-surface-hover: var(--surface-hover);
+  --color-surface-3: var(--surface-3);
+  --color-accent-solid: var(--accent-solid);
+  --color-positive: var(--positive);
+  --color-positive-soft: var(--positive-soft);
+  --color-info: var(--info);
   --color-on-accent: var(--on-accent);
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
@@ -125,11 +130,49 @@
   }
 }
 
-/* Wall display night dimming */
+/* ── Wall display (iPad) ────────────────────────────────────────────────
+ * The Home display never scrolls: rows share the screen height.
+ * Landscape: hero on the left, temperatures / lights+security / scenes right.
+ * Portrait: stacked, temperatures take the spare height.
+ */
+.wall-grid {
+  display: grid;
+  gap: 1.8vmin 2.6vmin;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.4fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, auto) auto;
+  grid-template-areas: 'hero temps' 'hero info' 'hero scenes';
+}
+.wall-hero { grid-area: hero; justify-content: center; }
+.wall-temps { grid-area: temps; grid-auto-rows: minmax(0, 1fr); }
+.wall-info { grid-area: info; min-height: 15vmin; }
+.wall-scenes { grid-area: scenes; }
+@media (orientation: portrait) {
+  .wall-grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    grid-template-areas: 'hero' 'temps' 'info' 'scenes';
+  }
+  .wall-hero { justify-content: flex-start; }
+}
+.wall-surface {
+  background: color-mix(in oklab, var(--tone-fill, var(--surface)) 7%, var(--surface));
+  border: 1px solid var(--rule);
+}
+/* Calm presentation: quieter colour and contrast — alerts stay full strength. */
+[data-ambient='calm'] .wall-surface,
+[data-ambient='calm'] .wall-hero > :not(.wall-alerts) {
+  transition: opacity 900ms var(--ease), filter 900ms var(--ease);
+  opacity: 0.78;
+  filter: saturate(0.4);
+}
+[data-ambient='calm'] .wall-surface { background: var(--surface); }
+
+/* Wall display night dimming (alerts excluded) */
 [data-dimmed='true'] .wall-content {
-  filter: brightness(0.42) saturate(0.6);
+  filter: brightness(0.55) saturate(0.6);
   transition: filter 600ms var(--ease);
 }
+[data-dimmed='true'] .wall-alerts { filter: brightness(1.6); }
 
 /* ── Motion system ─────────────────────────────────────────────────────────
  * Small, purposeful, quick. Everything collapses to instant under
@@ -138,7 +181,6 @@
  *   --ease-spring a gentle overshoot for toggles and selections
  */
 :root {
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --dur-slow: 320ms;
 }
 
@@ -149,6 +191,13 @@
 @keyframes zh-pulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
 @keyframes zh-pop { 0% { transform: scale(0.92); } 60% { transform: scale(1.04); } 100% { transform: scale(1); } }
 @keyframes zh-slide-in { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+@keyframes zh-slide-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateX(16px) scale(0.98); } }
+@keyframes zh-page { from { opacity: 0; transform: translateY(8px) scale(0.995); } to { opacity: 1; transform: none; } }
+@keyframes zh-dialog-in { from { opacity: 0; transform: translate(-50%, -48%) scale(0.96); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+@keyframes zh-dialog-out { from { opacity: 1; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(-50%, -49%) scale(0.97); } }
+@keyframes zh-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes zh-fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes zh-done { 0% { transform: scale(0.6); opacity: 0; } 60% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
 @keyframes zh-ring { from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); } to { box-shadow: 0 0 0 12px transparent; } }
 
 .animate-zh-spin { animation: zh-spin 0.9s linear infinite; }
@@ -157,7 +206,15 @@
 .animate-zh-tick { animation: zh-tick 380ms var(--ease) both; }
 .animate-zh-pulse { animation: zh-pulse 1.6s ease-in-out infinite; }
 .animate-zh-pop { animation: zh-pop 260ms var(--ease-spring) both; }
-.animate-zh-slide-in { animation: zh-slide-in var(--dur-slow) var(--ease) both; }
+.animate-zh-slide-in { animation: zh-slide-in var(--dur-slow) var(--ease-out) both; }
+.animate-zh-slide-out { animation: zh-slide-out 200ms var(--ease) both; }
+.animate-zh-page { animation: zh-page var(--dur-page) var(--ease-out) both; }
+.animate-zh-done { animation: zh-done 360ms var(--ease-spring) both; }
+/* Radix dialogs: animate both opening and closing (Radix waits for the exit animation). */
+.zh-dialog[data-state='open'] { animation: zh-dialog-in 220ms var(--ease-out) both; }
+.zh-dialog[data-state='closed'] { animation: zh-dialog-out 160ms var(--ease) both; }
+.zh-overlay[data-state='open'] { animation: zh-fade 220ms var(--ease) both; }
+.zh-overlay[data-state='closed'] { animation: zh-fade-out 160ms var(--ease) both; }
 
 /* Staggered entrance: direct children of .stagger (and grids inside) rise one after another. */
 .stagger > *:nth-child(1) { animation-delay: 0ms; }
@@ -212,8 +269,12 @@ html.theme-fade, html.theme-fade *, html.theme-fade *::before, html.theme-fade *
 
 @media (prefers-reduced-motion: reduce) {
   .animate-zh-spin { animation-duration: 2.4s; }
-  .animate-zh-in, .animate-zh-rise, .animate-zh-tick, .animate-zh-pulse, .animate-zh-pop, .animate-zh-slide-in, .zh-ripple { animation: none; }
+  .animate-zh-in, .animate-zh-rise, .animate-zh-tick, .animate-zh-pulse, .animate-zh-pop, .animate-zh-slide-in, .animate-zh-slide-out, .animate-zh-page, .animate-zh-done, .zh-dialog, .zh-overlay, .zh-ripple { animation: none !important; }
   .zh-ripple { display: none; }
   .lift:hover, .lift:active, button:not(:disabled):active { transform: none; }
   html.theme-fade * { transition: none !important; }
 }
+
+/* Small visual buttons keep a 44 × 44 px touch area (invisible extension). */
+.hit-44 { position: relative; }
+.hit-44::after { content: ''; position: absolute; left: 50%; top: 50%; width: max(100%, 44px); height: max(100%, 44px); transform: translate(-50%, -50%); }

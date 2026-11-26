@@ -40,7 +40,8 @@ function ToastItem({ toast, onDismiss, sample }: { toast: Toast; onDismiss: (id:
     <div
       role={toast.tone === 'error' ? 'alert' : 'status'}
       className={cx(
-        'pointer-events-auto flex w-full items-start gap-3 rounded-md border bg-surface px-4 py-3 shadow-[var(--shadow)] animate-zh-slide-in',
+        'pointer-events-auto flex w-full items-start gap-3 rounded-[18px] border bg-surface/95 px-4 py-3 shadow-[var(--shadow)] backdrop-blur-xl',
+        toast.leaving ? 'animate-zh-slide-out' : 'animate-zh-slide-in',
         toast.tone === 'error' ? 'border-danger' : toast.tone === 'event' ? 'border-accent' : 'border-rule-strong',
       )}
     >
@@ -49,7 +50,7 @@ function ToastItem({ toast, onDismiss, sample }: { toast: Toast; onDismiss: (id:
         strokeWidth={1.75}
         className={cx(
           'mt-0.5 size-4 shrink-0',
-          toast.tone === 'error' ? 'text-danger' : toast.tone === 'success' ? 'text-fg-2' : 'text-accent-ink',
+          toast.tone === 'error' ? 'text-danger' : toast.tone === 'success' ? 'text-positive' : 'text-accent-ink',
         )}
       />
       <div className="min-w-0 flex-1">

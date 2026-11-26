@@ -9,12 +9,13 @@
  * live data.
  */
 import { Gauge, House, Lightbulb, MonitorSmartphone, Moon, Settings2, ShieldCheck, Sun, Thermometer, Waves, type LucideIcon } from 'lucide-react';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useSlidingIndicator } from '@/hooks/useSlidingIndicator';
+import { WallDock } from '@/layout/WallDock';
 import { cx } from '@/components/primitives';
 import type { Route } from '@/hooks';
 import { useNow } from '@/hooks';
 import { formatTime } from '@/lib/format';
-import { ROUTE_TONE } from '@/lib/tones';
 import { useHome } from '@/store/home';
 import { usePreferences } from '@/store/preferences';
 
@@ -28,18 +29,18 @@ export const NAV: { id: Exclude<Route, 'wall'>; label: string; short: string; ic
   { id: 'settings', label: 'Settings', short: 'Settings', icon: Settings2 },
 ];
 
-export function AppShell({ route, children }: { route: Route; children: ReactNode }) {
+export function AppShell({ route, wall, children }: { route: Route; wall?: boolean; children: ReactNode }) {
   const status = useHome((s) => s.snapshot?.connection.status);
   const offline = status === 'disconnected' || status === 'reconnecting';
   return (
-    <div className="min-h-dvh md:pl-[calc(var(--nav-pill-w)+28px)]">
+    <div className={cx('min-h-dvh', !wall && 'md:pl-[calc(var(--nav-pill-w)+28px)]')} data-wall-mode={wall || undefined}>
       <a
         href="#main"
         className="sr-only z-50 rounded-full bg-accent px-4 py-2 text-on-accent focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
       >
         Skip to content
       </a>
-      <PillNav route={route} />
+      {!wall && <PillNav route={route} />}
       <div className="mx-auto w-full max-w-[var(--content-max)] px-4 sm:px-6 md:pr-8 md:pl-2 xl:pr-12">
         <TopBar />
         <ConnectionBanner />
@@ -48,7 +49,8 @@ export function AppShell({ route, children }: { route: Route; children: ReactNod
           tabIndex={-1}
           aria-describedby={offline ? 'connection-banner' : undefined}
           className={cx(
-            'pt-2 pb-[calc(var(--bottom-nav-h)+40px)] focus:outline-none md:pb-14',
+            'pt-2 focus:outline-none',
+            wall ? 'pb-[calc(96px+env(safe-area-inset-bottom))]' : 'pb-[calc(var(--bottom-nav-h)+40px)] md:pb-14',
             // Last-known values: visibly dimmed so they can't be mistaken for live data.
             offline && 'opacity-60 saturate-50 transition-opacity',
           )}
@@ -56,7 +58,13 @@ export function AppShell({ route, children }: { route: Route; children: ReactNod
           {children}
         </main>
       </div>
-      <BottomNav route={route} />
+      {wall ? (
+        <div className="fixed inset-x-0 bottom-0 z-30 bg-gradient-to-t from-bg via-bg/85 to-transparent px-4 pt-6 pb-[max(env(safe-area-inset-bottom),12px)]">
+          <WallDock />
+        </div>
+      ) : (
+        <BottomNav route={route} />
+      )}
     </div>
   );
 }
@@ -134,7 +142,7 @@ export function ThemeSwitch() {
       title={label}
       onClick={() => set('theme', value)}
       className={cx(
-        'grid size-8 place-items-center rounded-full transition-colors duration-[var(--dur)] md:size-9',
+        'hit-44 grid size-8 place-items-center rounded-full transition-colors duration-[var(--dur)] md:size-9',
         current === value ? 'bg-fg text-bg' : 'text-muted hover:text-fg',
       )}
     >
@@ -151,43 +159,48 @@ export function ThemeSwitch() {
 }
 
 function PillNav({ route }: { route: Route }) {
+  const listRef = useRef<HTMLUListElement>(null);
+  const { style } = useSlidingIndicator(listRef, '[aria-current="page"]', route);
   return (
-    <nav
-      aria-label="Primary"
-      className="fixed top-1/2 left-5 z-30 hidden w-[var(--nav-pill-w)] -translate-y-1/2 md:block"
-    >
-      <ul className="tile flex flex-col items-center gap-2 rounded-full! px-2 py-4">
+    <nav aria-label="Primary" className="fixed top-1/2 left-5 z-30 hidden w-[var(--nav-pill-w)] -translate-y-1/2 md:block">
+      <ul ref={listRef} className="tile relative flex flex-col items-center gap-2 rounded-full! px-2 py-4">
+        {/* One shared selection pill that glides between destinations */}
+        <span aria-hidden className="pointer-events-none absolute top-0 left-0 rounded-full bg-accent shadow-[var(--accent-glow)]" style={style} />
         {NAV.map((item) => (
-          <li key={item.id}>
-            <NavButton key={item.id === route ? 'on' : 'off'} href={`#/${item.id}`} label={item.label} icon={item.icon} active={item.id === route} tone={ROUTE_TONE[item.id]} />
+          <li key={item.id} className="relative">
+            <NavButton href={`#/${item.id}`} label={item.label} icon={item.icon} active={item.id === route} />
           </li>
         ))}
         <li aria-hidden className="my-1 h-px w-8 bg-rule" />
-        <li>
-          <NavButton href="#/wall" label="Wall display" icon={MonitorSmartphone} active={false} />
+        <li className="relative">
+          <NavButton href="#/wall" label="Home display" icon={MonitorSmartphone} active={false} />
         </li>
       </ul>
     </nav>
   );
 }
 
-function NavButton({ href, label, icon: Icon, active, tone }: { href: string; label: string; icon: LucideIcon; active: boolean; tone?: string }) {
+function NavButton({ href, label, icon: Icon, active }: { href: string; label: string; icon: LucideIcon; active: boolean }) {
   return (
     <a
       href={href}
       aria-current={active ? 'page' : undefined}
       aria-label={label}
-      data-tone={tone}
       className={cx(
-        'group relative grid size-12 place-items-center rounded-full transition-[background-color,color,box-shadow,transform] duration-[var(--dur)] ease-[var(--ease-spring)]',
-        active ? 'animate-zh-pop scale-105 border border-accent-ink bg-accent text-on-accent shadow-[var(--accent-glow)]' : 'text-muted hover:scale-105 hover:bg-accent-soft hover:text-accent-ink',
+        'group relative grid size-12 place-items-center rounded-full transition-[color,background-color,transform] duration-[var(--dur)] ease-[var(--ease-out)]',
+        'active:scale-90',
+        active ? 'text-on-accent' : 'text-muted hover:bg-surface-2 hover:text-fg',
       )}
     >
-      <Icon aria-hidden className="size-5" strokeWidth={active ? 2 : 1.6} />
+      <Icon
+        aria-hidden
+        className={cx('size-5 transition-transform duration-[420ms] ease-[var(--ease-spring)]', active && 'scale-110')}
+        strokeWidth={active ? 2.1 : 1.7}
+      />
       {/* Tooltip */}
       <span
         aria-hidden
-        className="pointer-events-none absolute left-full ml-3 rounded-full bg-fg px-3 py-1.5 text-label font-medium whitespace-nowrap text-bg opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+        className="pointer-events-none absolute left-full ml-3 translate-x-[-4px] rounded-full bg-fg px-3 py-1.5 text-label font-medium whitespace-nowrap text-bg opacity-0 transition-[opacity,transform] duration-[var(--dur)] group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
       >
         {label}
       </span>
@@ -196,25 +209,34 @@ function NavButton({ href, label, icon: Icon, active, tone }: { href: string; la
 }
 
 function BottomNav({ route }: { route: Route }) {
+  const listRef = useRef<HTMLUListElement>(null);
+  const { style } = useSlidingIndicator(listRef, '[aria-current="page"]', route);
   return (
-    <nav aria-label="Primary" className="fixed inset-x-3 bottom-3 z-30 pb-[env(safe-area-inset-bottom)] md:hidden">
-      <ul className="tile grid h-[var(--bottom-nav-h)] grid-cols-7 rounded-full! bg-surface/90! px-1.5 shadow-[var(--shadow)] backdrop-blur-xl">
+    <nav aria-label="Primary" className="fixed inset-x-3 bottom-[max(env(safe-area-inset-bottom),12px)] z-30 md:hidden">
+      <ul
+        ref={listRef}
+        className="tile relative grid h-[var(--bottom-nav-h)] grid-cols-7 items-center rounded-[28px]! bg-surface/88! px-1 shadow-[var(--shadow)] backdrop-blur-xl"
+      >
+        <span aria-hidden className="pointer-events-none absolute top-0 left-0 rounded-[20px] bg-accent-soft" style={style} />
         {NAV.map((item) => {
           const active = item.id === route;
           const Icon = item.icon;
           return (
-            <li key={item.id} className="grid place-items-center">
+            <li key={item.id} className="relative flex justify-center">
               <a
                 href={`#/${item.id}`}
                 aria-current={active ? 'page' : undefined}
-                aria-label={item.label}
-                data-tone={ROUTE_TONE[item.id]}
                 className={cx(
-                  'grid size-11 place-items-center rounded-full transition-[background-color,color,transform] duration-[var(--dur)] ease-[var(--ease-spring)]',
-                  active ? 'animate-zh-pop scale-105 border border-accent-ink bg-accent text-on-accent shadow-[var(--accent-glow)]' : 'text-muted active:bg-accent-soft',
+                  'flex h-[52px] w-full max-w-[56px] flex-col items-center justify-center gap-0.5 rounded-[20px] transition-[color,transform] duration-[var(--dur)] active:scale-90',
+                  active ? 'text-accent-ink' : 'text-muted',
                 )}
               >
-                <Icon aria-hidden className="size-5" strokeWidth={active ? 2 : 1.6} />
+                <Icon
+                  aria-hidden
+                  className={cx('size-[22px] transition-transform duration-[420ms] ease-[var(--ease-spring)]', active && '-translate-y-px scale-110')}
+                  strokeWidth={active ? 2.2 : 1.7}
+                />
+                <span className={cx('text-[10px] leading-none font-medium tracking-tight', active ? 'font-semibold' : '')}>{item.short}</span>
               </a>
             </li>
           );

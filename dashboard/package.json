@@ -9,6 +9,7 @@
     "dev:lan": "vite --host 0.0.0.0 --port 5173",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --noEmit",
+    "test": "node --test src/lib/*.test.ts",
     "preview": "vite preview",
     "home": "vite build && vite preview"
   },

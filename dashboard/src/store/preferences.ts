@@ -16,11 +16,17 @@ export interface Preferences {
   density: 'comfortable' | 'compact';
   startPage: RouteId;
   hiddenModules: OverviewModule[];
+  /** This device is a wall display: opens on the Home display, uses the wall dock. */
+  wallMode: boolean;
   wall: {
     dimAtNight: boolean;
     dimFrom: string; // "HH:MM"
     dimUntil: string;
     showControls: boolean;
+    /** Calmer presentation: 'off', only after inactivity, or always. */
+    ambient: 'off' | 'idle' | 'always';
+    /** Return to the Home display after this many minutes untouched (0 = never). */
+    idleMinutes: number;
   };
   prototype: { simulateFailures: boolean };
 }
@@ -39,7 +45,8 @@ const defaults: Preferences = {
   density: 'comfortable',
   startPage: 'overview',
   hiddenModules: [],
-  wall: { dimAtNight: true, dimFrom: '22:00', dimUntil: '06:30', showControls: true },
+  wallMode: false,
+  wall: { dimAtNight: true, dimFrom: '22:00', dimUntil: '06:30', showControls: true, ambient: 'idle', idleMinutes: 0 },
   prototype: { simulateFailures: false },
 };
 
@@ -74,6 +81,7 @@ export const usePreferences = create<PreferencesStore>()(
       ...defaults,
       set: (key, value) => set({ [key]: value } as Partial<Preferences>),
       setWall: (patch) => set((s) => ({ wall: { ...s.wall, ...patch } })),
+
       toggleModule: (m) =>
         set((s) => ({
           hiddenModules: s.hiddenModules.includes(m) ? s.hiddenModules.filter((x) => x !== m) : [...s.hiddenModules, m],
@@ -85,6 +93,11 @@ export const usePreferences = create<PreferencesStore>()(
       storage: createJSONStorage(() => safeStorage),
       // Prototype failure simulation always starts off.
       partialize: ({ prototype: _p, set: _s, setWall: _w, toggleModule: _t, reset: _r, ...rest }) => rest,
+      // Older saved preferences lack the newer wall fields: fill them in.
+      merge: (persisted, current) => {
+        const p = (persisted ?? {}) as Partial<Preferences>;
+        return { ...current, ...p, wall: { ...current.wall, ...(p.wall ?? {}) } };
+      },
     },
   ),
 );

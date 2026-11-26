@@ -130,7 +130,8 @@ export function validateCommand(cmd: Command, s: HomeSnapshot, config: HomeConfi
         if (!inRange(heat, minF, maxF) || !inRange(cool, minF, maxF)) {
           throw new CommandError(`Setpoints must be between ${minF}° and ${maxF}°.`, 'validation');
         }
-        if (cool - heat < minGapF) {
+        // The heat/cool gap only matters when the system can do both (Auto).
+        if (zone.mode === 'auto' && cool - heat < minGapF) {
           throw new CommandError(`Cool setpoint must be at least ${minGapF}° above heat.`, 'validation');
         }
       }

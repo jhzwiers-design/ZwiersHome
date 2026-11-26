@@ -26,7 +26,7 @@ export function CameraView({ camera, compact }: { camera: Camera; compact?: bool
   };
 
   return (
-    <figure className="relative overflow-hidden rounded-md border border-rule bg-[var(--video-bg)]">
+    <figure className="relative overflow-hidden rounded-[18px] border border-rule bg-[var(--video-bg)]" aria-label={isSample ? `${camera.name}: camera placeholder, no video connected yet` : camera.name}>
       {/* Neutral placeholder frame: an abstract porch outline, not a fake photo. */}
       <svg viewBox="0 0 320 180" className="block aspect-video w-full" aria-hidden>
         <defs>
@@ -46,6 +46,7 @@ export function CameraView({ camera, compact }: { camera: Camera; compact?: bool
         <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--video-bg)]/70 px-3 py-1 text-label text-[var(--video-fg)] backdrop-blur">
           <span className="size-1.5 rounded-full bg-[var(--video-muted)]" aria-hidden />
           {camera.name}
+          {isSample && <span className="text-[var(--video-muted)]">· Placeholder — no video yet</span>}
         </span>
         <span className="num rounded-full bg-[var(--video-bg)]/70 px-3 py-1 text-label text-[var(--video-muted)] backdrop-blur">{formatTime(now, clock)}</span>
       </div>
@@ -53,7 +54,7 @@ export function CameraView({ camera, compact }: { camera: Camera; compact?: bool
       <div className="absolute inset-0 grid place-items-center p-4 text-center">
         {state === 'idle' && (
           <Button variant="solid" size={compact ? 'sm' : 'md'} icon={<Play className="size-4" strokeWidth={1.75} />} onClick={start}>
-            Start live view
+            {isSample ? 'Try live view' : 'Start live view'}
           </Button>
         )}
         {state === 'starting' && (

@@ -80,10 +80,13 @@ export interface Light {
   lastChanged: number;
 }
 
+export type SceneIcon = 'arrive' | 'leave' | 'evening' | 'movie' | 'night' | 'off';
+
 export interface Scene {
   id: string;
   name: string;
   description: string;
+  icon: SceneIcon;
   /** Target state per light id. Lights not listed are left unchanged. */
   targets: Record<string, { on: boolean; brightness?: number; colorTempK?: number }>;
 }

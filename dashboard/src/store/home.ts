@@ -19,6 +19,8 @@ export type ToastTone = 'success' | 'error' | 'info' | 'event';
 
 export interface Toast {
   id: number;
+  /** True while the toast is animating out. */
+  leaving?: boolean;
   tone: ToastTone;
   title: string;
   detail?: string;
@@ -84,7 +86,9 @@ export const useHome = create<HomeStore>((set, get) => ({
   },
 
   dismiss(id) {
-    set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) }));
+    // Animate out first, then remove.
+    set((s) => ({ toasts: s.toasts.map((t) => (t.id === id ? { ...t, leaving: true } : t)) }));
+    setTimeout(() => set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) })), 200);
   },
 }));
 

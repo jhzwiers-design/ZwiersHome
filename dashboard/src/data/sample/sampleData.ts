@@ -31,6 +31,7 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       { id: 'bedroom4', name: __PUBLIC__ ? 'Bedroom 4' : 'Tim’s Room' },
       { id: 'porch', name: 'Front Porch' },
       { id: 'outside', name: 'Outside' },
+      { id: 'eastwing', name: 'East Wing (upstairs)' },
       { id: 'garage', name: 'Garage' },
       { id: 'backyard', name: 'Backyard' },
     ],
@@ -106,7 +107,10 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       dev('d-bedroom4', __PUBLIC__ ? 'Bedroom 4 Light' : 'Tim’s Room Light', 'bedroom4', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(7 * MIN), 900),
       dev('d-front-porch', 'Front Porch Light', 'porch', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(2 * MIN), 900),
       // Climate
-      dev('d-thermostat', 'Infinity Touch Control', 'living', 'climate', 'carrier', 'Carrier', __PUBLIC__ ? 'Infinity Touch' : 'SYSTXCCITC01-B · fw 4.31', 'Cloud', 'online', ago(0.5 * MIN), 600),
+      // Upstairs thermostat (East Wing). Its brand, model and connection are not
+      // known yet, so nothing beyond the name and location is assumed.
+      dev('d-thermostat-east', 'Upstairs Thermostat', 'eastwing', 'climate', 'carrier', 'To confirm', 'Thermostat (model to confirm)', 'Unknown', 'online', ago(0.6 * MIN), 600, 'Brand and connection still to confirm'),
+      dev('d-thermostat', 'Main Thermostat', 'living', 'climate', 'carrier', 'Carrier', __PUBLIC__ ? 'Infinity Touch' : 'SYSTXCCITC01-B · fw 4.31', 'Cloud', 'online', ago(0.5 * MIN), 600),
       // Pool
       dev('d-omnilogic', 'OmniLogic Controller', 'backyard', 'pool', 'omnilogic', 'Hayward', 'OmniLogic (model to confirm)', 'Ethernet', 'online', ago(0.1 * MIN), 120),
       dev('d-filter-pump', 'Filter Pump', 'backyard', 'pool', 'omnilogic', 'Hayward', 'TriStar VS (sample)', 'Ethernet', 'online', ago(0.1 * MIN), 120),
@@ -141,58 +145,49 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       light('l-front-porch', 'd-front-porch', 'Front Porch Light', 'porch', true, null, null, {}, ago(80 * MIN)),
     ],
 
+    // Sample scenes. In the prototype they change sample lights only.
     scenes: [
+      {
+        id: 'scene-arrive',
+        name: 'Arriving Home',
+        icon: 'arrive',
+        description: 'Outside lights and the kitchen on',
+        targets: { 'l-man-door': { on: true }, 'l-front-porch': { on: true }, 'l-front-outdoor': { on: true }, 'l-kitchen': { on: true } },
+      },
+      {
+        id: 'scene-leave',
+        name: 'Leaving Home',
+        icon: 'leave',
+        description: 'Indoor lights off, outdoor lights on',
+        targets: { ...allLights(false), 'l-front-porch': { on: true }, 'l-man-door': { on: true }, 'l-front-outdoor': { on: true } },
+      },
       {
         id: 'scene-evening',
         name: 'Evening',
+        icon: 'evening',
         description: 'Living room, kitchen and the front of the house on',
-        targets: {
-          'l-living': { on: true },
-          'l-kitchen': { on: true },
-          'l-front-porch': { on: true },
-          'l-front-outdoor': { on: true },
-        },
-      },
-      {
-        id: 'scene-arrive',
-        name: 'Arriving home',
-        description: 'Outside lights and the kitchen on',
-        targets: {
-          'l-man-door': { on: true },
-          'l-front-porch': { on: true },
-          'l-front-outdoor': { on: true },
-          'l-kitchen': { on: true },
-        },
+        targets: { 'l-living': { on: true }, 'l-kitchen': { on: true }, 'l-front-porch': { on: true }, 'l-front-outdoor': { on: true } },
       },
       {
         id: 'scene-movie',
-        name: 'Movie night',
-        description: 'Media room light off, everything nearby off',
-        targets: {
-          'l-media': { on: false },
-          'l-living': { on: false },
-          'l-kitchen': { on: false },
-        },
+        name: 'Movie Night',
+        icon: 'movie',
+        description: 'Media room, living room and kitchen lights off',
+        targets: { 'l-media': { on: false }, 'l-living': { on: false }, 'l-kitchen': { on: false } },
       },
       {
         id: 'scene-goodnight',
         name: 'Goodnight',
+        icon: 'night',
         description: 'Everything off except the front porch',
-        targets: {
-          'l-living': { on: false },
-          'l-kitchen': { on: false },
-          'l-primary': { on: false },
-          'l-man-door': { on: false },
-          'l-front-outdoor': { on: false },
-          'l-screen-porch': { on: false },
-          'l-media': { on: false },
-          'l-bedroom1': { on: false },
-          'l-upstairs': { on: false },
-          'l-bedroom2': { on: false },
-          'l-bedroom3': { on: false },
-          'l-bedroom4': { on: false },
-          'l-front-porch': { on: true },
-        },
+        targets: { ...allLights(false), 'l-front-porch': { on: true } },
+      },
+      {
+        id: 'scene-all-off',
+        name: 'All Off',
+        icon: 'off',
+        description: 'Every light in the house off',
+        targets: allLights(false),
       },
     ],
 
@@ -200,7 +195,7 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       {
         id: 'hvac-main',
         deviceId: 'd-thermostat',
-        name: 'Infinity System',
+        name: 'Main Thermostat',
         outdoorTemp: 54,
         filterLifePct: 62,
         airflowCfm: 820,
@@ -223,6 +218,37 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
             hold: false,
             supportedModes: ['heat', 'cool', 'auto', 'fan_only', 'off'],
             lastUpdated: ago(0.5 * MIN),
+          },
+        ],
+      },
+      {
+        // Second thermostat area. Only room temperature and target-related
+        // readings are shown; equipment details are unknown, so they stay empty.
+        id: 'hvac-east',
+        deviceId: 'd-thermostat-east',
+        name: 'Upstairs Thermostat',
+        outdoorTemp: null,
+        filterLifePct: null,
+        airflowCfm: null,
+        blowerRpm: null,
+        staticPressureInWc: null,
+        stage: null,
+        energyTodayKwh: null,
+        zones: [
+          {
+            id: 'zone-east',
+            name: 'East Wing',
+            currentTemp: 70.5,
+            humidity: 39,
+            mode: 'heat',
+            action: 'idle',
+            heatSetpoint: 70,
+            coolSetpoint: 76,
+            fanMode: 'auto',
+            preset: 'home',
+            hold: false,
+            supportedModes: ['heat', 'cool', 'auto', 'fan_only', 'off'],
+            lastUpdated: ago(0.6 * MIN),
           },
         ],
       },
@@ -347,6 +373,12 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       ],
     },
   };
+}
+
+/** Every sample light set to one state (for whole-house scenes). */
+function allLights(on: boolean): Record<string, { on: boolean }> {
+  const ids = ['l-living','l-kitchen','l-primary','l-man-door','l-front-outdoor','l-screen-porch','l-media','l-bedroom1','l-upstairs','l-bedroom2','l-bedroom3','l-bedroom4','l-front-porch'];
+  return Object.fromEntries(ids.map((id) => [id, { on }]));
 }
 
 function dev(

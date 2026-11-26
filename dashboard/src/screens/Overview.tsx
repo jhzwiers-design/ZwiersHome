@@ -1,120 +1,140 @@
 /**
- * Overview — a tiled summary of the home.
- *  1. Greeting: date, time and a one-sentence status
- *  2. Four reading tiles (Indoor, Pool, Spa, Outside)
- *  3. Module tiles (security, climate, lighting, pool, alerts), order from
- *     home.config + user preferences, laid out on a 12-column grid.
+ * Overview — "What is happening in my home right now?"
+ *
+ *  1. Greeting, date/time, outside temperature and ONE status line.
+ *  2. Temperatures: Main Floor, East Wing, Pool, Spa (each opens its section).
+ *  3. Lighting (with one-tap scenes) and Security.
+ *  4. Alerts, only when something needs attention.
+ *
+ * Which blocks appear comes from home.config + Settings → Overview sections.
  */
-import { AlertTriangle, ArrowRight, Bath, CloudSun, Lightbulb, ShieldCheck, Thermometer, Waves, type LucideIcon } from 'lucide-react';
-import type { ReactNode } from 'react';
-import { CameraView, EventIcon } from '@/components/domain/SecurityParts';
-import { ThermostatControl } from '@/components/domain/ThermostatControl';
+import { ArrowRight, Bath, BellRing, CircleCheck, CloudSun, Lightbulb, ShieldCheck, Thermometer, TriangleAlert, Waves } from 'lucide-react';
+import { SceneButton } from '@/components/domain/Scenes';
+import { EventIcon } from '@/components/domain/SecurityParts';
 import { Metric, Section, TileLink } from '@/components/layout-parts';
 import { Button, cx } from '@/components/primitives';
 import { StatusDot } from '@/components/Status';
-import type { OverviewModule } from '@/config/schema';
 import type { HomeSnapshot } from '@/data/types';
 import { useNow } from '@/hooks';
-import { capitalize, formatDate, formatTemp, formatTime, relativeTime } from '@/lib/format';
-import { deriveAlerts, isStale, lightingSummary, lightsByArea, statusSentence } from '@/lib/selectors';
+import { formatDate, formatTemp, formatTime, relativeTime } from '@/lib/format';
+import { climateAreas, deriveAlerts, isStale, lightingSummary, lightsByArea, outdoorTemp, statusSentence } from '@/lib/selectors';
 import { useHome, usePendingKey } from '@/store/home';
 import { usePreferences } from '@/store/preferences';
-
-/** Column span of each module on the 12-column desktop grid. */
-const SPAN: Record<OverviewModule, string> = {
-  security: 'lg:col-span-7',
-  climate: 'lg:col-span-5',
-  lighting: 'lg:col-span-7',
-  pool: 'lg:col-span-5',
-  alerts: 'lg:col-span-12',
-};
 
 export function Overview({ s }: { s: HomeSnapshot }) {
   const config = useHome((st) => st.config)!;
   const hidden = usePreferences((p) => p.hiddenModules);
-  const modules = config.overview.modules.filter((m) => !hidden.includes(m));
+  const show = (m: (typeof config.overview.modules)[number]) => config.overview.modules.includes(m) && !hidden.includes(m);
+  const alerts = deriveAlerts(s);
 
   return (
     <div className="flex flex-col gap-4 md:gap-5">
       <Greeting s={s} />
-      <KeyMetrics s={s} />
+      <Temperatures s={s} showClimate={show('climate')} showPool={show('pool')} />
       <div className="grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-12">
-        {modules.map((m) => (
-          <div key={m} className={cx('flex min-w-0 [&>*]:flex-1', SPAN[m])}>
-            {MODULES[m](s)}
+        {show('lighting') && (
+          <div className="flex min-w-0 lg:col-span-7 [&>*]:flex-1">
+            <LightingSummary s={s} />
           </div>
-        ))}
+        )}
+        {show('security') && (
+          <div className="flex min-w-0 lg:col-span-5 [&>*]:flex-1">
+            <SecuritySummary s={s} />
+          </div>
+        )}
+        {show('alerts') && alerts.length > 0 && (
+          <div className="lg:col-span-12">
+            <AlertsSummary s={s} />
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-const MODULES: Record<OverviewModule, (s: HomeSnapshot) => ReactNode> = {
-  climate: (s) => <ClimateModule s={s} />,
-  pool: (s) => <PoolModule s={s} />,
-  lighting: (s) => <LightingModule s={s} />,
-  security: (s) => <SecurityModule s={s} />,
-  alerts: (s) => <AlertsModule s={s} />,
-};
-
 function Greeting({ s }: { s: HomeSnapshot }) {
   const clock = usePreferences((p) => p.clock);
+  const unit = usePreferences((p) => p.tempUnit);
   const now = useNow(10_000);
   const status = statusSentence(s);
+  const outside = outdoorTemp(s);
   const h = new Date(now).getHours();
   const greeting = h < 5 ? 'Good night' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  const ok = status.tone === 'ok';
   return (
     <header className="flex flex-wrap items-end justify-between gap-x-8 gap-y-3 pb-1">
       <div>
-        <p className="text-body text-muted md:text-lead">
-          {formatDate(now)} · <span className="num">{formatTime(now, clock)}</span>
+        <p className="flex flex-wrap items-center gap-x-2 text-body text-muted md:text-lead">
+          <span>{formatDate(now)}</span>
+          <span aria-hidden>·</span>
+          <span className="num">{formatTime(now, clock)}</span>
+          {outside !== null && (
+            <>
+              <span aria-hidden>·</span>
+              <span className="inline-flex items-center gap-1">
+                <CloudSun aria-hidden className="size-4" strokeWidth={1.7} />
+                <span className="num">{formatTemp(outside, unit)}</span> outside
+              </span>
+            </>
+          )}
         </p>
-        <h1 className="mt-1 text-[2rem] leading-tight font-medium tracking-[-0.03em] text-fg md:text-h1">{greeting}</h1>
+        <h1 className="mt-1 text-[2rem] leading-tight font-semibold tracking-[-0.03em] text-fg md:text-h1">{greeting}</h1>
       </div>
       <a
         href="#/devices"
         className={cx(
-          'inline-flex items-center gap-2.5 rounded-full border px-4 py-2.5 text-body transition-colors',
-          status.tone === 'ok' ? 'border-rule bg-surface text-fg-2 hover:border-rule-strong' : 'border-danger/40 bg-danger-soft text-fg hover:border-danger',
+          'inline-flex min-h-11 items-center gap-2 rounded-full border px-4 py-2 text-body transition-colors',
+          ok ? 'border-positive/30 bg-positive-soft text-fg' : 'border-danger/40 bg-danger-soft text-fg hover:border-danger',
         )}
       >
-        {status.tone === 'ok' ? <StatusDot status="online" /> : <AlertTriangle aria-hidden className="size-4 text-danger" strokeWidth={1.75} />}
+        {ok ? <CircleCheck aria-hidden className="size-4 text-positive" strokeWidth={2} /> : <TriangleAlert aria-hidden className="size-4 text-danger" strokeWidth={2} />}
         <span className="max-sm:hidden">{status.text}</span>
         <span className="sm:hidden">{status.short}</span>
-        {status.tone !== 'ok' && <ArrowRight aria-hidden className="size-3.5 text-muted" strokeWidth={1.75} />}
+        {!ok && <ArrowRight aria-hidden className="size-3.5 text-muted" strokeWidth={1.75} />}
       </a>
     </header>
   );
 }
 
-function KeyMetrics({ s }: { s: HomeSnapshot }) {
+function Temperatures({ s, showClimate, showPool }: { s: HomeSnapshot; showClimate: boolean; showPool: boolean }) {
   const unit = usePreferences((p) => p.tempUnit);
-  const now = useNow(15_000);
   const clock = usePreferences((p) => p.clock);
+  const now = useNow(15_000);
   const connected = s.connection.status === 'connected';
-  const sys = s.climate[0];
-  const zone = sys?.zones[0];
-  const pool = s.pool?.bodies.find((b) => b.id === 'pool');
-  const spa = s.pool?.bodies.find((b) => b.id === 'spa');
-  const staleZone = zone ? isStale(zone.lastUpdated, 600, now, connected) : true;
-  const stalePool = pool ? isStale(pool.lastUpdated, 120, now, connected) : true;
-  const asOf = (t?: number) => (t ? `As of ${formatTime(t, clock)}` : undefined);
+  const areas = showClimate ? climateAreas(s) : [];
+  const pool = showPool ? s.pool?.bodies.find((b) => b.id === 'pool') : undefined;
+  const spa = showPool ? s.pool?.bodies.find((b) => b.id === 'spa') : undefined;
+  const asOf = (t?: number) => (t ? `Last known · ${formatTime(t, clock)}` : undefined);
+  const count = areas.length + (pool ? 1 : 0) + (spa ? 1 : 0);
+  if (count === 0) return null;
 
   return (
-    <section aria-label="Key readings" className="grid grid-cols-2 gap-4 md:gap-5 lg:grid-cols-4">
-      {zone && (
-        <Metric
-          href="#/climate"
-          system="climate"
-          icon={Thermometer}
-          label="Indoor"
-          value={formatTemp(zone.currentTemp, unit)}
-          tone={zone.action === 'heating' ? 'accent' : zone.action === 'cooling' ? 'cool' : 'neutral'}
-          sub={climateLine(zone.action, zone.mode === 'cool' ? zone.coolSetpoint : zone.heatSetpoint, unit)}
-          stale={staleZone}
-          staleText={asOf(zone.lastUpdated)}
-        />
-      )}
+    <section aria-label="Temperatures" className={cx('grid grid-cols-2 gap-3 md:gap-5', count >= 4 ? 'lg:grid-cols-4' : count === 3 ? 'lg:grid-cols-3' : '')}>
+      {areas.map(({ zone, label }) => {
+        const target = zone.mode === 'cool' ? zone.coolSetpoint : zone.heatSetpoint;
+        const line =
+          zone.action === 'heating'
+            ? `Heating to ${formatTemp(target, unit)}`
+            : zone.action === 'cooling'
+              ? `Cooling to ${formatTemp(target, unit)}`
+              : zone.mode === 'off'
+                ? 'System off'
+                : `Holding ${formatTemp(target, unit)}`;
+        return (
+          <Metric
+            key={zone.id}
+            href="#/climate"
+            system="climate"
+            icon={Thermometer}
+            label={label}
+            value={formatTemp(zone.currentTemp, unit)}
+            tone={zone.action === 'heating' ? 'accent' : zone.action === 'cooling' ? 'cool' : 'neutral'}
+            sub={line}
+            stale={isStale(zone.lastUpdated, 600, now, connected)}
+            staleText={asOf(zone.lastUpdated)}
+          />
+        );
+      })}
       {pool && (
         <Metric
           href="#/pool"
@@ -122,9 +142,8 @@ function KeyMetrics({ s }: { s: HomeSnapshot }) {
           icon={Waves}
           label="Pool"
           value={formatTemp(pool.waterTemp, unit)}
-          tone={pool.heater.state === 'heating' ? 'accent' : 'neutral'}
-          sub={pool.heater.state === 'heating' ? `Heating to ${formatTemp(pool.heater.setpoint, unit)}` : pool.flow ? 'Filter running' : 'Circulation off'}
-          stale={stalePool}
+          sub={pool.heater.state === 'heating' ? `Heating to ${formatTemp(pool.heater.setpoint, unit)}` : pool.flow ? 'Filter running' : 'Not circulating'}
+          stale={isStale(pool.lastUpdated, 120, now, connected)}
           staleText={asOf(pool.lastUpdated)}
         />
       )}
@@ -135,203 +154,68 @@ function KeyMetrics({ s }: { s: HomeSnapshot }) {
           icon={Bath}
           label="Spa"
           value={formatTemp(spa.waterTemp, unit)}
-          tone={spa.heater.state === 'heating' ? 'accent' : 'neutral'}
-          sub={spa.heater.state === 'heating' ? `Heating to ${formatTemp(spa.heater.setpoint, unit)}` : spa.heater.enabled ? 'Heater on · waiting for flow' : 'Heater off'}
-          stale={stalePool}
+          sub={spa.heater.state === 'heating' ? `Heating to ${formatTemp(spa.heater.setpoint, unit)}` : spa.heater.enabled ? 'Heater on · needs spa mode' : 'Heater off'}
+          stale={isStale(spa.lastUpdated, 120, now, connected)}
           staleText={asOf(spa.lastUpdated)}
         />
       )}
-      <Metric
-        system="devices"
-        icon={CloudSun}
-        label="Outside"
-        value={formatTemp(sys?.outdoorTemp ?? s.pool?.airTemp ?? null, unit)}
-        sub="Thermostat sensor"
-        stale={!connected}
-        staleText={connected ? undefined : 'Last known'}
-      />
     </section>
   );
 }
 
-function climateLine(action: string, setpoint: number, unit: 'F' | 'C') {
-  if (action === 'heating') return `Heating to ${formatTemp(setpoint, unit)}`;
-  if (action === 'cooling') return `Cooling to ${formatTemp(setpoint, unit)}`;
-  if (action === 'fan') return 'Fan only';
-  if (action === 'off') return 'System off';
-  return `Holding ${formatTemp(setpoint, unit)}`;
-}
-
-function LightingModule({ s }: { s: HomeSnapshot }) {
+function LightingSummary({ s }: { s: HomeSnapshot }) {
   const config = useHome((st) => st.config)!;
   const run = useHome((st) => st.run);
   const allPending = usePendingKey('lights:all');
   const sum = lightingSummary(s);
   const groups = lightsByArea(s, config.areaOrder);
+  const litRooms = groups.filter((g) => g.lights.some((l) => l.on));
   const scenes = config.overview.quickScenes.length ? s.scenes.filter((x) => config.overview.quickScenes.includes(x.id)) : s.scenes;
   const disabled = s.connection.status !== 'connected';
-  const pct = sum.total ? Math.round((sum.on / sum.total) * 100) : 0;
 
   return (
-    <Section tone="lighting" band title="Lighting" subtitle={`${groups.length} rooms`} icon={Lightbulb} iconActive={sum.on > 0} meta={<TileLink href="#/lighting" label="Open lighting" />}>
-      <div className="flex items-end justify-between gap-4">
-        <p className="text-h1 font-light tracking-[-0.03em] text-fg">
-          <span className="num">{sum.on}</span> <span className="text-h2 text-muted">of {sum.total} on</span>
+    <Section tone="lighting" title="Lighting" subtitle={sum.on ? `${litRooms.length} ${litRooms.length === 1 ? 'room' : 'rooms'} lit` : 'All lights off'} icon={Lightbulb} iconActive={sum.on > 0} meta={<TileLink href="#/lighting" label="Open lighting" />}>
+      <div className="flex flex-wrap items-baseline justify-between gap-3">
+        <p className="text-h2 font-semibold tracking-[-0.02em] text-fg">
+          <span className="num">{sum.on}</span> <span className="font-normal text-muted">of {sum.total} lights on</span>
         </p>
         {sum.unreachable > 0 && (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-danger-soft px-3 py-1 text-label text-danger">
-            <AlertTriangle aria-hidden className="size-3.5" strokeWidth={1.75} /> {sum.unreachable} unreachable
+            <TriangleAlert aria-hidden className="size-3.5" strokeWidth={2} /> {sum.unreachable} not responding
           </span>
         )}
       </div>
-      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-surface-2" aria-hidden>
-        <div className="h-full rounded-full bg-accent shadow-[0_0_10px_var(--accent)] transition-all" style={{ width: `${pct}%` }} />
-      </div>
-      <ul className="rail mt-5 sm:grid sm:grid-cols-3 sm:gap-2">
-        {groups.map(({ area, lights }) => {
-          const on = lights.filter((l) => l.on).length;
-          return (
-            <li
-              key={area.id}
-              className={cx(
-                'flex min-w-[9.5rem] shrink-0 snap-start items-center justify-between gap-2 rounded-sm border px-3 py-2.5 sm:min-w-0',
-                on ? 'border-accent/30 bg-accent-soft' : 'border-rule bg-surface-2',
-              )}
-            >
-              <span className="truncate text-body text-fg-2">{area.name}</span>
-              <span className={cx('num text-label font-medium', on ? 'text-accent-ink' : 'text-muted')}>
-                {on}/{lights.length}
+      {litRooms.length > 0 && (
+        <ul className="mt-3 flex flex-wrap gap-1.5" aria-label="Rooms with lights on">
+          {litRooms.map(({ area, lights }) => (
+            <li key={area.id} className="inline-flex items-center gap-1.5 rounded-full bg-[var(--chip-bg)] px-3 py-1 text-label text-fg">
+              <span aria-hidden className="size-1.5 rounded-full bg-[var(--tone-fill)]" />
+              {area.name}
+              <span className="num text-muted">
+                {lights.filter((l) => l.on).length}/{lights.length}
               </span>
             </li>
-          );
-        })}
-      </ul>
-      <div className="rail mt-auto pt-5 sm:flex sm:flex-wrap sm:gap-2">
-        {scenes.map((sc) => (
-          <SceneButton key={sc.id} id={sc.id} name={sc.name} disabled={disabled} />
-        ))}
-        <Button
-          size="sm"
-          variant="quiet"
-          pending={!!allPending}
-          disabled={disabled || sum.on === 0}
-          onClick={() => run({ type: 'lights.allOff' }, { pending: 'Turning all off…', success: 'All lights off' })}
-        >
-          All off
-        </Button>
-      </div>
-    </Section>
-  );
-}
-
-export function SceneButton({ id, name, disabled }: { id: string; name: string; disabled?: boolean }) {
-  const run = useHome((st) => st.run);
-  const pending = usePendingKey(`scene:${id}`);
-  return (
-    <Button
-      size="sm"
-      variant="primary"
-      pending={!!pending}
-      disabled={disabled}
-      onClick={() => run({ type: 'scene.activate', sceneId: id }, { pending: 'Activating…', success: `${name} scene set` })}
-    >
-      {name}
-    </Button>
-  );
-}
-
-function ClimateModule({ s }: { s: HomeSnapshot }) {
-  const unit = usePreferences((p) => p.tempUnit);
-  const sys = s.climate[0];
-  const zone = sys?.zones[0];
-  if (!sys || !zone) return null;
-  const heating = zone.action === 'heating';
-  return (
-    <Section
-      tone="climate"
-      band
-      title="Climate"
-      subtitle={zone.name}
-      icon={Thermometer}
-      iconActive={heating}
-      meta={<TileLink href="#/climate" label="Open climate" />}
-    >
-      <div className="flex flex-1 flex-col justify-center">
-        <ThermostatControl zone={zone} variant="dial" size="md" />
-      </div>
-      <div className="mt-4 grid grid-cols-3 gap-2">
-        {[
-          { k: 'Mode', v: zone.mode === 'fan_only' ? 'Fan' : capitalize(zone.mode) },
-          { k: 'Humidity', v: `${zone.humidity ?? '—'}%` },
-          { k: 'Outside', v: formatTemp(sys.outdoorTemp, unit) },
-        ].map((it) => (
-          <div key={it.k} className="rounded-sm bg-surface-2 px-3 py-2.5 text-center">
-            <p className="text-micro text-muted uppercase tracking-[0.08em]">{it.k}</p>
-            <p className="num mt-0.5 text-body font-medium text-fg">{it.v}</p>
-          </div>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
-function PoolModule({ s }: { s: HomeSnapshot }) {
-  const unit = usePreferences((p) => p.tempUnit);
-  if (!s.pool) return null;
-  const running = s.pool.equipment.filter((e) => e.on);
-  const anyHeating = s.pool.bodies.some((b) => b.heater.state === 'heating');
-  const ICONS: Record<string, LucideIcon> = { pool: Waves, spa: Bath };
-  return (
-    <Section
-      tone="pool"
-      band
-      title="Pool & Spa"
-      subtitle={s.pool.spaMode ? 'Spa mode' : 'Pool mode'}
-      icon={Waves}
-      iconActive={anyHeating}
-      meta={<TileLink href="#/pool" label="Open pool and spa" />}
-    >
-      <div className="grid grid-cols-2 gap-3">
-        {s.pool.bodies.map((b) => {
-          const Icon = ICONS[b.id] ?? Waves;
-          const heating = b.heater.state === 'heating';
-          return (
-            <div key={b.id} data-tone={b.id} className={cx('rounded-md border p-4 transition-colors duration-[var(--dur-slow)]', heating ? 'border-accent-ink/40 bg-accent-soft' : 'border-rule bg-surface-2')}>
-              <div className="flex items-center justify-between">
-                <span className="text-body font-medium text-fg">{b.name}</span>
-                <Icon aria-hidden className="size-4 text-accent-ink" strokeWidth={1.75} />
-              </div>
-              <p className={cx('num mt-3 text-[2.25rem] leading-none font-light tracking-[-0.03em]', heating ? 'text-accent-ink' : 'text-fg')}>
-                {formatTemp(b.waterTemp, unit)}
-              </p>
-              <p className="mt-2 text-label text-muted">
-                {heating ? `Heating to ${formatTemp(b.heater.setpoint, unit)}` : b.heater.enabled ? `Heater on · ${formatTemp(b.heater.setpoint, unit)}` : 'Heater off'}
-              </p>
-            </div>
-          );
-        })}
-      </div>
-      <div className="mt-auto pt-4">
-        <p className="caps mb-2 text-muted">Running</p>
-        <div className="flex flex-wrap gap-2">
-          {running.length ? (
-            running.map((e) => (
-              <span key={e.id} className="inline-flex items-center gap-1.5 rounded-full border border-rule bg-surface-2 px-3 py-1.5 text-label text-fg-2">
-                <StatusDot status="on" />
-                {e.name}
-                {e.speedPct ? ` ${e.speedPct}%` : ''}
-              </span>
-            ))
-          ) : (
-            <span className="text-body text-muted">All equipment off</span>
-          )}
+          ))}
+        </ul>
+      )}
+      <div className="mt-auto pt-5">
+        <p className="mb-2 text-label text-muted">Scenes</p>
+        <div className="rail sm:flex sm:flex-wrap sm:gap-2">
+          {scenes.map((sc) => (
+            <SceneButton key={sc.id} scene={sc} disabled={disabled} />
+          ))}
         </div>
+        {scenes.every((sc) => sc.id !== 'scene-all-off') && (
+          <Button size="sm" variant="quiet" className="mt-2" pending={!!allPending} disabled={disabled || sum.on === 0} onClick={() => run({ type: 'lights.allOff' }, { pending: 'Turning all off…', success: 'All lights off' })}>
+            All off
+          </Button>
+        )}
       </div>
     </Section>
   );
 }
 
-function SecurityModule({ s }: { s: HomeSnapshot }) {
+function SecuritySummary({ s }: { s: HomeSnapshot }) {
   const clock = usePreferences((p) => p.clock);
   const now = useNow(30_000);
   const cam = s.security.cameras[0];
@@ -341,66 +225,56 @@ function SecurityModule({ s }: { s: HomeSnapshot }) {
   const lastDing = events.find((e) => e.kind === 'ding');
   const lastMotion = events.find((e) => e.kind === 'motion');
   const online = dev?.availability === 'online';
+  const today = events.filter((e) => now - e.at < 86_400_000).length;
 
   return (
-    <Section
-      tone="security"
-      band
-      title="Security"
-      subtitle={`${cam.name} · ${online ? 'Online' : capitalize(dev?.availability ?? 'unavailable')}`}
-      icon={ShieldCheck}
-      meta={<TileLink href="#/security" label="Open security" />}
-    >
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-        <CameraView camera={cam} compact />
-        <div className="flex flex-col gap-2">
-          {[
-            { k: 'Doorbell', e: lastDing },
-            { k: 'Motion', e: lastMotion },
-          ].map(({ k, e }) => (
-            <div key={k} className="flex items-center gap-3 rounded-sm bg-surface-2 px-3 py-3">
-              {e ? <EventIcon kind={e.kind} /> : null}
-              <span className="flex-1 text-body text-fg-2">{k}</span>
-              <span className="num text-body font-medium text-fg">{e ? relativeTime(e.at, now, clock) : 'None'}</span>
-            </div>
-          ))}
-          <p className="mt-auto px-1 text-label text-muted">{events.filter((e) => now - e.at < 86_400_000).length} events in the last 24 h</p>
-        </div>
+    <Section tone="security" title="Security" subtitle={`${cam.name} ${online ? 'online' : 'not responding'}`} icon={ShieldCheck} meta={<TileLink href="#/security" label="Open security" />}>
+      <div className="flex flex-col gap-2">
+        {[
+          { k: 'Doorbell', e: lastDing, icon: BellRing },
+          { k: 'Motion', e: lastMotion, icon: undefined },
+        ].map(({ k, e }) => (
+          <div key={k} className="flex min-h-12 items-center gap-3 rounded-[14px] bg-surface-2 px-3.5">
+            {e ? <EventIcon kind={e.kind} /> : <StatusDot status="off" />}
+            <span className="flex-1 text-body text-fg-2">{k}</span>
+            <span className="num text-body font-medium text-fg">{e ? relativeTime(e.at, now, clock) : 'None today'}</span>
+          </div>
+        ))}
       </div>
+      <p className="mt-auto flex items-center justify-between gap-2 pt-4 text-label text-muted">
+        <span>{today} events in the last 24 hours</span>
+        <span className="inline-flex items-center gap-1.5">
+          <StatusDot status={online ? 'online' : 'offline'} />
+          {online ? 'Doorbell online' : 'Doorbell offline'}
+        </span>
+      </p>
     </Section>
   );
 }
 
-function AlertsModule({ s }: { s: HomeSnapshot }) {
+function AlertsSummary({ s }: { s: HomeSnapshot }) {
   const clock = usePreferences((p) => p.clock);
   const now = useNow(30_000);
   const alerts = deriveAlerts(s);
   return (
-    <Section title="Alerts" icon={AlertTriangle} meta={<span className="num rounded-full bg-surface-2 px-3 py-1">{alerts.length || 'None'}</span>}>
-      {alerts.length === 0 ? (
-        <p className="text-body text-muted">Nothing needs attention.</p>
-      ) : (
-        <ul className="grid grid-cols-1 gap-2 md:grid-cols-2">
-          {alerts.map((a) => (
-            <li key={a.id}>
-              <a
-                href={a.route}
-                className="group flex items-center gap-3 rounded-sm border border-rule bg-surface-2 px-4 py-3 transition-colors hover:border-rule-strong"
-              >
-                <AlertTriangle aria-hidden className={cx('size-4 shrink-0', a.severity === 'error' ? 'text-danger' : 'text-muted')} strokeWidth={1.75} />
-                <span className="min-w-0 flex-1">
-                  <span className={cx('block text-body font-medium', a.severity === 'error' ? 'text-fg' : 'text-fg-2')}>{a.title}</span>
-                  <span className="block truncate text-label text-muted">
-                    {a.detail}
-                    {a.since && ` · since ${relativeTime(a.since, now, clock)}`}
-                  </span>
+    <Section title="Needs attention" icon={TriangleAlert} meta={<span className="num rounded-full bg-danger-soft px-3 py-1 text-danger">{alerts.length}</span>}>
+      <ul className="grid grid-cols-1 gap-2 md:grid-cols-2">
+        {alerts.map((a) => (
+          <li key={a.id}>
+            <a href={a.route} className="group flex min-h-14 items-center gap-3 rounded-[14px] border border-rule bg-surface-2 px-4 py-3 transition-colors hover:border-rule-strong">
+              <TriangleAlert aria-hidden className={cx('size-4 shrink-0', a.severity === 'error' ? 'text-danger' : 'text-muted')} strokeWidth={2} />
+              <span className="min-w-0 flex-1">
+                <span className="block text-body font-medium text-fg">{a.title}</span>
+                <span className="block truncate text-label text-muted">
+                  {a.detail}
+                  {a.since && ` · since ${relativeTime(a.since, now, clock)}`}
                 </span>
-                <ArrowRight aria-hidden className="size-3.5 text-muted group-hover:text-fg" strokeWidth={1.5} />
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
+              </span>
+              <ArrowRight aria-hidden className="size-4 text-muted transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
+            </a>
+          </li>
+        ))}
+      </ul>
     </Section>
   );
 }

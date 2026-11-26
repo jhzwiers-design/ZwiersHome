@@ -68,6 +68,8 @@ export function PoolSpa({ s }: { s: HomeSnapshot }) {
         }
       />
 
+      <PoolGlance s={s} />
+
       <SpaModeBar s={s} />
 
       <div className="grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-2">
@@ -466,5 +468,42 @@ function SharedSection({ s }: { s: HomeSnapshot }) {
         Via the community local integration (haomnilogic-local). Not supported: dual-speed pumps, ORP chlorinator control, schedule editing. Controller model and firmware still to be confirmed.
       </Note>
     </Section>
+  );
+}
+
+/** Plain-language summary: what each part of the pool system is doing right now. */
+function PoolGlance({ s }: { s: HomeSnapshot }) {
+  const unit = usePreferences((p) => p.tempUnit);
+  const pool = s.pool!;
+  const p = pool.bodies.find((b) => b.id === 'pool');
+  const sp = pool.bodies.find((b) => b.id === 'spa');
+  const pump = pool.equipment.find((e) => e.type === 'pump');
+  const chlor = pool.equipment.find((e) => e.type === 'chlorinator');
+  const heaterText = (b?: Body) =>
+    !b ? '—' : b.heater.state === 'heating' ? `Heating to ${formatTemp(b.heater.setpoint, unit)}` : b.heater.enabled ? `On, holding ${formatTemp(b.heater.setpoint, unit)}` : 'Off';
+  const items: { k: string; v: string; on?: boolean }[] = [
+    { k: 'Pool water', v: p ? formatTemp(p.waterTemp, unit) : '—' },
+    { k: 'Spa water', v: sp ? formatTemp(sp.waterTemp, unit) : '—' },
+    { k: 'Pool heater', v: heaterText(p), on: p?.heater.state === 'heating' },
+    { k: 'Spa heater', v: heaterText(sp), on: sp?.heater.state === 'heating' },
+    { k: 'Pump & filter', v: pump ? (pump.on ? `Running${pump.speedPct !== undefined ? ` at ${pump.speedPct}%` : ''}` : 'Off') : '—', on: pump?.on },
+    { k: 'Chlorinator', v: chlor ? (chlor.on ? `On${chlor.outputPct !== undefined ? ` · ${chlor.outputPct}% output` : ''}` : 'Off') : '—', on: chlor?.on },
+    { k: 'Water goes to', v: pool.spaMode ? 'Spa (pool paused)' : 'Pool (normal)' },
+  ];
+  return (
+    <section aria-label="At a glance" className="tile p-4 sm:p-5">
+      <h2 className="caps mb-3 text-muted">At a glance</h2>
+      <dl className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-4 lg:grid-cols-7">
+        {items.map((it) => (
+          <div key={it.k} className="min-w-0">
+            <dt className="text-label text-muted">{it.k}</dt>
+            <dd className="mt-0.5 flex items-center gap-1.5 text-body font-medium text-fg">
+              {it.on !== undefined && <StatusDot status={it.on ? 'online' : 'off'} />}
+              <span className="truncate">{it.v}</span>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 }

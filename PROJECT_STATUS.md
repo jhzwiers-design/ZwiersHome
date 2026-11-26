@@ -3,7 +3,8 @@
 _Running log of completed work, open tasks, and known limitations. Updated each working session._
 
 ## Current phase
-**Milestone 1 (design system + interactive prototype): redesign round 1 done (tiles, red accents, home map), awaiting your review.**
+**Milestone 1 (design system + interactive prototype): master redesign done (Apple-style identity, motion system, two thermostats with a draggable dial, iPad wall display). Awaiting your review and a test on the real iPad.**
+- Wall display set-up: [docs/04-wall-display.md](docs/04-wall-display.md)
 - Run the prototype: see [dashboard/README.md](dashboard/README.md) (`cd dashboard && npm run dev`, then open http://localhost:5173).
 - Discovery report: [docs/01-discovery-report.md](docs/01-discovery-report.md) (revision 2.1)
 
@@ -16,6 +17,40 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 | 2026-11-25 | Stack: React 19, TypeScript 5.9, Vite 8, Tailwind CSS 4 (token-driven), Radix primitives, Zustand, Zod, Lucide icons, Inter (bundled locally, no external font service). |
 
 ## Completed
+- 2026-11-25: **Master redesign and experience overhaul.**
+  - **Visual identity:**
+    - The Apple system font
+    - 16–22 px radii
+    - Crimson `#A71930` (light) and electric red `#FF303B` (dark) used only for interactive controls
+    - Amber for warnings, green for success, grey for inactive, blue for information
+    - Category colours kept for identity only
+  - **Motion:**
+    - A shared sliding selection pill in the side, bottom and wall navigation
+    - 240 ms page transitions
+    - Dialogs that scale in and out, toasts that slide out
+    - Scene and thermostat success ticks
+    - Pressed states throughout
+    - All of it off under reduce motion
+  - **Climate:**
+    - Two thermostat areas: Main Floor and East Wing (upstairs). The East Wing thermostat's brand and connection are still to confirm.
+    - A new draggable dial: touch, mouse, trackpad and keyboard; 1 °F steps; no jump on grab; safe ends.
+    - The dial goes Adjusting → Sending → Set ✓ / failed, and keeps the last-known value when offline. Unit tests cover the dial maths.
+  - **Overview:** a greeting with time and outside temperature; tiles for both thermostats, pool and spa; a lighting summary with scenes; security; and "Needs attention".
+  - **Scenes:** Arriving Home, Leaving Home, Evening, Movie Night, Goodnight, All Off, each with an icon, a description and a success tick.
+  - **Pool & Spa:** a plain-language "At a glance" row covering water temperatures, both heaters, pump & filter, chlorinator, and where the water goes.
+  - **Security:** the camera is labelled "Placeholder — no video yet".
+  - **iPad wall display:**
+    - A no-scroll Home display, landscape and portrait, and a wall-mode dock
+    - Calm look and night dimming that never dim alerts
+    - Optional return-to-Home after inactivity, off by default and never sends commands
+    - Settings controls for all of these
+  - **Usability:** 44 px touch targets, and the Heat/Cool gap rule applies only in Auto mode (it was wrongly blocking heat setpoints).
+  - **Tested:**
+    - Type-check, unit tests (6/6) and production build
+    - Browser checks at iPad 1180×820, 1180×740 and 820×1180 (no scroll measured), phone 375×812 (no sideways scroll) and desktop
+    - Offline simulation, light and dark themes, wall mode on and off
+    - No console errors on any screen
+    - **Not yet tested on a physical iPad or iPhone.**
 - 2026-11-25: Environment check, passive network scan, integration research, discovery report (rev 1).
 - 2026-11-25: Rev 2: migration assessment, $199 Green price, backend deferred, Carrier/Hayward detail.
 - 2026-11-25: Rev 2.1:
@@ -94,9 +129,11 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 **M2: data-source layer + Home Assistant connection (code only).** Build `HomeAssistantSource` behind the existing interface: login flow, token storage per §3.1a, registry discovery by areas/labels, live state, command mapping, reconnects. It can be developed and unit-tested without a running Home Assistant. A real connection waits for M3, the optional Home Assistant trial on this Mac, **which needs your approval to install**.
 
 ## Waiting on you
-- [ ] **Design review of round 1** (tiles, new palette, home map).
+- [ ] **Design review of the master redesign** (red-for-controls identity, motion, two-thermostat Climate, Home display).
+- [ ] **East Wing (upstairs) thermostat:** brand/model and how it connects (another Carrier? separate system or a zone of the main one?).
+- [ ] **Wall iPad:** try the Home display on the real 11" iPad Air, then decide on *Return to Home display* (off by default).
 - [x] Monogram: **Gable**
-- [ ] **Old iPad: model and iPadOS version** (decides whether it runs the dashboard as-is).
+- [x] Wall iPad: **iPad Air 11", iPadOS 26.6**
 - [ ] **Floor plan scan.** It replaces the approximate room shapes on the home map.
 - [ ] **Room names.** Some SmartThings labels were cut off in the screenshots (e.g. "Alli… Room", "…n's room"); they're placeholders "Bedroom 2–4" for now.
 - [x] SmartThings device list received
@@ -116,8 +153,10 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 - The camera shows a labelled placeholder; no video until the Ring integration is connected.
 - Pool **schedules are read-only** and the light-show list is fixed sample content.
 - The production Content-Security-Policy is applied only to builds (Vite's dev server needs inline scripts). The Home Assistant address will be added to it in M2.
-- A single climate zone is assumed in the layout. Multi-zone Infinity systems will need a zone selector if yours has zones.
-- Not yet tested on a physical tablet or phone. Use `npm run dev:lan` to try it on your own devices.
+- Climate shows two thermostats (Main Floor, East Wing). The East Wing thermostat is a placeholder until its brand and connection are confirmed. Extra zones appear automatically if a system reports them.
+- Not yet tested on a physical iPad or phone; tested only by browser emulation of their screen sizes. Use `npm run dev:lan` (or `npm run home`) to try it on your own devices.
+- The Home display's no-scroll layout was measured at 1180×820, 1180×740 and 820×1180. Very small windows (under ~600 px tall) may clip the smallest text.
+- The *Return to Home display* timer has been reviewed in code but not timed in a browser.
 - The home map layout is approximate. Unlabelled spaces (baths, closets, halls) aren't clickable.
 - On phones the home map scrolls sideways to keep room names readable.
 - Dark-mode electric-red buttons with white text meet contrast guidelines for large/bold text only; if needed, the red can be deepened slightly.
