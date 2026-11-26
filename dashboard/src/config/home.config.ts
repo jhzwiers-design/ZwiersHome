@@ -9,7 +9,7 @@ import { HomeConfigSchema, type HomeConfig } from './schema';
 
 const raw = {
   home: { name: 'Zwiers Home', shortName: 'Zwiers' },
-  areaOrder: ['entry', 'living', 'kitchen', 'media', 'patio', 'primary', 'kids', 'bedroom2', 'bedroom3', 'bedroom4', 'garage', 'backyard'],
+  areaOrder: ['living', 'kitchen', 'primary', 'media', 'kids', 'lauren', 'allie', 'tim', 'porch', 'outside', 'garage', 'backyard'],
   overview: {
     modules: ['security', 'climate', 'lighting', 'pool', 'alerts'],
     quickScenes: [],

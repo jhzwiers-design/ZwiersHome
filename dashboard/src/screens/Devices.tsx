@@ -25,6 +25,8 @@ const STATUS_HELP: { status: Exclude<DisplayStatus, 'on'>; text: string }[] = [
 
 const CATEGORY_LABEL: Record<Device['category'], string> = {
   light: 'Light',
+  fan: 'Fan',
+  media: 'TV',
   climate: 'Climate',
   pool: 'Pool',
   security: 'Security',

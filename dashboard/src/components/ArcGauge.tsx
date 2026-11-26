@@ -55,7 +55,8 @@ export function ArcGauge({
   const tick = marker !== undefined ? START + SWEEP * frac(marker) : null;
 
   return (
-    <div className={cx('relative mx-auto aspect-square w-full max-w-[240px]', className)}>
+    // @container: the centre text sizes itself relative to the dial (cqw units).
+    <div className={cx('@container relative mx-auto aspect-square w-full max-w-[240px] min-w-[176px]', className)}>
       <svg viewBox="0 0 200 200" className="absolute inset-0 size-full" aria-hidden>
         <defs>
           <linearGradient id={gid} x1="0" y1="1" x2="1" y2="0">
@@ -95,7 +96,7 @@ export function ArcGauge({
           <circle cx={polar(START).x} cy={polar(START).y} r="9" fill="var(--surface)" stroke={color} strokeWidth="4" />
         </g>
       </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">{children}</div>
+      <div className="absolute inset-[18%] flex flex-col items-center justify-center text-center">{children}</div>
     </div>
   );
 }

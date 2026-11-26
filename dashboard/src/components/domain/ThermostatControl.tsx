@@ -91,15 +91,15 @@ export function ThermostatControl({
     const btn =
       'grid size-11 place-items-center rounded-full border border-rule bg-surface-2 text-fg-2 transition-colors hover:border-accent hover:text-accent-ink disabled:opacity-30';
     return (
-      <div role="group" aria-label={`${isHeat ? 'Heat' : 'Cool'} setpoint`}>
+      <div role="group" aria-label={`${isHeat ? 'Heat' : 'Cool'} setpoint`} className="w-full">
         <ArcGauge value={value} min={minF} max={maxF} tone={isHeat ? 'accent' : 'cool'} dim={!connected} className={size === 'md' ? 'max-w-[200px]' : undefined}>
-          <span className="caps text-muted">{isHeat ? 'Heat to' : 'Cool to'}</span>
-          <output aria-live="polite" className={size === 'md' ? 'num text-[2.75rem] leading-none font-light' : 'num text-[3.5rem] leading-none font-light'}>
+          <span className="text-[clamp(0.625rem,5.5cqw,0.75rem)] font-medium tracking-[0.09em] text-muted uppercase">{isHeat ? 'Heat to' : 'Cool to'}</span>
+          <output aria-live="polite" className="num my-0.5 text-[clamp(2rem,26cqw,3.75rem)] leading-none font-light tracking-[-0.03em]">
             <span key={value} className="inline-block animate-zh-tick">{formatTemp(value, unit)}</span>
           </output>
-          <span className="mt-1 text-label text-muted">Now {formatTemp(zone.currentTemp, unit, { decimals: true })}</span>
+          <span className="text-[clamp(0.625rem,5.5cqw,0.75rem)] text-muted">Now {formatTemp(zone.currentTemp, unit, { decimals: true })}</span>
         </ArcGauge>
-        <div className="-mt-4 flex items-center justify-center gap-6">
+        <div className="-mt-2 flex items-center justify-center gap-6">
           <button type="button" className={btn} onClick={() => set(-1)} disabled={disabled || !canDec} aria-label={`Lower ${isHeat ? 'heat' : 'cool'} setpoint`}>
             <Minus className="size-4" strokeWidth={1.75} />
           </button>

@@ -33,9 +33,9 @@ export interface Integration {
   lastUpdated: number | null;
 }
 
-export type DeviceCategory = 'light' | 'climate' | 'pool' | 'security' | 'hub' | 'cleaner';
+export type DeviceCategory = 'light' | 'fan' | 'media' | 'climate' | 'pool' | 'security' | 'hub' | 'cleaner';
 
-export type Protocol = 'Zigbee' | 'Z-Wave' | 'Wi-Fi' | 'Ethernet' | 'Thread' | 'Cloud';
+export type Protocol = 'Zigbee' | 'Z-Wave' | 'Wi-Fi' | 'Ethernet' | 'Thread' | 'Cloud' | 'Unknown';
 
 export interface Area {
   id: string;

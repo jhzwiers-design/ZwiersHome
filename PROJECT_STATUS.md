@@ -81,16 +81,22 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 - 2026-11-25: **Go-live plan with one-time purchases only**: [docs/02-go-live-plan.md](docs/02-go-live-plan.md) (Home Assistant Green + adapters instead of the SmartThings plan; Tailscale for remote access; old iPad as a wall hub).
 - 2026-11-25: Code pushed to the private GitHub repo `jhzwiers-design/ZwiersHome` (by you).
 
+- 2026-11-25: **Gable chosen as the monogram.** It's now the dashboard logo, browser icon and home-screen app icon (Add to Home Screen opens it full-screen).
+- 2026-11-25: **Sample home rebuilt from your real SmartThings device list**: 13 lights, 2 fans, 2 hubs and a TV across your SmartThings rooms (Living Room, Kitchen, Master Bedroom, Media Room, Kids Room, Lauren’s, Allie’s and Tim’s rooms, Front Porch, Outside). On/off states match the screenshots; the Media Room TV and second hub show as offline, as they do in SmartThings.
+- 2026-11-25: Fixed the thermostat and pool dials on phones (the temperature now scales with the circle).
+
 ## Next milestone
 **M2: data-source layer + Home Assistant connection (code only).** Build `HomeAssistantSource` behind the existing interface: login flow, token storage per §3.1a, registry discovery by areas/labels, live state, command mapping, reconnects. It can be developed and unit-tested without a running Home Assistant. A real connection waits for M3, the optional Home Assistant trial on this Mac, **which needs your approval to install**.
 
 ## Waiting on you
 - [ ] **Design review of round 1** (tiles, new palette, home map).
-- [ ] **Pick a monogram direction** from the brand canvas.
+- [x] Monogram: **Gable**
 - [ ] **Old iPad: model and iPadOS version** (decides whether it runs the dashboard as-is).
 - [ ] **Floor plan scan.** It replaces the approximate room shapes on the home map.
 - [ ] **Room names.** Some SmartThings labels were cut off in the screenshots (e.g. "Alli… Room", "…n's room"); they're placeholders "Bedroom 2–4" for now.
-- [ ] SmartThings device list (decides the Zigbee/Z-Wave adapter vs. none)
+- [x] SmartThings device list received
+- [ ] **Light protocols**: in the SmartThings app, open a light → ⋮ → Information and note "Zigbee" or "Z-Wave" (and brand/model if shown). This decides which adapter(s) to buy.
+- [ ] Confirm map rooms: which of the two cut-off bedrooms is Lauren’s and which is Tim’s
 - [ ] Carrier app name
 - [ ] OmniLogic controller model, firmware/MSP version, connection type, equipment list (any dual-speed pumps?)
 - [ ] Ring Protect plan

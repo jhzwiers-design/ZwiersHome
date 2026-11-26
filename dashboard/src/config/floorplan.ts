@@ -3,6 +3,9 @@
  *
  * APPROXIMATE: traced by eye from screenshots of the SmartThings 3D home map
  * on 25 Nov 2026. Replace with measurements from the scanned floor plan.
+ * Room links follow the SmartThings labels (Outside, Front Porch, Kids Room,
+ * Master Bedroom, Allie’s Room). Lauren’s and Tim’s rooms are a best guess
+ * from cut-off labels; swap their areaId if they're the other way round.
  *
  * Units are arbitrary "plan units" (roughly 1 unit ≈ 2 in). Origin top-left.
  * Each interactive room links to a Home Assistant Area by `areaId`, so lights
@@ -47,15 +50,15 @@ export const floorPlan: FloorPlan = {
   ],
   rooms: [
     { areaId: 'media', points: rect(8, 210, 132, 165) },
-    { areaId: 'patio', points: rect(140, 210, 283, 118) },
+    { areaId: 'outside', points: rect(140, 210, 283, 118) },
     { areaId: 'living', points: rect(140, 328, 160, 177) },
     { areaId: 'kitchen', points: rect(300, 328, 123, 234) },
-    { areaId: 'bedroom2', points: rect(14, 378, 93, 84) },
+    { areaId: 'tim', points: rect(14, 378, 93, 84) },
     { areaId: 'kids', points: rect(100, 505, 100, 92), label: [150, 548] },
-    { areaId: 'entry', points: rect(200, 505, 52, 60) },
+    { areaId: 'porch', points: rect(200, 505, 52, 60) },
     { areaId: 'primary', points: rect(425, 168, 123, 100) },
-    { areaId: 'bedroom3', points: rect(555, 15, 87, 110) },
-    { areaId: 'bedroom4', points: rect(582, 185, 100, 83) },
+    { areaId: 'lauren', points: rect(555, 15, 87, 110) },
+    { areaId: 'allie', points: rect(582, 185, 100, 83) },
     {
       areaId: 'garage',
       points: [[520, 315], [706, 315], [706, 595], [520, 595]],

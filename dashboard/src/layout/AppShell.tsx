@@ -266,13 +266,19 @@ export function connLabel(status?: string) {
   }
 }
 
-/** Brand mark: a gable in a filled accent circle. */
+/** Brand mark: the "Gable" ZH monogram (a house whose crossbar is a Z) in a Redwood circle. */
 export function Mark({ className }: { className?: string }) {
   return (
-    <span className={cx('grid size-9 shrink-0 place-items-center rounded-full bg-accent text-on-accent shadow-[var(--accent-glow)]', className)}>
-      <svg viewBox="0 0 24 24" aria-hidden className="size-5">
-        <path d="M5 19v-8.5l7-5 7 5V19" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-        <path d="M10 19v-5h4v5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+    <span data-tone="brand" className={cx('grid size-9 shrink-0 place-items-center rounded-full bg-accent text-on-accent shadow-[var(--accent-glow)]', className)}>
+      <svg viewBox="0 0 100 100" aria-hidden className="size-[62%]">
+        <path
+          d="M12 44 L50 10 L88 44 M24 34 L24 90 M76 34 L76 90 M24 52 L58 52 L42 74 L76 74"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="10"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     </span>
   );

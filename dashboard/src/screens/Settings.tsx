@@ -218,7 +218,7 @@ export function Settings({ s }: { s: HomeSnapshot }) {
               Reset
             </Button>
           </SettingRow>
-          <Note className="mt-2">The Garage Workbench light is deliberately unreliable (every other command fails) to demonstrate a real-world weak signal.</Note>
+          <Note className="mt-2">The Screen Porch light is deliberately unreliable (every other command fails) to demonstrate a real-world weak signal.</Note>
         </Section>
       )}
 

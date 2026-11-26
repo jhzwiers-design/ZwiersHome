@@ -218,11 +218,11 @@ function BodyColumn({ body, s }: { body: Body; s: HomeSnapshot }) {
         tone={heater.state === 'heating' ? 'accent' : 'neutral'}
         dim={stale}
       >
-        <span className="caps text-muted">Water</span>
-        <span className={cx('num text-[3rem] leading-none font-light tracking-[-0.03em]', stale ? 'text-muted' : heater.state === 'heating' ? 'text-accent-ink' : 'text-fg')}>
+        <span className="text-[clamp(0.625rem,5.5cqw,0.75rem)] font-medium tracking-[0.09em] text-muted uppercase">Water</span>
+        <span className={cx('num my-0.5 text-[clamp(1.75rem,22cqw,3rem)] leading-none font-light tracking-[-0.03em]', stale ? 'text-muted' : heater.state === 'heating' ? 'text-accent-ink' : 'text-fg')}>
           {formatTemp(body.waterTemp, unit, { decimals: body.id === 'spa' })}
         </span>
-        <span className="mt-1 max-w-[9rem] text-label text-muted">{heaterLine}</span>
+        <span className="text-[clamp(0.625rem,5.5cqw,0.75rem)] leading-tight text-muted">{heaterLine}</span>
       </ArcGauge>
       {stale && <p className="text-center text-label text-muted italic">As of {formatTime(body.lastUpdated, clock)}</p>}
 

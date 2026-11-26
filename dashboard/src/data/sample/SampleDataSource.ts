@@ -60,12 +60,12 @@ export class SampleDataSource implements DataSource, PrototypeControls {
     if (this.failAll) {
       throw new CommandError(`${systemName(cmd)} didn't acknowledge within 10 s (simulated failure).`);
     }
-    // One realistic flaky device: the Garage Workbench switch on a weak Z-Wave link
+    // One realistic flaky device (prototype demo): the Screen Porch switch
     // fails every other attempt.
-    if (cmd.type === 'light.set' && cmd.lightId === 'l-garage-work') {
+    if (cmd.type === 'light.set' && cmd.lightId === 'l-screen-porch') {
       this.flakyAttempts += 1;
       if (this.flakyAttempts % 2 === 1) {
-        throw new CommandError("Garage Workbench didn't acknowledge. Weak Z-Wave signal; try again.");
+        throw new CommandError("Screen Porch didn't acknowledge. It may be out of range of the hub; try again.");
       }
     }
 
