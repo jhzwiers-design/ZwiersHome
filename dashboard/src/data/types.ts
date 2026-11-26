@@ -93,6 +93,8 @@ export interface Fan {
   speed: FanSpeed | null;
   /** Speeds the control supports; empty = on/off only. */
   speeds: FanSpeed[];
+  /** "All Off" also turns this fan off (the Master Bedroom fan is left alone). */
+  inAllOff: boolean;
   lastChanged: number;
 }
 

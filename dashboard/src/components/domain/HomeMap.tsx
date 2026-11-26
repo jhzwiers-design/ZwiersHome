@@ -76,7 +76,7 @@ export function HomeMap({
       outline,
       viewBox: `${minX} ${minY} ${Math.max(...xs) - minX + pad} ${Math.max(...ys) - minY + pad}`,
       rooms: plan.rooms.map((r) => ({ ...r, pts: r.points.map((p) => project(p, mode)), center: project(r.label ?? centroid(r.points), mode) })),
-      spaces: plan.spaces.map((sp) => sp.map((p) => project(p, mode))),
+      spaces: plan.spaces.map((sp) => ({ pts: sp.points.map((p) => project(p, mode)), label: sp.label, center: project(centroid(sp.points), mode) })),
     };
   }, [plan, mode]);
 
@@ -138,8 +138,15 @@ export function HomeMap({
         <polygon points={toPath(geo.outline)} fill="var(--surface-2)" stroke="var(--rule-strong)" strokeWidth="5" strokeLinejoin="round" />
 
         {/* Non-interactive spaces */}
-        {geo.spaces.map((pts, i) => (
-          <polygon key={i} points={toPath(pts)} fill="var(--rule)" opacity="0.55" stroke="var(--rule-strong)" strokeWidth="3" />
+        {geo.spaces.map((sp, i) => (
+          <g key={i}>
+            <polygon points={toPath(sp.pts)} fill="var(--rule)" opacity="0.55" stroke="var(--rule-strong)" strokeWidth="3" />
+            {sp.label && (
+              <text x={sp.center[0]} y={sp.center[1] + 4} textAnchor="middle" fontSize="11" fill="var(--muted)" style={{ pointerEvents: 'none' }}>
+                {sp.label}
+              </text>
+            )}
+          </g>
         ))}
 
         {/* Rooms */}
@@ -148,7 +155,7 @@ export function HomeMap({
           const lit = st.on > 0;
           const isSel = selected === r.areaId;
           const isHover = hover === r.areaId;
-          const label = `${areaName(r.areaId)}, ${st.total ? `${st.on} of ${st.total} lights on` : 'no lights'}${st.unreachable ? `, ${st.unreachable} unreachable` : ''}`;
+          const label = `${areaName(r.areaId)}${r.caption ? ` (${r.caption.toLowerCase()})` : ''}, ${st.total ? `${st.on} of ${st.total} lights on` : 'no lights'}${st.unreachable ? `, ${st.unreachable} unreachable` : ''}`;
           return (
             <g
               key={r.areaId}
@@ -169,12 +176,18 @@ export function HomeMap({
                 fillOpacity={lit ? undefined : isHover ? 0.85 : 1}
                 stroke={isSel ? 'var(--accent-ink)' : 'var(--rule-strong)'}
                 strokeWidth={isSel ? 5 : 3}
+                strokeDasharray={r.detached && !isSel ? '8 6' : undefined}
                 strokeLinejoin="round"
                 style={{
                   transition: 'fill-opacity var(--dur-slow), fill var(--dur-slow), stroke var(--dur)',
                   fillOpacity: lit ? (isSel ? 'calc(var(--lit-opacity, 0.28) + 0.15)' : 'var(--lit-opacity, 0.28)') : undefined,
                 }}
               />
+              {r.caption && (
+                <text x={r.center[0]} y={r.center[1] - 24} textAnchor="middle" fontSize="10" fontWeight={600} letterSpacing="0.08em" fill="var(--muted)" style={{ pointerEvents: 'none' }}>
+                  {r.caption.toUpperCase()}
+                </text>
+              )}
               <text
                 x={r.center[0]}
                 y={r.center[1] - 4}
@@ -220,11 +233,9 @@ export function HomeMap({
         <span className="inline-flex items-center gap-1.5">
           <AlertTriangle aria-hidden className="size-3 text-danger" strokeWidth={2} /> Unreachable light
         </span>
-        {plan.approximate ? (
-          <span className="ml-auto italic">Layout approximate</span>
-        ) : (
-          <span className="ml-auto italic">{plan.name}: example layout</span>
-        )}
+        <span className="ml-auto italic">
+          {plan.name} · {plan.note}
+        </span>
       </div>
     </div>
   );

@@ -202,12 +202,34 @@ function apply(d: HomeSnapshot, cmd: Command): string | undefined {
         l.lastChanged = now;
         touch(l.deviceId);
       }
+      // "All off" also covers fans marked for it (the Master Bedroom fan is left alone).
+      if (cmd.type === 'lights.allOff') {
+        for (const f of d.fans.filter((x) => x.inAllOff)) {
+          if (!online(f.deviceId)) {
+            skipped.push(f.name);
+            continue;
+          }
+          f.on = false;
+          f.lastChanged = now;
+          touch(f.deviceId);
+        }
+      }
       return skipped.length ? `Skipped ${skipped.length} unreachable: ${skipped.join(', ')}` : undefined;
     }
     case 'scene.activate': {
       const scene = d.scenes.find((x) => x.id === cmd.sceneId)!;
       const skipped: string[] = [];
       for (const [id, t] of Object.entries(scene.targets)) {
+        const fan = d.fans.find((x) => x.id === id);
+        if (fan) {
+          if (!online(fan.deviceId)) skipped.push(fan.name);
+          else {
+            fan.on = t.on;
+            fan.lastChanged = now;
+            touch(fan.deviceId);
+          }
+          continue;
+        }
         const l = d.lights.find((x) => x.id === id);
         if (!l) continue;
         if (!online(l.deviceId)) {

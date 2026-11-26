@@ -213,7 +213,7 @@ function LightingSummary({ s }: { s: HomeSnapshot }) {
           ))}
         </div>
         {scenes.every((sc) => sc.id !== 'scene-all-off') && (
-          <Button size="sm" variant="quiet" className="mt-2" pending={!!allPending} disabled={disabled || sum.on === 0} onClick={() => run({ type: 'lights.allOff' }, { pending: 'Turning all off…', success: 'All lights off' })}>
+          <Button size="sm" variant="quiet" className="mt-2" pending={!!allPending} disabled={disabled || (sum.on === 0 && !s.fans.some((f) => f.inAllOff && f.on))} onClick={() => run({ type: 'lights.allOff' }, { pending: 'Turning all off…', success: 'All lights and the Upstairs Fan off' })}>
             All off
           </Button>
         )}

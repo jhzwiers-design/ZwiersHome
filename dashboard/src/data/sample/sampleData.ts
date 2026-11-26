@@ -151,8 +151,8 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
     // confirmed Honeywell Z-Wave fan control (low / medium / high). The Upstairs
     // Fan's speed support isn't known yet, so it is on/off only for now.
     fans: [
-      { id: 'f-primary', deviceId: 'd-primary-fan', name: 'Master Bedroom Fan', areaId: 'primary', on: false, speed: 'medium', speeds: ['low', 'medium', 'high'], lastChanged: ago(5 * HOUR) },
-      { id: 'f-upstairs', deviceId: 'd-upstairs-fan', name: 'Upstairs Fan', areaId: 'kids', on: false, speed: null, speeds: [], lastChanged: ago(6 * HOUR) },
+      { id: 'f-primary', deviceId: 'd-primary-fan', name: 'Master Bedroom Fan', areaId: 'primary', on: false, speed: 'medium', speeds: ['low', 'medium', 'high'], inAllOff: false, lastChanged: ago(5 * HOUR) },
+      { id: 'f-upstairs', deviceId: 'd-upstairs-fan', name: 'Upstairs Fan', areaId: 'kids', on: false, speed: null, speeds: [], inAllOff: true, lastChanged: ago(6 * HOUR) },
     ],
 
     // Sample scenes. In the prototype they change sample lights only.
@@ -196,8 +196,8 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
         id: 'scene-all-off',
         name: 'All Off',
         icon: 'off',
-        description: 'Every light in the house off',
-        targets: allLights(false),
+        description: 'Every light and the Upstairs Fan off (the Master Bedroom fan stays as it is)',
+        targets: { ...allLights(false), 'f-upstairs': { on: false } },
       },
     ],
 

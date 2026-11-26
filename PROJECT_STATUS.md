@@ -17,6 +17,9 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 | 2026-11-25 | Stack: React 19, TypeScript 5.9, Vite 8, Tailwind CSS 4 (token-driven), Radix primitives, Zustand, Zod, Lucide icons, Inter (bundled locally, no external font service). |
 
 ## Completed
+- 2026-11-26: **Home map redrawn from the architect's first-floor plan** (real proportions, labelled office, foyer, dining, baths, etc.; the upstairs Kids Room as a separate dashed tile). Public builds still show the demo layout.
+- 2026-11-26: **All Off** now also turns off the Upstairs Fan; the Master Bedroom fan is deliberately left alone.
+- 2026-11-26: **Home Assistant Green + Connect ZWA-2 purchased.** Setup guide: [docs/05-setup-green-and-zwa2.md](docs/05-setup-green-and-zwa2.md).
 - 2026-11-26: **Fans are controllable** on the Lights & fans page (renamed from Lighting).
   - Checked against the SmartThings device list: all 17 devices are present (11 lights, 2 fans, 2 hubs, the Media Room TV).
   - **Master Bedroom Fan:** on/off plus Low / Medium / High. It's a confirmed Honeywell Z-Wave fan control.
@@ -140,7 +143,9 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 - [ ] **Wall iPad:** try the Home display on the real 11" iPad Air, then decide on *Return to Home display* (off by default).
 - [x] Monogram: **Gable**
 - [x] Wall iPad: **iPad Air 11", iPadOS 26.6**
-- [ ] **Floor plan scan.** It replaces the approximate room shapes on the home map.
+- [x] Floor plan received (architect's first-floor plan); map redrawn.
+- [ ] **Which bedroom is whose?** Plan Bedrooms 2–5 vs Lauren's, Allie's and Tim's rooms (map currently guesses Bedroom 2 = Lauren, 3 = Allie, 4 = Tim; Bedroom 5 unlinked). Is the Media Room the Rec Room?
+- [ ] When the Green + ZWA-2 arrive: follow docs/05 steps 1–2 (you), then we move the two Honeywell Z-Wave controls together.
 - [ ] **Room names.** Some SmartThings labels were cut off in the screenshots (e.g. "Alli… Room", "…n's room"); they're placeholders "Bedroom 2–4" for now.
 - [x] SmartThings device list received
 - [x] Light protocol: **Living Room Lights is Z-Wave** (manufacturer code 0039 = Honeywell; 0039-4944-3038 appears to be their Z-Wave Plus in-wall dimmer). Adapter needed: **Connect ZWA-2 (~$69)**; Zigbee adapter likely unnecessary.

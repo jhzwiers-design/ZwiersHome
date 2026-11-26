@@ -1,90 +1,119 @@
 /**
- * Floor plan — room shapes for the interactive home map (Lighting screen).
+ * Floor plan — room shapes for the interactive home map (Lights & fans screen).
  *
- * APPROXIMATE: traced by eye from screenshots of the SmartThings 3D home map
- * on 25 Nov 2026. Replace with measurements from the scanned floor plan.
- * Room links follow the SmartThings labels (Outside, Front Porch, Kids Room,
- * Master Bedroom, Bedroom 3). Bedrooms 2 and 4 are a best guess from
- * cut-off labels; swap their areaId if they're the other way round.
+ * Traced from the architect's first-floor plan (Design Studio, "Zwiers
+ * Residence", sheet 4) on 26 Nov 2026, so proportions follow the real walls.
+ * Coordinates are written in pixels of that drawing and scaled by `P()`.
+ *
+ * Room links: each interactive room links to a Home Assistant Area by
+ * `areaId`, so lights and fans appear in the right room automatically.
+ *  - Rec Room → "Media Room" area; Back Porch → "Outside" area.
+ *  - Plan Bedrooms 2/3/4 → bedroom2/3/4 areas (whose room is whose is still
+ *    to confirm). Plan Bedroom 5 isn't linked to an area yet.
+ *  - The Kids Room is upstairs, so it is drawn as a separate dashed tile.
+ * `spaces` are non-interactive rooms (baths, closets, office…) drawn for context.
  *
  * Public builds use DEMO_PLAN instead, so the real layout never goes online.
- *
- * Units are arbitrary "plan units" (roughly 1 unit ≈ 2 in). Origin top-left.
- * Each interactive room links to a Home Assistant Area by `areaId`, so lights
- * appear in the right room automatically — no device IDs here.
- * `spaces` are non-interactive rooms (baths, closets, halls) drawn for context.
  */
+
+export type Pt = [number, number];
 
 export interface PlanRoom {
   areaId: string;
   /** Polygon points [x, y][] in plan units. */
-  points: [number, number][];
+  points: Pt[];
   /** Optional label position override. Defaults to the polygon's centre. */
-  label?: [number, number];
+  label?: Pt;
+  /** Drawn apart from the house (dashed), e.g. an upstairs room. */
+  detached?: boolean;
+  /** Small caption above the name, e.g. "Upstairs". */
+  caption?: string;
+}
+
+export interface PlanSpace {
+  points: Pt[];
+  label?: string;
 }
 
 export interface FloorPlan {
   name: string;
-  approximate: boolean;
+  /** Shown under the map, e.g. "Traced from the architect's plan". */
+  note: string;
   width: number;
   height: number;
   /** House outline. */
-  outline: [number, number][];
+  outline: Pt[];
   rooms: PlanRoom[];
-  spaces: [number, number][][];
+  spaces: PlanSpace[];
 }
 
-const rect = (x: number, y: number, w: number, h: number): [number, number][] => [
+const rect = (x: number, y: number, w: number, h: number): Pt[] => [
   [x, y],
   [x + w, y],
   [x + w, y + h],
   [x, y + h],
 ];
 
-/** Real (traced) layout. A function so public builds drop it entirely. */
+/** Real layout (architect's plan). A function so public builds drop it entirely. */
 function tracedPlan(): FloorPlan {
+  // Drawing pixels → plan units.
+  const S = 0.76;
+  const P = ([x, y]: Pt): Pt => [Math.round((x - 95) * S), Math.round((y - 40) * S)];
+  const poly = (pts: Pt[]) => pts.map(P);
+  const box = (x: number, y: number, w: number, h: number) => poly(rect(x, y, w, h));
   return {
-  name: 'Main floor',
-  approximate: true,
-  width: 720,
-  height: 680,
-  outline: [
-    [8, 210], [423, 210], [423, 8], [690, 8], [690, 328], [712, 328], [712, 595], [610, 595], [610, 615],
-    [518, 615], [518, 562], [352, 562], [352, 667], [252, 667], [252, 600], [88, 600], [88, 565], [8, 565],
-  ],
-  rooms: [
-    { areaId: 'media', points: rect(8, 210, 132, 165) },
-    { areaId: 'outside', points: rect(140, 210, 283, 118) },
-    { areaId: 'living', points: rect(140, 328, 160, 177) },
-    { areaId: 'kitchen', points: rect(300, 328, 123, 234) },
-    { areaId: 'bedroom4', points: rect(14, 378, 93, 84) },
-    { areaId: 'kids', points: rect(100, 505, 100, 92), label: [150, 548] },
-    { areaId: 'porch', points: rect(200, 505, 52, 60) },
-    { areaId: 'primary', points: rect(425, 168, 123, 100) },
-    { areaId: 'bedroom2', points: rect(555, 15, 87, 110) },
-    { areaId: 'bedroom3', points: rect(582, 185, 100, 83) },
-    {
-      areaId: 'garage',
-      points: [[520, 315], [706, 315], [706, 595], [520, 595]],
-    },
-  ],
-  spaces: [
-    rect(425, 15, 125, 148), // baths / closets, north wing
-    rect(648, 15, 40, 165), // closets, east
-    rect(555, 130, 87, 50), // hall bath
-    rect(425, 272, 90, 285), // hall + laundry
-    rect(107, 378, 33, 84), // closet
-    rect(8, 465, 87, 95), // bath
-    rect(252, 545, 100, 118), // porch / storage
-    rect(582, 272, 100, 40), // closet
-  ],
-};
+    name: 'First floor',
+    note: "Traced from the architect's plan",
+    width: Math.round(970 * S),
+    height: Math.round(905 * S),
+    outline: poly([
+      [660, 52], [1020, 52], [1020, 490], [1055, 490], [1055, 842], [985, 842], [985, 870], [790, 870], [790, 800],
+      [570, 800], [570, 937], [430, 937], [430, 842], [215, 842], [215, 800], [108, 800], [108, 660], [105, 660],
+      [105, 320], [290, 320], [290, 488], [660, 488],
+    ]),
+    rooms: [
+      { areaId: 'media', points: box(105, 320, 185, 228) }, // Rec Room
+      { areaId: 'outside', points: box(290, 330, 370, 158) }, // Back Porch
+      { areaId: 'living', points: box(290, 488, 205, 234) },
+      { areaId: 'kitchen', points: box(495, 600, 165, 190) },
+      { areaId: 'primary', points: box(660, 265, 180, 143) },
+      { areaId: 'bedroom3', points: poly([[840, 52], [958, 52], [958, 122], [1020, 122], [1020, 180], [840, 180]]) },
+      { areaId: 'bedroom2', points: box(875, 295, 145, 113) },
+      { areaId: 'bedroom4', points: box(255, 722, 105, 120) },
+      { areaId: 'porch', points: box(215, 845, 215, 65) },
+      { areaId: 'garage', points: poly([[830, 490], [1055, 490], [1055, 842], [790, 842], [790, 620], [830, 620]]) },
+      { areaId: 'kids', points: box(125, 95, 150, 115), detached: true, caption: 'Upstairs' },
+    ],
+    spaces: [
+      { points: box(660, 52, 180, 123), label: 'Master bath' },
+      { points: box(660, 175, 180, 90), label: 'Closets' },
+      { points: box(840, 180, 35, 310) },
+      { points: box(875, 180, 145, 65), label: 'Bath 2' },
+      { points: box(875, 245, 145, 50) },
+      { points: box(958, 52, 62, 70) },
+      { points: box(905, 408, 115, 82), label: 'Storage' },
+      { points: box(790, 440, 40, 180), label: 'Stairs' },
+      { points: box(660, 408, 130, 107), label: 'Office' },
+      { points: box(660, 515, 65, 105), label: 'Powder' },
+      { points: box(725, 515, 65, 105), label: 'Mud room' },
+      { points: box(660, 620, 130, 80), label: 'Pantry' },
+      { points: box(660, 700, 130, 100), label: 'Laundry' },
+      { points: box(495, 488, 165, 112), label: 'Keeping' },
+      { points: box(105, 548, 133, 112), label: 'Bedroom 5' },
+      { points: box(238, 548, 52, 174) },
+      { points: box(108, 660, 147, 140), label: 'Bath 3' },
+      { points: box(360, 722, 70, 120), label: 'Foyer' },
+      { points: box(430, 722, 65, 68), label: "Butler's" },
+      { points: box(495, 790, 75, 10) },
+      { points: box(430, 790, 140, 147), label: 'Dining' },
+    ],
+  };
 }
 
 /** A made-up layout for the public demo. Not the real house. */
 const DEMO_PLAN: FloorPlan = {
   name: 'Demo home',
-  approximate: false,
+  note: 'Example layout',
   width: 640,
   height: 420,
   outline: [[10, 10], [630, 10], [630, 410], [10, 410]],
