@@ -31,7 +31,7 @@ export function Toggle({
 }) {
   return (
     <span className={cx('inline-flex items-center gap-2', className)}>
-      {pending && <Spinner className="size-3 text-accent" label="Sending" />}
+      {pending && <Spinner className="size-3 text-accent-ink" label="Sending" />}
       <RadixSwitch.Root
         checked={checked}
         onCheckedChange={onChange}
@@ -161,7 +161,7 @@ export function Stepper({
 }) {
   const btn = cx(
     'grid shrink-0 place-items-center rounded-full border border-rule bg-surface-2 text-fg-2 transition-colors',
-    'hover:border-accent hover:text-accent disabled:opacity-30',
+    'hover:border-accent hover:text-accent-ink disabled:opacity-30',
     size === 'lg' ? 'size-11' : 'size-9',
   );
   return (
@@ -175,7 +175,7 @@ export function Stepper({
         className={cx(
           'num min-w-[3.5ch] text-center font-light',
           size === 'lg' ? 'text-h1' : 'text-h2',
-          tone === 'heat' && 'text-accent',
+          tone === 'heat' && 'text-accent-ink',
           tone === 'cool' && 'text-cool',
         )}
       >

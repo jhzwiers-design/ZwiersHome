@@ -57,7 +57,7 @@ export function ConfirmHost() {
           {request && (
             <>
               <div className="mb-3 flex items-center justify-between gap-3">
-                <span className="caps text-accent">Confirm</span>
+                <span className="caps text-accent-ink">Confirm</span>
                 <SampleTag>Prototype · no real command</SampleTag>
               </div>
               <AlertDialog.Title className="text-h2 font-medium text-fg">{request.title}</AlertDialog.Title>

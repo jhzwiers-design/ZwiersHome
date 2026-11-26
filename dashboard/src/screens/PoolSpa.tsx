@@ -219,7 +219,7 @@ function BodyColumn({ body, s }: { body: Body; s: HomeSnapshot }) {
         dim={stale}
       >
         <span className="caps text-muted">Water</span>
-        <span className={cx('num text-[3rem] leading-none font-light tracking-[-0.03em]', stale ? 'text-muted' : heater.state === 'heating' ? 'text-accent' : 'text-fg')}>
+        <span className={cx('num text-[3rem] leading-none font-light tracking-[-0.03em]', stale ? 'text-muted' : heater.state === 'heating' ? 'text-accent-ink' : 'text-fg')}>
           {formatTemp(body.waterTemp, unit, { decimals: body.id === 'spa' })}
         </span>
         <span className="mt-1 max-w-[9rem] text-label text-muted">{heaterLine}</span>

@@ -120,7 +120,7 @@ export function Settings({ s }: { s: HomeSnapshot }) {
         </SettingRow>
       </Section>
 
-      <Section title="Wall display" icon={MonitorSmartphone} meta={<a href="#/wall" className="text-label text-accent hover:underline">Open wall display</a>}>
+      <Section title="Wall display" icon={MonitorSmartphone} meta={<a href="#/wall" className="text-label text-accent-ink hover:underline">Open wall display</a>}>
         <SettingRow title="Dim at night" hint="Lowers brightness on the wall display between these times.">
           <Toggle checked={p.wall.dimAtNight} onChange={(v) => p.setWall({ dimAtNight: v })} label="Dim at night" />
           <label className="flex items-center gap-2 text-label text-muted">

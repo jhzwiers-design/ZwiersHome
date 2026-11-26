@@ -68,7 +68,7 @@ export function CameraView({ camera, compact }: { camera: Camera; compact?: bool
             {!compact && (
               <p className="mt-1 text-label text-[var(--video-muted)]">Live view connects through Home Assistant's Ring integration (WebRTC) in a later milestone.</p>
             )}
-            <button type="button" className="mt-3 text-label text-[var(--video-accent)] underline-offset-4 hover:underline" onClick={() => setState('idle')}>
+            <button type="button" className="mt-3 text-label text-[#ffa586] underline-offset-4 hover:underline" onClick={() => setState('idle')}>
               Close
             </button>
           </div>
@@ -86,7 +86,7 @@ export function CameraView({ camera, compact }: { camera: Camera; compact?: bool
 
 export function EventIcon({ kind, className }: { kind: SecurityEvent['kind']; className?: string }) {
   const Icon = kind === 'ding' ? BellRing : Footprints;
-  return <Icon aria-hidden strokeWidth={1.5} className={cx('size-4 shrink-0', kind === 'ding' ? 'text-accent' : 'text-muted', className)} />;
+  return <Icon aria-hidden strokeWidth={1.5} className={cx('size-4 shrink-0', kind === 'ding' ? 'text-accent-ink' : 'text-muted', className)} />;
 }
 
 export function EventList({ events, cameras, limit, groupByDay = true }: { events: SecurityEvent[]; cameras: Camera[]; limit?: number; groupByDay?: boolean }) {

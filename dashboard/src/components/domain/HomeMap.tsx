@@ -162,12 +162,12 @@ export function HomeMap({
               onPointerLeave={() => setHover(null)}
               className="cursor-pointer outline-none [&:focus-visible>polygon]:stroke-[var(--accent)]"
             >
-              {lit && <polygon points={toPath(r.pts)} fill="var(--accent)" opacity="0.28" filter="url(#room-glow)" />}
+              {lit && <polygon points={toPath(r.pts)} fill="var(--accent-ink)" opacity="0.3" filter="url(#room-glow)" />}
               <polygon
                 points={toPath(r.pts)}
-                fill={lit ? 'var(--accent)' : 'var(--surface)'}
-                fillOpacity={lit ? (isSel ? 0.5 : 0.34) : isHover ? 0.85 : 1}
-                stroke={isSel ? 'var(--accent)' : 'var(--rule-strong)'}
+                fill={lit ? 'var(--accent-ink)' : 'var(--surface)'}
+                fillOpacity={lit ? (isSel ? 0.42 : 0.26) : isHover ? 0.85 : 1}
+                stroke={isSel ? 'var(--accent-ink)' : 'var(--rule-strong)'}
                 strokeWidth={isSel ? 5 : 3}
                 strokeLinejoin="round"
                 style={{ transition: 'fill-opacity var(--dur), stroke var(--dur)' }}
@@ -189,7 +189,7 @@ export function HomeMap({
                   y={r.center[1] + 14}
                   textAnchor="middle"
                   fontSize="12"
-                  fill={lit ? 'var(--accent)' : 'var(--muted)'}
+                  fill={lit ? 'var(--accent-ink)' : 'var(--muted)'}
                   fontWeight={500}
                   style={{ pointerEvents: 'none' }}
                 >
@@ -209,7 +209,7 @@ export function HomeMap({
 
       <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-label text-muted">
         <span className="inline-flex items-center gap-1.5">
-          <span aria-hidden className="size-2.5 rounded-full bg-accent shadow-[0_0_6px_var(--accent)]" /> Lights on
+          <span aria-hidden className="size-2.5 rounded-full bg-accent-ink shadow-[0_0_6px_var(--accent-ink)]" /> Lights on
         </span>
         <span className="inline-flex items-center gap-1.5">
           <span aria-hidden className="size-2.5 rounded-full border border-rule-strong bg-surface" /> All off

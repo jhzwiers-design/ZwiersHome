@@ -53,7 +53,7 @@ export function StatusIndicator({
 }) {
   if (pending) {
     return (
-      <span className={cx('inline-flex items-center gap-2 text-label text-accent', className)} role="status">
+      <span className={cx('inline-flex items-center gap-2 text-label text-accent-ink', className)} role="status">
         <Spinner className="size-3" />
         {pending}
       </span>

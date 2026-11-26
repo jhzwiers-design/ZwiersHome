@@ -51,9 +51,10 @@ src/
 | | |
 |---|---|
 | Tokens | `src/styles/tokens.css` (dark + light). Components never use raw colour values. |
-| Accent | **Dark mode: electric red `#FF2D4F`. Light mode: crimson `#C8102E`.** Means on/active/heating/selected. |
-| Problems | **Amber** (`--danger`: `#F5A524` dark / `#B45309` light), always with an icon or wording. It's deliberately not red, so "on" and "problem" never look alike. |
-| Surfaces | Warm near-black page with raised tiles (dark); warm off-white page with white tiles (light). |
+| Palette | Navy `#161E2F` · `#242F49` · slate `#384358` · peach `#FFA586` · crimson `#B51A2B` · wine `#541A2E`. |
+| Accent | Crimson fills for on/active/selected. Accent text and lines use `--accent-ink`: **peach on navy (dark)**, **crimson on white (light)**, for contrast. |
+| Problems | Gold `#F2C94C` (dark) / ochre `#946200` (light), always with an icon or wording. Deliberately not red or peach. |
+| Surfaces | Navy page with navy tiles (dark); warm off-white page with white tiles and navy text (light). |
 | Shape | Rounded tiles (20 px), pill buttons, chips and option selectors, round icon badges. |
 | Type | Inter Variable (bundled locally), tabular figures for numbers. |
 | Motion | 120–180 ms transitions only; disabled under "reduce motion". |

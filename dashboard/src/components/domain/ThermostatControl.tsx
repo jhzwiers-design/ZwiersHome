@@ -69,7 +69,7 @@ export function ThermostatControl({
   const status = (
     <p className="mt-3 flex h-5 items-center justify-center gap-2 text-label" aria-live="polite">
       {pending ? (
-        <span className="flex items-center gap-2 text-accent">
+        <span className="flex items-center gap-2 text-accent-ink">
           <Spinner className="size-3" /> {pending}
         </span>
       ) : draft ? (
@@ -89,7 +89,7 @@ export function ThermostatControl({
     const canDec = value - step >= minF;
     const canInc = value + step <= maxF;
     const btn =
-      'grid size-11 place-items-center rounded-full border border-rule bg-surface-2 text-fg-2 transition-colors hover:border-accent hover:text-accent disabled:opacity-30';
+      'grid size-11 place-items-center rounded-full border border-rule bg-surface-2 text-fg-2 transition-colors hover:border-accent hover:text-accent-ink disabled:opacity-30';
     return (
       <div role="group" aria-label={`${isHeat ? 'Heat' : 'Cool'} setpoint`}>
         <ArcGauge value={value} min={minF} max={maxF} tone={isHeat ? 'accent' : 'cool'} dim={!connected} className={size === 'md' ? 'max-w-[200px]' : undefined}>

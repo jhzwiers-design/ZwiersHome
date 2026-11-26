@@ -146,7 +146,7 @@ export function Metric({
           size === 'display' && 'text-[2.75rem] leading-none tracking-[-0.04em] lg:text-[3.5rem]',
           size === 'h1' && 'text-h1',
           size === 'wall' && 'text-wall',
-          stale ? 'text-muted' : tone === 'accent' ? 'text-accent' : tone === 'cool' ? 'text-cool' : tone === 'danger' ? 'text-danger' : 'text-fg',
+          stale ? 'text-muted' : tone === 'accent' ? 'text-accent-ink' : tone === 'cool' ? 'text-cool' : tone === 'danger' ? 'text-danger' : 'text-fg',
         )}
       >
         {value}

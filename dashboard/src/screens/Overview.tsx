@@ -194,7 +194,7 @@ function LightingModule({ s }: { s: HomeSnapshot }) {
               )}
             >
               <span className="truncate text-body text-fg-2">{area.name}</span>
-              <span className={cx('num text-label font-medium', on ? 'text-accent' : 'text-faint')}>
+              <span className={cx('num text-label font-medium', on ? 'text-accent-ink' : 'text-faint')}>
                 {on}/{lights.length}
               </span>
             </li>
@@ -290,9 +290,9 @@ function PoolModule({ s }: { s: HomeSnapshot }) {
             <div key={b.id} className={cx('rounded-md border p-4', heating ? 'border-accent/30 bg-accent-soft' : 'border-rule bg-surface-2')}>
               <div className="flex items-center justify-between">
                 <span className="text-body font-medium text-fg">{b.name}</span>
-                <Icon aria-hidden className={cx('size-4', heating ? 'text-accent' : 'text-muted')} strokeWidth={1.75} />
+                <Icon aria-hidden className={cx('size-4', heating ? 'text-accent-ink' : 'text-muted')} strokeWidth={1.75} />
               </div>
-              <p className={cx('num mt-3 text-[2.25rem] leading-none font-light tracking-[-0.03em]', heating ? 'text-accent' : 'text-fg')}>
+              <p className={cx('num mt-3 text-[2.25rem] leading-none font-light tracking-[-0.03em]', heating ? 'text-accent-ink' : 'text-fg')}>
                 {formatTemp(b.waterTemp, unit)}
               </p>
               <p className="mt-2 text-label text-muted">

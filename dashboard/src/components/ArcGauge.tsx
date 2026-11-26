@@ -2,7 +2,7 @@
  * ArcGauge — a 270° dial for temperatures (thermostat setpoint, water temp).
  * Purely visual: the value is also always present as text for assistive tech.
  */
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { cx } from './primitives';
 
 const START = 135; // degrees, measured clockwise from 3 o'clock
@@ -48,22 +48,33 @@ export function ArcGauge({
   const frac = (v: number) => Math.min(1, Math.max(0, (v - min) / (max - min)));
   const end = START + SWEEP * frac(value);
   const knob = polar(end);
-  const color = dim || tone === 'neutral' ? 'var(--fg-2)' : tone === 'cool' ? 'var(--cool)' : 'var(--accent)';
+  const gid = `arc-${useId().replace(/:/g, '')}`;
+  const accent = !dim && tone === 'accent';
+  // Accent arcs run crimson → peach (the brand palette); others are flat.
+  const color = dim || tone === 'neutral' ? 'var(--fg-2)' : tone === 'cool' ? 'var(--cool)' : 'var(--accent-ink)';
+  const stroke = accent ? `url(#${gid})` : color;
+  const glow = accent ? 'var(--accent)' : color;
   const tick = marker !== undefined ? START + SWEEP * frac(marker) : null;
 
   return (
     <div className={cx('relative mx-auto aspect-square w-full max-w-[240px]', className)}>
       <svg viewBox="0 0 200 200" className="absolute inset-0 size-full" aria-hidden>
+        <defs>
+          <linearGradient id={gid} x1="0" y1="1" x2="1" y2="0">
+            <stop offset="0%" stopColor="var(--accent)" />
+            <stop offset="100%" stopColor="var(--accent-ink)" />
+          </linearGradient>
+        </defs>
         <path d={arcPath(START, START + SWEEP)} fill="none" stroke="var(--surface-2)" strokeWidth="14" strokeLinecap="round" />
         <path d={arcPath(START, START + SWEEP)} fill="none" stroke="var(--rule)" strokeWidth="1" strokeDasharray="1 6" />
         {frac(value) > 0.001 && (
           <path
             d={arcPath(START, end)}
             fill="none"
-            stroke={color}
+            stroke={stroke}
             strokeWidth="14"
             strokeLinecap="round"
-            style={{ filter: dim ? undefined : `drop-shadow(0 0 6px ${color})`, transition: 'all var(--dur) var(--ease)' }}
+            style={{ filter: dim ? undefined : `drop-shadow(0 0 6px ${glow})`, transition: 'all var(--dur) var(--ease)' }}
           />
         )}
         {tick !== null && (

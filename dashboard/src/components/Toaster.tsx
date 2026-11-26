@@ -49,7 +49,7 @@ function ToastItem({ toast, onDismiss, sample }: { toast: Toast; onDismiss: (id:
         strokeWidth={1.75}
         className={cx(
           'mt-0.5 size-4 shrink-0',
-          toast.tone === 'error' ? 'text-danger' : toast.tone === 'success' ? 'text-fg-2' : 'text-accent',
+          toast.tone === 'error' ? 'text-danger' : toast.tone === 'success' ? 'text-fg-2' : 'text-accent-ink',
         )}
       />
       <div className="min-w-0 flex-1">

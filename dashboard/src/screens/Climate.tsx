@@ -67,7 +67,7 @@ export function Climate({ s }: { s: HomeSnapshot }) {
           <p
             className={cx(
               'num mt-2 text-[5rem] leading-none font-extralight tracking-[-0.05em] md:text-[6.5rem]',
-              stale ? 'text-muted' : zone.action === 'heating' ? 'text-accent' : zone.action === 'cooling' ? 'text-cool' : 'text-fg',
+              stale ? 'text-muted' : zone.action === 'heating' ? 'text-accent-ink' : zone.action === 'cooling' ? 'text-cool' : 'text-fg',
             )}
           >
             {formatTemp(zone.currentTemp, unit, { decimals: true })}

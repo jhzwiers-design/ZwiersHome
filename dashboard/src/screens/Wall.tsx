@@ -126,7 +126,7 @@ function WallMetric({ label, value, sub, accent, stale }: { label: string; value
   return (
     <div className="tile p-6">
       <p className="caps text-muted">{label}</p>
-      <p className={cx('num mt-3 text-[4.5rem] leading-none font-extralight tracking-[-0.04em] xl:text-wall', stale ? 'text-muted' : accent ? 'text-accent' : 'text-fg')}>{value}</p>
+      <p className={cx('num mt-3 text-[4.5rem] leading-none font-extralight tracking-[-0.04em] xl:text-wall', stale ? 'text-muted' : accent ? 'text-accent-ink' : 'text-fg')}>{value}</p>
       <p className={cx('mt-3 text-lead', stale ? 'text-faint' : 'text-fg-2')}>{stale ? 'Last known' : sub}</p>
     </div>
   );

@@ -66,11 +66,17 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
   - Sample rooms now mirror your home: Media Room, Patio, Living Room, Kitchen, Front Entry, Kids' Room, Primary Bedroom, Bedrooms 2–4, Garage, plus Backyard for pool equipment.
   - Re-tested at desktop, tablet, phone and wall sizes in both themes; build passes.
 
+- 2026-11-25: **New brand palette** (navy, slate, peach, crimson, wine) applied to the dashboard and the brand canvas. Lit rooms on the map glow peach; dial gauges run crimson → peach.
+- 2026-11-25: **Brand exploration**: a design canvas (private) with 8 ZH monogram directions, including 3 "Hand Drive" ideas, app-icon and small-size tests, and lockups. Recommended: A "Gable" mark with B "Bridge" below 24 px.
+- 2026-11-25: Local git repository created; remote set to GitHub `jhzwiers-design/ZwiersHome`. **Not pushed yet.** Waiting for the repo to be made private.
+
 ## Next milestone
 **M2: data-source layer + Home Assistant connection (code only).** Build `HomeAssistantSource` behind the existing interface: login flow, token storage per §3.1a, registry discovery by areas/labels, live state, command mapping, reconnects. It can be developed and unit-tested without a running Home Assistant. A real connection waits for M3, the optional Home Assistant trial on this Mac, **which needs your approval to install**.
 
 ## Waiting on you
-- [ ] **Design review of round 1** (tiles, red accents, home map).
+- [ ] **Design review of round 1** (tiles, new palette, home map).
+- [ ] **Pick a monogram direction** from the brand canvas.
+- [ ] **Make the GitHub repo private**, then I push.
 - [ ] **Floor plan scan.** It replaces the approximate room shapes on the home map.
 - [ ] **Room names.** Some SmartThings labels were cut off in the screenshots (e.g. "Alli… Room", "…n's room"); they're placeholders "Bedroom 2–4" for now.
 - [ ] SmartThings device list (decides the Zigbee/Z-Wave adapter vs. none)
