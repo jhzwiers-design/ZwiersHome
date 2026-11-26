@@ -32,7 +32,7 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
     - Pressed states throughout
     - All of it off under reduce motion
   - **Climate:**
-    - Two thermostat areas: West Wing (main, downstairs) and East Wing (upstairs), both the same Carrier model.
+    - Two thermostat areas: West Wing (downstairs only) and East Wing (upstairs and downstairs, connected), both the same Carrier model, one thermostat each.
     - A new draggable dial: touch, mouse, trackpad and keyboard; 1 °F steps; no jump on grab; safe ends.
     - The dial goes Adjusting → Sending → Set ✓ / failed, and keeps the last-known value when offline. Unit tests cover the dial maths.
   - **Overview:** a greeting with time and outside temperature; tiles for both thermostats, pool and spa; a lighting summary with scenes; security; and "Needs attention".

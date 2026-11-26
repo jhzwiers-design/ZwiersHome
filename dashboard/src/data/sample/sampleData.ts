@@ -32,7 +32,7 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       { id: 'porch', name: 'Front Porch' },
       { id: 'outside', name: 'Outside' },
       { id: 'westwing', name: 'West Wing (downstairs)' },
-      { id: 'eastwing', name: 'East Wing (upstairs)' },
+      { id: 'eastwing', name: 'East Wing (upstairs + downstairs)' },
       { id: 'garage', name: 'Garage' },
       { id: 'backyard', name: 'Backyard' },
     ],
@@ -108,7 +108,8 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       dev('d-bedroom4', __PUBLIC__ ? 'Bedroom 4 Light' : 'Tim’s Room Light', 'bedroom4', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(7 * MIN), 900),
       dev('d-front-porch', 'Front Porch Light', 'porch', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(2 * MIN), 900),
       // Climate
-      // Two thermostats of the same Carrier model: West Wing (main, downstairs) and East Wing (upstairs).
+      // Two thermostats of the same Carrier model: West Wing (main, downstairs only) and East Wing
+      // (one connected space over two floors).
       dev('d-thermostat-east', 'East Wing Thermostat', 'eastwing', 'climate', 'carrier', 'Carrier', __PUBLIC__ ? 'Infinity Touch' : 'SYSTXCCITC01-B', 'Cloud', 'online', ago(0.6 * MIN), 600),
       dev('d-thermostat', 'West Wing Thermostat', 'westwing', 'climate', 'carrier', 'Carrier', __PUBLIC__ ? 'Infinity Touch' : 'SYSTXCCITC01-B · fw 4.31', 'Cloud', 'online', ago(0.5 * MIN), 600),
       // Pool

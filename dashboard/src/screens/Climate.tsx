@@ -1,7 +1,7 @@
 /**
  * Climate — the home's two thermostat areas, side by side:
- *   • West Wing      (main thermostat)
- *   • East Wing      (upstairs thermostat)
+ *   • West Wing      (downstairs only)
+ *   • East Wing      (upstairs and downstairs, one connected space)
  * Each area has its own interactive dial, mode and status. Fan and comfort
  * settings sit behind "More settings" so everyday use stays simple.
  * Any additional zones a thermostat reports are listed under its area.
@@ -242,8 +242,8 @@ function SystemDetails({ s, system }: { s: HomeSnapshot; system: ClimateSystem }
             ]}
           />
           <div className="mt-4 space-y-2">
-            <Note>Main thermostat: through Carrier’s cloud. Changes can take a few seconds to reach it.</Note>
-            <Note>Upstairs (East Wing) thermostat: brand and connection still to be confirmed, so only room temperature and targets are shown.</Note>
+            <Note>Both thermostats are the same Carrier model and connect through Carrier’s cloud. Changes can take a few seconds to reach them.</Note>
+            <Note>The West Wing thermostat covers the downstairs only. The East Wing thermostat covers its connected upstairs and downstairs.</Note>
           </div>
         </div>
       ) : (
