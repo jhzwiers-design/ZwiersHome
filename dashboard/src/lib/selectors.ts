@@ -131,7 +131,7 @@ export function statusSentence(s: HomeSnapshot): { tone: 'ok' | 'attention'; tex
 export interface ClimateArea {
   system: HomeSnapshot['climate'][number];
   zone: HomeSnapshot['climate'][number]['zones'][number];
-  /** Plain-language area name, e.g. "Main Floor" or "East Wing". */
+  /** Plain-language area name, e.g. "West Wing" or "East Wing". */
   label: string;
   /** Which thermostat controls it, e.g. "Main thermostat". */
   sublabel: string;

@@ -32,7 +32,7 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
     - Pressed states throughout
     - All of it off under reduce motion
   - **Climate:**
-    - Two thermostat areas: Main Floor and East Wing (upstairs). The East Wing thermostat's brand and connection are still to confirm.
+    - Two thermostat areas: West Wing (main) and East Wing (upstairs), both the same Carrier model.
     - A new draggable dial: touch, mouse, trackpad and keyboard; 1 °F steps; no jump on grab; safe ends.
     - The dial goes Adjusting → Sending → Set ✓ / failed, and keeps the last-known value when offline. Unit tests cover the dial maths.
   - **Overview:** a greeting with time and outside temperature; tiles for both thermostats, pool and spa; a lighting summary with scenes; security; and "Needs attention".
@@ -130,7 +130,7 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 
 ## Waiting on you
 - [ ] **Design review of the master redesign** (red-for-controls identity, motion, two-thermostat Climate, Home display).
-- [ ] **East Wing (upstairs) thermostat:** brand/model and how it connects (another Carrier? separate system or a zone of the main one?).
+- [x] East Wing thermostat: **same model as the West Wing** (Carrier).
 - [ ] **Wall iPad:** try the Home display on the real 11" iPad Air, then decide on *Return to Home display* (off by default).
 - [x] Monogram: **Gable**
 - [x] Wall iPad: **iPad Air 11", iPadOS 26.6**
@@ -153,7 +153,7 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 - The camera shows a labelled placeholder; no video until the Ring integration is connected.
 - Pool **schedules are read-only** and the light-show list is fixed sample content.
 - The production Content-Security-Policy is applied only to builds (Vite's dev server needs inline scripts). The Home Assistant address will be added to it in M2.
-- Climate shows two thermostats (Main Floor, East Wing). The East Wing thermostat is a placeholder until its brand and connection are confirmed. Extra zones appear automatically if a system reports them.
+- Climate shows two thermostats (West Wing, East Wing), both the same Carrier model. The East Wing's equipment readings (filter, airflow, blower) are left empty until known. Extra zones appear automatically if a system reports them.
 - Not yet tested on a physical iPad or phone; tested only by browser emulation of their screen sizes. Use `npm run dev:lan` (or `npm run home`) to try it on your own devices.
 - The Home display's no-scroll layout was measured at 1180×820, 1180×740 and 820×1180. Very small windows (under ~600 px tall) may clip the smallest text.
 - The *Return to Home display* timer has been reviewed in code but not timed in a browser.

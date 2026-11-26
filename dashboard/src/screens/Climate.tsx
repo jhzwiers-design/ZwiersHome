@@ -1,6 +1,6 @@
 /**
  * Climate — the home's two thermostat areas, side by side:
- *   • Main Floor     (main thermostat)
+ *   • West Wing      (main thermostat)
  *   • East Wing      (upstairs thermostat)
  * Each area has its own interactive dial, mode and status. Fan and comfort
  * settings sit behind "More settings" so everyday use stays simple.

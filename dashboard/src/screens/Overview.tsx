@@ -2,7 +2,7 @@
  * Overview — "What is happening in my home right now?"
  *
  *  1. Greeting, date/time, outside temperature and ONE status line.
- *  2. Temperatures: Main Floor, East Wing, Pool, Spa (each opens its section).
+ *  2. Temperatures: West Wing, East Wing, Pool, Spa (each opens its section).
  *  3. Lighting (with one-tap scenes) and Security.
  *  4. Alerts, only when something needs attention.
  *

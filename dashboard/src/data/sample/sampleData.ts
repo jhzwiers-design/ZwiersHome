@@ -107,10 +107,9 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       dev('d-bedroom4', __PUBLIC__ ? 'Bedroom 4 Light' : 'Tim’s Room Light', 'bedroom4', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(7 * MIN), 900),
       dev('d-front-porch', 'Front Porch Light', 'porch', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(2 * MIN), 900),
       // Climate
-      // Upstairs thermostat (East Wing). Its brand, model and connection are not
-      // known yet, so nothing beyond the name and location is assumed.
-      dev('d-thermostat-east', 'Upstairs Thermostat', 'eastwing', 'climate', 'carrier', 'To confirm', 'Thermostat (model to confirm)', 'Unknown', 'online', ago(0.6 * MIN), 600, 'Brand and connection still to confirm'),
-      dev('d-thermostat', 'Main Thermostat', 'living', 'climate', 'carrier', 'Carrier', __PUBLIC__ ? 'Infinity Touch' : 'SYSTXCCITC01-B · fw 4.31', 'Cloud', 'online', ago(0.5 * MIN), 600),
+      // Two thermostats of the same Carrier model: West Wing (main) and East Wing (upstairs).
+      dev('d-thermostat-east', 'East Wing Thermostat', 'eastwing', 'climate', 'carrier', 'Carrier', __PUBLIC__ ? 'Infinity Touch' : 'SYSTXCCITC01-B', 'Cloud', 'online', ago(0.6 * MIN), 600),
+      dev('d-thermostat', 'West Wing Thermostat', 'living', 'climate', 'carrier', 'Carrier', __PUBLIC__ ? 'Infinity Touch' : 'SYSTXCCITC01-B · fw 4.31', 'Cloud', 'online', ago(0.5 * MIN), 600),
       // Pool
       dev('d-omnilogic', 'OmniLogic Controller', 'backyard', 'pool', 'omnilogic', 'Hayward', 'OmniLogic (model to confirm)', 'Ethernet', 'online', ago(0.1 * MIN), 120),
       dev('d-filter-pump', 'Filter Pump', 'backyard', 'pool', 'omnilogic', 'Hayward', 'TriStar VS (sample)', 'Ethernet', 'online', ago(0.1 * MIN), 120),
@@ -195,7 +194,7 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       {
         id: 'hvac-main',
         deviceId: 'd-thermostat',
-        name: 'Main Thermostat',
+        name: 'West Wing Thermostat',
         outdoorTemp: 54,
         filterLifePct: 62,
         airflowCfm: 820,
@@ -206,7 +205,7 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
         zones: [
           {
             id: 'zone-main',
-            name: 'Main Floor',
+            name: 'West Wing',
             currentTemp: 69.5,
             humidity: 41,
             mode: 'heat',
@@ -222,12 +221,12 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
         ],
       },
       {
-        // Second thermostat area. Only room temperature and target-related
-        // readings are shown; equipment details are unknown, so they stay empty.
+        // Same thermostat model as the West Wing. Its own equipment readings
+        // (filter, airflow, blower) aren't known yet, so they stay empty.
         id: 'hvac-east',
         deviceId: 'd-thermostat-east',
-        name: 'Upstairs Thermostat',
-        outdoorTemp: null,
+        name: 'East Wing Thermostat',
+        outdoorTemp: 54,
         filterLifePct: null,
         airflowCfm: null,
         blowerRpm: null,

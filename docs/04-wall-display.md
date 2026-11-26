@@ -10,7 +10,7 @@ The **Home display** (`#/wall`) answers "what's happening at home?" from across 
 - the time, the date and the outside temperature
 - a one-line status ("All is well at home", or what needs attention)
 - alerts, which are never hidden, dimmed or muted
-- **Main Floor** and **East Wing** thermostats: the room temperature and what each is doing
+- **West Wing** and **East Wing** thermostats: the room temperature and what each is doing
 - **Pool** and **Spa** water temperatures
 - **Lights:** how many are on, and in which rooms
 - **Front door:** the last doorbell press, the last motion, and whether the doorbell is online

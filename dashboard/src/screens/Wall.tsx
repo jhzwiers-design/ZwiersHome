@@ -7,7 +7,7 @@
  * installed full-screen app.
  *
  *   ┌ brand ············ connection · prototype · theme ┐
- *   │  9:41                │  Main Floor │ East Wing     │
+ *   │  9:41                │  West Wing  │ East Wing     │
  *   │  Wednesday, 25 Nov   │  Pool       │ Spa           │
  *   │  status · outside    │  Lighting   │ Security      │
  *   │  alerts              │                             │
