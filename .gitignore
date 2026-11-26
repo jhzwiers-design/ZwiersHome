@@ -14,3 +14,6 @@ dist/
 .vscode/
 .idea/
 *.tsbuildinfo
+
+# Process archive: private, stays on this computer only (never GitHub)
+process/

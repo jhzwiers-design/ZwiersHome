@@ -2,7 +2,8 @@
  * Derived views of a HomeSnapshot. Pure functions — no device names or IDs
  * are hard-coded; everything is computed from whatever the data source reports.
  */
-import type { Area, Availability, Device, HomeSnapshot, Light } from '@/data/types';
+import type { Area, Availability, ClimateZone, Device, HomeSnapshot, Light } from '@/data/types';
+import { formatTemp } from './format';
 
 /** Display status used across the app. "off" = reachable but switched off. */
 export type DisplayStatus = 'on' | 'off' | 'online' | 'offline' | 'unavailable';
@@ -148,12 +149,29 @@ export interface ClimateArea {
  * a thermostat reports are shown inside its area, never invented here.
  */
 export function climateAreas(s: HomeSnapshot): ClimateArea[] {
-  return s.climate
-    .filter((sys) => sys.zones.length > 0)
-    .map((sys) => {
-      const zone = sys.zones[0]!;
-      return { system: sys, zone, label: zone.name, sublabel: sys.name === zone.name ? 'Thermostat' : sys.name };
-    });
+  // Every zone is its own area (the East Wing system has two: downstairs and upstairs).
+  return s.climate.flatMap((sys) =>
+    sys.zones.map((zone) => ({ system: sys, zone, label: zone.name, sublabel: sys.name === zone.name ? 'Thermostat' : sys.name })),
+  );
+}
+
+/**
+ * One plain line for a zone, in the Carrier app's own words for Auto:
+ * "Keep 68°–72°", "Heating · keep 70°–72°", "Heating to 71°", "System off".
+ */
+export function zoneStatusLine(zone: ClimateZone, unit: 'F' | 'C'): string {
+  if (zone.mode === 'off') return 'System off';
+  if (zone.mode === 'fan_only') return 'Fan only';
+  if (zone.mode === 'auto') {
+    const range = `keep ${formatTemp(zone.heatSetpoint, unit)}–${formatTemp(zone.coolSetpoint, unit)}`;
+    if (zone.action === 'heating') return `Heating · ${range}`;
+    if (zone.action === 'cooling') return `Cooling · ${range}`;
+    return range[0]!.toUpperCase() + range.slice(1);
+  }
+  const target = zone.mode === 'cool' ? zone.coolSetpoint : zone.heatSetpoint;
+  if (zone.action === 'heating') return `Heating to ${formatTemp(target, unit)}`;
+  if (zone.action === 'cooling') return `Cooling to ${formatTemp(target, unit)}`;
+  return `Holding ${formatTemp(target, unit)}`;
 }
 
 /** Outside temperature from whichever thermostat reports one. */

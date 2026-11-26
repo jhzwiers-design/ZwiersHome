@@ -17,7 +17,7 @@ import { StatusDot } from '@/components/Status';
 import type { HomeSnapshot } from '@/data/types';
 import { useNow } from '@/hooks';
 import { formatDate, formatTemp, formatTime, relativeTime } from '@/lib/format';
-import { climateAreas, deriveAlerts, fanSummary, isStale, lightingSummary, lightsByArea, outdoorTemp, statusSentence } from '@/lib/selectors';
+import { climateAreas, deriveAlerts, fanSummary, zoneStatusLine, isStale, lightingSummary, lightsByArea, outdoorTemp, statusSentence } from '@/lib/selectors';
 import { useHome, usePendingKey } from '@/store/home';
 import { usePreferences } from '@/store/preferences';
 
@@ -109,17 +109,9 @@ function Temperatures({ s, showClimate, showPool }: { s: HomeSnapshot; showClima
   if (count === 0) return null;
 
   return (
-    <section aria-label="Temperatures" className={cx('grid grid-cols-2 gap-3 md:gap-5', count >= 4 ? 'lg:grid-cols-4' : count === 3 ? 'lg:grid-cols-3' : '')}>
+    <section aria-label="Temperatures" className={cx('grid grid-cols-2 gap-3 md:gap-5', count >= 5 ? 'lg:grid-cols-5' : count === 4 ? 'lg:grid-cols-4' : count === 3 ? 'lg:grid-cols-3' : '')}>
       {areas.map(({ zone, label }) => {
-        const target = zone.mode === 'cool' ? zone.coolSetpoint : zone.heatSetpoint;
-        const line =
-          zone.action === 'heating'
-            ? `Heating to ${formatTemp(target, unit)}`
-            : zone.action === 'cooling'
-              ? `Cooling to ${formatTemp(target, unit)}`
-              : zone.mode === 'off'
-                ? 'System off'
-                : `Holding ${formatTemp(target, unit)}`;
+        const line = zoneStatusLine(zone, unit);
         return (
           <Metric
             key={zone.id}

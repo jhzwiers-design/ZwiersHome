@@ -15,7 +15,7 @@ const raw = {
     quickScenes: [],
   },
   safety: {
-    thermostat: { minF: 55, maxF: 85, minGapF: 3 },
+    thermostat: { minF: 55, maxF: 85, minGapF: 2 },
     pool: { setpointF: [65, 92] },
     spa: { setpointF: [80, 104] },
     pumpSpeed: { minPct: 18, maxPct: 100 },

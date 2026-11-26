@@ -40,7 +40,7 @@ export function Climate({ s }: { s: HomeSnapshot }) {
     <Stack tone="climate">
       <PageHeader title="Climate" summary={areas.map((a) => `${a.label} ${formatTemp(a.zone.currentTemp, unit)}`).join(' · ')} />
 
-      <div className="grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:gap-5 lg:grid-cols-2 2xl:grid-cols-3">
         {areas.map((a) => (
           <ClimateArea key={a.zone.id} s={s} system={a.system} zone={a.zone} label={a.label} sublabel={a.sublabel} />
         ))}
@@ -64,7 +64,6 @@ function ClimateArea({ s, system, zone, label, sublabel }: { s: HomeSnapshot; sy
   const reachable = device?.availability === 'online';
   const stale = isStale(zone.lastUpdated, device?.staleAfterSec ?? 600, now, connected);
   const disabled = !connected || !reachable;
-  const extraZones = system.zones.filter((z) => z.id !== zone.id);
 
   const activity =
     zone.action === 'heating'
@@ -137,21 +136,6 @@ function ClimateArea({ s, system, zone, label, sublabel }: { s: HomeSnapshot; sy
       </button>
       {more && <MoreSettings zone={zone} label={label} disabled={disabled} />}
 
-      {extraZones.length > 0 && (
-        <div className="mt-4 border-t border-rule pt-4">
-          <p className="mb-2 text-label text-muted">Other zones on this thermostat</p>
-          <ul className="grid grid-cols-2 gap-2">
-            {extraZones.map((z) => (
-              <li key={z.id} className="rounded-md bg-surface-2 px-3 py-2.5">
-                <p className="text-body text-fg">{z.name}</p>
-                <p className="num text-label text-muted">
-                  {formatTemp(z.currentTemp, unit)} · target {formatTemp(z.mode === 'cool' ? z.coolSetpoint : z.heatSetpoint, unit)}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
       {reachable && <p className="mt-3 text-center text-micro text-muted">Updated {relativeTime(zone.lastUpdated, now, clock)}</p>}
     </Section>
   );

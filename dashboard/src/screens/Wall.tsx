@@ -28,7 +28,7 @@ import { inTimeWindow, useNow } from '@/hooks';
 import { ConnectionDot, connLabel, Mark, ThemeSwitch } from '@/layout/AppShell';
 import { WallDock } from '@/layout/WallDock';
 import { formatDate, formatTemp, formatTime, relativeTime } from '@/lib/format';
-import { climateAreas, deriveAlerts, isStale, lightingSummary, lightsByArea, outdoorTemp, statusSentence } from '@/lib/selectors';
+import { climateAreas, zoneStatusLine, deriveAlerts, isStale, lightingSummary, lightsByArea, outdoorTemp, statusSentence } from '@/lib/selectors';
 import { useHome } from '@/store/home';
 import { usePreferences } from '@/store/preferences';
 
@@ -123,9 +123,9 @@ export function Wall({ s }: { s: HomeSnapshot }) {
         </section>
 
         {/* ── Temperatures ── */}
-        <section aria-label="Temperatures" className="wall-temps grid min-h-0 grid-cols-2 gap-[1.6vmin]">
-          {areas.slice(0, 2).map(({ zone, label }) => {
-            const target = zone.mode === 'cool' ? zone.coolSetpoint : zone.heatSetpoint;
+        <section aria-label="Temperatures" className="wall-temps grid min-h-0 grid-cols-6 gap-[1.6vmin]">
+          {/* Thermostats share the top row (span 6 ÷ count); pool and spa share the second. */}
+          {areas.map(({ zone, label }) => {
             return (
               <WallTile
                 key={zone.id}
@@ -136,7 +136,8 @@ export function Wall({ s }: { s: HomeSnapshot }) {
                 value={formatTemp(zone.currentTemp, unit)}
                 active={zone.action === 'heating' || zone.action === 'cooling'}
                 stale={!connected || isStale(zone.lastUpdated, 600, now, connected)}
-                sub={zone.action === 'heating' ? `Heating to ${formatTemp(target, unit)}` : zone.action === 'cooling' ? `Cooling to ${formatTemp(target, unit)}` : `Set to ${formatTemp(target, unit)}`}
+                sub={zoneStatusLine(zone, unit)}
+                className={areas.length >= 3 ? 'col-span-2' : 'col-span-3'}
               />
             );
           })}
@@ -145,6 +146,7 @@ export function Wall({ s }: { s: HomeSnapshot }) {
               href="#/pool"
               tone="pool"
               icon={Waves}
+              className="col-span-3"
               label="Pool"
               value={formatTemp(pool.waterTemp, unit)}
               active={pool.heater.state === 'heating'}
@@ -157,6 +159,7 @@ export function Wall({ s }: { s: HomeSnapshot }) {
               href="#/pool"
               tone="spa"
               icon={Bath}
+              className="col-span-3"
               label="Spa"
               value={formatTemp(spa.waterTemp, unit)}
               active={spa.heater.state === 'heating'}
@@ -226,6 +229,7 @@ function WallTile({
   sub,
   active,
   stale,
+  className,
 }: {
   href: string;
   tone: string;
@@ -235,11 +239,12 @@ function WallTile({
   sub: string;
   active?: boolean;
   stale?: boolean;
+  className?: string;
 }) {
   return (
-    <a href={href} data-tone={tone} className="wall-surface lift flex min-h-0 flex-col justify-between overflow-hidden rounded-[22px] p-[2.2vmin]">
-      <span className="flex items-center justify-between gap-2 text-fg-2" style={{ fontSize: 'clamp(0.9rem, 2vmin, 1.15rem)' }}>
-        <span className="truncate font-medium">{label}</span>
+    <a href={href} data-tone={tone} className={cx('wall-surface lift flex min-h-0 min-w-0 flex-col justify-between overflow-hidden rounded-[22px] p-[2.2vmin]', className)}>
+      <span className="flex items-start justify-between gap-2 text-fg-2" style={{ fontSize: 'clamp(0.9rem, 2vmin, 1.15rem)' }}>
+        <span className="line-clamp-2 leading-tight font-medium">{label}</span>
         <Icon aria-hidden className={cx('size-[1.2em] shrink-0', active ? 'text-[var(--tone-ink)]' : 'text-muted')} strokeWidth={1.8} />
       </span>
       <span className={cx('num leading-none font-light tracking-[-0.04em]', stale ? 'text-muted' : active ? 'text-[var(--tone-ink)]' : 'text-fg')} style={{ fontSize: 'clamp(2.5rem, 9vmin, 5.25rem)' }}>
