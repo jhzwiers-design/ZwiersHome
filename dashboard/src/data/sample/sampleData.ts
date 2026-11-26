@@ -38,7 +38,7 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       { id: 'westwing', name: 'West Wing (downstairs)' },
       { id: 'eastwing', name: 'East Wing (upstairs + downstairs)' },
       { id: 'garage', name: 'Garage' },
-      { id: 'backyard', name: 'Backyard' },
+      { id: 'backyard', name: 'Pool & Patio' },
     ],
 
     integrations: [

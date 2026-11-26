@@ -41,6 +41,15 @@ export interface PlanCamera {
   cameraId: string;
   at: Pt;
   angle: number;
+  /** Not installed yet: drawn dashed, shown in its area's panel as "planned". */
+  planned?: { name: string; areaId: string };
+}
+
+/** Outdoor features drawn for context (not rooms). */
+export interface PlanGround {
+  kind: 'paving' | 'water' | 'building';
+  points: Pt[];
+  label?: string;
 }
 
 export interface FloorPlan {
@@ -54,6 +63,7 @@ export interface FloorPlan {
   rooms: PlanRoom[];
   spaces: PlanSpace[];
   cameras: PlanCamera[];
+  grounds?: PlanGround[];
 }
 
 const rect = (x: number, y: number, w: number, h: number): Pt[] => [
@@ -94,7 +104,9 @@ function tracedPlan(): FloorPlan {
       { areaId: 'garage', points: poly([[830, 490], [1055, 490], [1055, 842], [790, 842], [790, 620], [830, 620]]) },
       // Drawn after the garage so its label sits on top.
       { areaId: 'mandoor', points: box(1058, 495, 82, 100), label: P([1101, 568]) },
-      { areaId: 'upstairs', points: box(125, 95, 150, 115), detached: true },
+      { areaId: 'upstairs', points: box(1090, 60, 150, 115), detached: true },
+      // Pool deck behind the back porch (from the satellite view; approximate).
+      { areaId: 'backyard', points: poly([[200, 40], [550, 40], [550, 318], [200, 318]]), label: P([300, 285]) },
       { areaId: 'frontyard', points: box(830, 875, 225, 60) },
     ],
     spaces: [
@@ -125,6 +137,17 @@ function tracedPlan(): FloorPlan {
       { cameraId: 'cam-mandoor', at: P([1062, 503]), angle: 30 },
       { cameraId: 'cam-front', at: P([360, 852]), angle: 85 },
       { cameraId: 'cam-frontyard', at: P([1053, 862]), angle: 88 },
+      // Coming later: a camera on the pool house looking over the pool.
+      { cameraId: 'planned-poolhouse', at: P([558, 232]), angle: 200, planned: { name: 'Pool house', areaId: 'backyard' } },
+    ],
+    // Grounds from the satellite view (26 Nov 2026). Positions are approximate;
+    // the barn is drawn closer than it really is so the map stays readable.
+    grounds: [
+      { kind: 'paving', points: poly([[1065, 380], [1150, 380], [1150, 990], [560, 990], [560, 945], [1065, 945]]), label: 'Driveway' },
+      { kind: 'water', points: poly([[245, 105], [495, 105], [495, 235], [245, 235]]), label: 'Pool' },
+      { kind: 'water', points: poly(Array.from({ length: 16 }, (_, i) => [522 + 30 * Math.cos((i / 16) * 2 * Math.PI), 82 + 30 * Math.sin((i / 16) * 2 * Math.PI)] as Pt)), label: 'Spa' },
+      { kind: 'building', points: box(560, 55, 92, 190), label: 'Pool house' },
+      { kind: 'building', points: poly([[-40, -70], [170, -112], [188, -28], [-22, 14]]), label: 'Barn (storage)' },
     ],
   };
 }

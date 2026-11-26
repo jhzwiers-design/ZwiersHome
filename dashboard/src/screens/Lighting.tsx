@@ -7,7 +7,7 @@ import { FanRow } from '@/components/domain/FanRow';
 import { CameraView } from '@/components/domain/SecurityParts';
 import { LightRow } from '@/components/domain/LightRow';
 import { Segmented } from '@/components/controls';
-import { Lightbulb, Map, Sparkles } from 'lucide-react';
+import { ArrowRight, Lightbulb, Map, Sparkles, Video, Waves } from 'lucide-react';
 import { HomeMap, roomStats } from '@/components/domain/HomeMap';
 import { floorPlan } from '@/config/floorplan';
 import { PageHeader, Section, Stack } from '@/components/layout-parts';
@@ -156,6 +156,8 @@ function RoomPanel({ s, areaId, className }: { s: HomeSnapshot; areaId: string |
   const lights = s.lights.filter((l) => l.areaId === area.id);
   const roomFans = s.fans.filter((f) => f.areaId === area.id);
   const roomCams = s.security.cameras.filter((c) => c.areaId === area.id);
+  const plannedCams = floorPlan.cameras.filter((c) => c.planned?.areaId === area.id);
+  const isPool = !!s.pool && s.devices.find((d) => d.id === s.pool!.controllerDeviceId)?.areaId === area.id;
   const st = roomStats(s, area.id);
   return (
     <Section
@@ -165,7 +167,9 @@ function RoomPanel({ s, areaId, className }: { s: HomeSnapshot; areaId: string |
           ? `${roomSubtitle(st.on, lights.length, roomFans)}${st.unreachable ? ` · ${st.unreachable} unreachable` : ''}`
           : roomCams.length
             ? `${roomCams.length === 1 ? 'Camera' : `${roomCams.length} cameras`} · no lights`
-            : 'No lights'
+            : isPool
+              ? 'Pool, spa and patio'
+              : 'No lights'
       }
       icon={Lightbulb}
       iconActive={st.on > 0}
@@ -181,8 +185,26 @@ function RoomPanel({ s, areaId, className }: { s: HomeSnapshot; areaId: string |
             ))}
           </div>
         )}
+        {plannedCams.map((c) => (
+          <div key={c.cameraId} className="mb-3 flex items-center gap-3 rounded-[18px] border border-dashed border-rule-strong p-4">
+            <span aria-hidden className="grid size-10 shrink-0 place-items-center rounded-full bg-surface-2 text-muted">
+              <Video className="size-5" strokeWidth={1.75} />
+            </span>
+            <span>
+              <span className="block text-body font-medium text-fg">{c.planned!.name} camera</span>
+              <span className="block text-label text-muted">Planned, not installed yet. Its view will appear here.</span>
+            </span>
+          </div>
+        ))}
+        {isPool && (
+          <a href="#/pool" className="lift mb-3 flex min-h-12 items-center gap-3 rounded-[18px] bg-surface-2 p-4 text-body text-fg hover:bg-surface-3">
+            <Waves aria-hidden className="size-5 text-[var(--pool-ink)]" strokeWidth={1.75} />
+            <span className="flex-1">Pool &amp; Spa controls</span>
+            <ArrowRight aria-hidden className="size-4 text-muted" strokeWidth={1.75} />
+          </a>
+        )}
         {lights.length + roomFans.length === 0 ? (
-          roomCams.length ? null : (
+          roomCams.length || plannedCams.length || isPool ? null : (
           <p className="text-body text-muted">No lights are assigned to this room yet. In Home Assistant, assign a light to the “{area.name}” area and it will appear here.</p>
           )
         ) : (

@@ -77,8 +77,10 @@ export function HomeMap({
       }
       return { ...c, pt: project(c.at, mode), cone: wedge.map((p) => project(p, mode)) };
     });
-    // Bounds include rooms and camera cones outside the house so nothing is clipped.
+    const grounds = (plan.grounds ?? []).map((g) => ({ ...g, pts: g.points.map((p) => project(p, mode)), center: project(centroid(g.points), mode) }));
+    // Bounds include rooms, grounds and camera cones outside the house so nothing is clipped.
     const all = [
+      ...grounds.flatMap((g) => g.pts),
       ...outline,
       ...(mode === '3d' ? outline.map(([x, y]) => [x, y + SLAB] as Pt) : []),
       ...rooms.flatMap((r) => r.pts),
@@ -95,6 +97,7 @@ export function HomeMap({
       rooms,
       spaces: plan.spaces.map((sp) => ({ pts: sp.points.map((p) => project(p, mode)), label: sp.label, center: project(centroid(sp.points), mode) })),
       cameras,
+      grounds,
     };
   }, [plan, mode]);
 
@@ -147,6 +150,20 @@ export function HomeMap({
             </feMerge>
           </filter>
         </defs>
+
+        {/* Paving (driveway) sits under everything */}
+        {geo.grounds
+          .filter((g) => g.kind === 'paving')
+          .map((g, i) => (
+            <g key={`pave-${i}`} style={{ pointerEvents: 'none' }}>
+              <polygon points={toPath(g.pts)} fill="var(--rule)" opacity="0.45" />
+              {g.label && (
+                <text x={g.center[0]} y={g.center[1]} textAnchor="middle" fontSize="11" fill="var(--muted)">
+                  {g.label}
+                </text>
+              )}
+            </g>
+          ))}
 
         {/* Slab edge (3D only) */}
         {mode === '3d' && (
@@ -238,8 +255,51 @@ export function HomeMap({
             </g>
           );
         })}
+        {/* Pool, spa and outbuildings: context only, drawn over the deck */}
+        {geo.grounds
+          .filter((g) => g.kind !== 'paving')
+          .map((g, i) => (
+            <g key={`ground-${i}`} style={{ pointerEvents: 'none' }}>
+              {g.kind === 'building' && mode === '3d' && (
+                <polygon points={toPath(g.pts.map(([x, y]) => [x, y + SLAB * 0.7] as Pt))} fill="var(--rule-strong)" opacity="0.9" />
+              )}
+              <polygon
+                points={toPath(g.pts)}
+                fill={g.kind === 'water' ? 'var(--pool-fill)' : 'var(--surface-2)'}
+                fillOpacity={g.kind === 'water' ? 0.45 : 1}
+                stroke={g.kind === 'water' ? 'var(--pool-fill)' : 'var(--rule-strong)'}
+                strokeWidth={g.kind === 'water' ? 2 : 3}
+                strokeLinejoin="round"
+              />
+              {g.label && (
+                <text x={g.center[0]} y={g.center[1] + 4} textAnchor="middle" fontSize="11" fontWeight={g.kind === 'water' ? 600 : 400} fill={g.kind === 'water' ? 'var(--fg)' : 'var(--muted)'}>
+                  {g.label}
+                </text>
+              )}
+            </g>
+          ))}
+
         {/* Cameras: view cone + clickable marker. Selecting one opens its room (camera preview first). */}
         {geo.cameras.map((c) => {
+          if (c.planned) {
+            const isSel = selected === c.planned.areaId;
+            return (
+              <g
+                key={c.cameraId}
+                role="button"
+                tabIndex={0}
+                aria-label={`${c.planned.name} camera, planned, not installed yet`}
+                onClick={() => onSelect(c.planned!.areaId)}
+                onKeyDown={(e) => onKey(e, c.planned!.areaId)}
+                className="cursor-pointer outline-none [&:focus-visible>circle]:stroke-[var(--accent)]"
+              >
+                <polygon points={toPath(c.cone)} fill="none" stroke="var(--security-fill)" strokeOpacity={0.6} strokeWidth={1.5} strokeDasharray="3 5" />
+                <circle cx={c.pt[0]} cy={c.pt[1]} r={14} fill="var(--surface)" stroke={isSel ? 'var(--accent-ink)' : 'var(--security-fill)'} strokeWidth={2} strokeDasharray="4 3" />
+                <Video x={c.pt[0] - 8} y={c.pt[1] - 8} width={16} height={16} color="var(--muted)" strokeWidth={2} aria-hidden />
+                <title>{c.planned.name} camera (planned)</title>
+              </g>
+            );
+          }
           const cam = s.security.cameras.find((x) => x.id === c.cameraId);
           if (!cam) return null;
           const online = s.devices.find((d) => d.id === cam.deviceId)?.availability === 'online';
