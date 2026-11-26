@@ -31,6 +31,7 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       { id: 'bedroom4', name: __PUBLIC__ ? 'Bedroom 4' : 'Tim’s Room' },
       { id: 'porch', name: 'Front Porch' },
       { id: 'outside', name: 'Outside' },
+      { id: 'westwing', name: 'West Wing (downstairs)' },
       { id: 'eastwing', name: 'East Wing (upstairs)' },
       { id: 'garage', name: 'Garage' },
       { id: 'backyard', name: 'Backyard' },
@@ -107,9 +108,9 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       dev('d-bedroom4', __PUBLIC__ ? 'Bedroom 4 Light' : 'Tim’s Room Light', 'bedroom4', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(7 * MIN), 900),
       dev('d-front-porch', 'Front Porch Light', 'porch', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(2 * MIN), 900),
       // Climate
-      // Two thermostats of the same Carrier model: West Wing (main) and East Wing (upstairs).
+      // Two thermostats of the same Carrier model: West Wing (main, downstairs) and East Wing (upstairs).
       dev('d-thermostat-east', 'East Wing Thermostat', 'eastwing', 'climate', 'carrier', 'Carrier', __PUBLIC__ ? 'Infinity Touch' : 'SYSTXCCITC01-B', 'Cloud', 'online', ago(0.6 * MIN), 600),
-      dev('d-thermostat', 'West Wing Thermostat', 'living', 'climate', 'carrier', 'Carrier', __PUBLIC__ ? 'Infinity Touch' : 'SYSTXCCITC01-B · fw 4.31', 'Cloud', 'online', ago(0.5 * MIN), 600),
+      dev('d-thermostat', 'West Wing Thermostat', 'westwing', 'climate', 'carrier', 'Carrier', __PUBLIC__ ? 'Infinity Touch' : 'SYSTXCCITC01-B · fw 4.31', 'Cloud', 'online', ago(0.5 * MIN), 600),
       // Pool
       dev('d-omnilogic', 'OmniLogic Controller', 'backyard', 'pool', 'omnilogic', 'Hayward', 'OmniLogic (model to confirm)', 'Ethernet', 'online', ago(0.1 * MIN), 120),
       dev('d-filter-pump', 'Filter Pump', 'backyard', 'pool', 'omnilogic', 'Hayward', 'TriStar VS (sample)', 'Ethernet', 'online', ago(0.1 * MIN), 120),
