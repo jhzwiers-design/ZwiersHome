@@ -177,6 +177,17 @@ function apply(d: HomeSnapshot, cmd: Command): string | undefined {
       touch(l.deviceId);
       return;
     }
+    case 'fan.set': {
+      const f = d.fans.find((x) => x.id === cmd.fanId)!;
+      if (cmd.on !== undefined) f.on = cmd.on;
+      if (cmd.speed !== undefined) {
+        f.speed = cmd.speed;
+        f.on = true;
+      }
+      f.lastChanged = now;
+      touch(f.deviceId);
+      return;
+    }
     case 'lights.setArea':
     case 'lights.allOff': {
       const targets = d.lights.filter((l) => (cmd.type === 'lights.allOff' ? true : l.areaId === cmd.areaId));
@@ -343,7 +354,7 @@ function refreshTimestamps(d: HomeSnapshot) {
 }
 
 function systemName(cmd: Command): string {
-  if (cmd.type.startsWith('light') || cmd.type.startsWith('scene')) return 'SmartThings';
+  if (cmd.type.startsWith('light') || cmd.type.startsWith('scene') || cmd.type.startsWith('fan')) return 'SmartThings';
   if (cmd.type.startsWith('climate')) return 'Carrier';
   if (cmd.type.startsWith('pool')) return 'OmniLogic';
   return 'Ring';

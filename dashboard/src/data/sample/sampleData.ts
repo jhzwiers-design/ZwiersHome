@@ -92,16 +92,17 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       dev('hub', 'Hub', 'kitchen', 'hub', 'smartthings', 'Aeotec', __PUBLIC__ ? 'Smart home hub' : 'Smart Home Hub IM6001-V3P01', 'Wi-Fi', 'online', ago(0.2 * MIN), 600),
       dev('d-media-hub', 'Hub – Media Room', 'media', 'hub', 'smartthings', 'Samsung', 'Hub (TV-based, to confirm)', 'Unknown', 'offline', ago(2 * HOUR), 600, 'Offline in SmartThings'),
       dev('d-media-tv', 'Media Room Television', 'media', 'media', 'smartthings', 'Samsung', 'TV (model to confirm)', 'Wi-Fi', 'offline', ago(2 * HOUR), 600, 'Offline in SmartThings'),
-      dev('d-living', 'Living Room Light', 'living', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(3 * MIN), 900),
+      // Confirmed Honeywell Z-Wave (manufacturer 0039) from the SmartThings device info.
+      dev('d-living', 'Living Room Light', 'living', 'light', 'smartthings', 'Honeywell', __PUBLIC__ ? 'Z-Wave in-wall dimmer' : 'Z-Wave dimmer 0039-4944-3038', 'Z-Wave', 'online', ago(3 * MIN), 900),
       dev('d-kitchen', 'Kitchen Lights', 'kitchen', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(3 * MIN), 900),
       dev('d-primary-light', 'Master Bed Room', 'primary', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(5 * MIN), 900),
-      dev('d-primary-fan', 'Master Bedroom', 'primary', 'fan', 'smartthings', 'To confirm', 'Fan control', 'Unknown', 'online', ago(5 * MIN), 900),
+      dev('d-primary-fan', 'Master Bedroom Fan', 'primary', 'fan', 'smartthings', 'Honeywell', __PUBLIC__ ? 'Z-Wave fan control' : 'Z-Wave fan control 0039-4944-3131', 'Z-Wave', 'online', ago(5 * MIN), 900),
       dev('d-man-door', 'Man Door Light', 'outside', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(4 * MIN), 900),
       dev('d-front-outdoor', 'Front Outdoor Light', 'outside', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(4 * MIN), 900),
       dev('d-screen-porch', 'Screen Porch', 'outside', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(4 * MIN), 900, 'Sometimes slow to respond (prototype demo)'),
       dev('d-media-light', 'Media Room Light', 'media', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(6 * MIN), 900),
       dev('d-bedroom1', __PUBLIC__ ? 'Bedroom 1 Light' : 'John’s Room Light', 'kids', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(9 * MIN), 900),
-      dev('d-upstairs-fan', 'Upstairs Fan', 'kids', 'fan', 'smartthings', 'To confirm', 'Fan control', 'Unknown', 'online', ago(9 * MIN), 900),
+      dev('d-upstairs-fan', 'Upstairs Fan', 'kids', 'fan', 'smartthings', 'To confirm', 'Fan control (speeds to confirm)', 'Unknown', 'online', ago(9 * MIN), 900),
       dev('d-upstairs-lights', 'Upstairs Lights', 'kids', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(9 * MIN), 900),
       dev('d-bedroom2', __PUBLIC__ ? 'Bedroom 2 Light' : 'Lauren’s Room Light', 'bedroom2', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(7 * MIN), 900),
       dev('d-bedroom3', __PUBLIC__ ? 'Bedroom 3 Light' : 'Allie’s Room Light', 'bedroom3', 'light', 'smartthings', 'To confirm', 'Wall switch', 'Unknown', 'online', ago(7 * MIN), 900),
@@ -144,6 +145,14 @@ export function createSampleSnapshot(now = Date.now()): HomeSnapshot {
       light('l-bedroom3', 'd-bedroom3', __PUBLIC__ ? 'Bedroom 3 Light' : 'Allie’s Room Light', 'bedroom3', false, null, null, {}, ago(3 * HOUR)),
       light('l-bedroom4', 'd-bedroom4', __PUBLIC__ ? 'Bedroom 4 Light' : 'Tim’s Room Light', 'bedroom4', false, null, null, {}, ago(3 * HOUR)),
       light('l-front-porch', 'd-front-porch', 'Front Porch Light', 'porch', true, null, null, {}, ago(80 * MIN)),
+    ],
+
+    // Both fans show Off in SmartThings. The Master Bedroom control is a
+    // confirmed Honeywell Z-Wave fan control (low / medium / high). The Upstairs
+    // Fan's speed support isn't known yet, so it is on/off only for now.
+    fans: [
+      { id: 'f-primary', deviceId: 'd-primary-fan', name: 'Master Bedroom Fan', areaId: 'primary', on: false, speed: 'medium', speeds: ['low', 'medium', 'high'], lastChanged: ago(5 * HOUR) },
+      { id: 'f-upstairs', deviceId: 'd-upstairs-fan', name: 'Upstairs Fan', areaId: 'kids', on: false, speed: null, speeds: [], lastChanged: ago(6 * HOUR) },
     ],
 
     // Sample scenes. In the prototype they change sample lights only.

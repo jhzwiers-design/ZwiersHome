@@ -33,7 +33,7 @@ const SCREENS: Record<Exclude<Route, 'wall'>, (p: { s: HomeSnapshot }) => React.
 
 const TITLES: Record<Route, string> = {
   overview: 'Overview',
-  lighting: 'Lighting',
+  lighting: 'Lights & fans',
   climate: 'Climate',
   pool: 'Pool & Spa',
   security: 'Security',

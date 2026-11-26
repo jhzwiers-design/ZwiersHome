@@ -1,8 +1,9 @@
 /**
- * Lighting — every light grouped by area (from Home Assistant Areas),
- * scenes, area-level on/off and filters.
+ * Lights & fans — every light and fan grouped by area (from Home Assistant
+ * Areas), scenes, area-level light on/off and filters.
  */
 import { useState } from 'react';
+import { FanRow } from '@/components/domain/FanRow';
 import { LightRow } from '@/components/domain/LightRow';
 import { Segmented } from '@/components/controls';
 import { Lightbulb, Map, Sparkles } from 'lucide-react';
@@ -10,8 +11,8 @@ import { HomeMap, roomStats } from '@/components/domain/HomeMap';
 import { floorPlan } from '@/config/floorplan';
 import { PageHeader, Section, Stack } from '@/components/layout-parts';
 import { Button } from '@/components/primitives';
-import type { HomeSnapshot } from '@/data/types';
-import { availabilityOf, lightingSummary, lightsByArea } from '@/lib/selectors';
+import type { Fan, HomeSnapshot } from '@/data/types';
+import { availabilityOf, fanSummary, lightingSummary, sortAreas } from '@/lib/selectors';
 import { useHome, usePendingKey } from '@/store/home';
 import { SceneButton } from '@/components/domain/Scenes';
 
@@ -24,33 +25,43 @@ export function Lighting({ s }: { s: HomeSnapshot }) {
     () => floorPlan.rooms.find((r) => roomStats(s, r.areaId).on > 0)?.areaId ?? floorPlan.rooms[0]?.areaId ?? null,
   );
   const sum = lightingSummary(s);
+  const fans = fanSummary(s);
   const connected = s.connection.status === 'connected';
 
-  const groups = lightsByArea(s, config.areaOrder)
-    .map((g) => ({
-      ...g,
-      lights: g.lights.filter((l) => {
-        const reachable = availabilityOf(s, l.deviceId) === 'online';
-        if (filter === 'on') return l.on && reachable;
-        if (filter === 'unreachable') return !reachable;
-        return true;
-      }),
+  const keep = (x: { on: boolean; deviceId: string }) => {
+    const reachable = availabilityOf(s, x.deviceId) === 'online';
+    if (filter === 'on') return x.on && reachable;
+    if (filter === 'unreachable') return !reachable;
+    return true;
+  };
+  const groups = sortAreas(s.areas, config.areaOrder)
+    .map((area) => ({
+      area,
+      allLights: s.lights.filter((l) => l.areaId === area.id),
+      lights: s.lights.filter((l) => l.areaId === area.id && keep(l)),
+      fans: s.fans.filter((f) => f.areaId === area.id && keep(f)),
     }))
-    .filter((g) => g.lights.length > 0);
+    .filter((g) => g.lights.length + g.fans.length > 0);
 
   return (
     <Stack tone="lighting">
       <PageHeader
-        title="Lighting"
+        title="Lights & fans"
         summary={
           <>
-            <span className="num text-fg">{sum.on}</span> of {sum.total} on
+            <span className="num text-fg">{sum.on}</span> of {sum.total} lights on
+            {fans.total > 0 && (
+              <>
+                {' · '}
+                <span className="num text-fg">{fans.on}</span> of {fans.total} fans on
+              </>
+            )}
             {sum.unreachable > 0 && <span className="text-danger"> · {sum.unreachable} unreachable</span>}
           </>
         }
         actions={
           <Segmented<Filter>
-            label="Filter lights"
+            label="Filter lights and fans"
             size="sm"
             value={filter}
             onChange={setFilter}
@@ -78,24 +89,27 @@ export function Lighting({ s }: { s: HomeSnapshot }) {
         </div>
       </Section>
 
-      {groups.length === 0 && <p className="tile p-8 text-center text-body text-muted">No lights match this filter.</p>}
+      {groups.length === 0 && <p className="tile p-8 text-center text-body text-muted">Nothing matches this filter.</p>}
 
       <h2 className="mt-2 text-h2 font-medium tracking-[-0.02em] text-fg">All rooms</h2>
       <div className="grid grid-cols-1 gap-4 md:gap-5 xl:grid-cols-2">
-        {groups.map(({ area, lights }) => {
-          const on = lights.filter((l) => l.on && availabilityOf(s, l.deviceId) === 'online').length;
+        {groups.map(({ area, allLights, lights, fans: roomFans }) => {
+          const on = allLights.filter((l) => l.on && availabilityOf(s, l.deviceId) === 'online').length;
           return (
             <Section
               key={area.id}
               title={area.name}
-              subtitle={`${on} of ${lights.length} on`}
+              subtitle={roomSubtitle(on, allLights.length, s.fans.filter((f) => f.areaId === area.id))}
               icon={Lightbulb}
               iconActive={on > 0}
-              meta={<AreaActions areaId={area.id} areaName={area.name} s={s} />}
+              meta={allLights.length > 0 && <AreaActions areaId={area.id} areaName={area.name} s={s} />}
             >
               <div>
                 {lights.map((l) => (
                   <LightRow key={l.id} light={l} />
+                ))}
+                {roomFans.map((f) => (
+                  <FanRow key={f.id} fan={f} />
                 ))}
               </div>
             </Section>
@@ -139,23 +153,44 @@ function RoomPanel({ s, areaId, className }: { s: HomeSnapshot; areaId: string |
     );
   }
   const lights = s.lights.filter((l) => l.areaId === area.id);
+  const roomFans = s.fans.filter((f) => f.areaId === area.id);
   const st = roomStats(s, area.id);
   return (
     <Section
       title={area.name}
-      subtitle={lights.length ? `${st.on} of ${lights.length} on${st.unreachable ? ` · ${st.unreachable} unreachable` : ''}` : 'No lights'}
+      subtitle={
+        lights.length || roomFans.length
+          ? `${roomSubtitle(st.on, lights.length, roomFans)}${st.unreachable ? ` · ${st.unreachable} unreachable` : ''}`
+          : 'No lights'
+      }
       icon={Lightbulb}
       iconActive={st.on > 0}
       meta={lights.length > 0 && <AreaActions areaId={area.id} areaName={area.name} s={s} />}
       className={className}
     >
       <div aria-live="polite">
-        {lights.length === 0 ? (
+        {lights.length + roomFans.length === 0 ? (
           <p className="text-body text-muted">No lights are assigned to this room yet. In Home Assistant, assign a light to the “{area.name}” area and it will appear here.</p>
         ) : (
-          lights.map((l) => <LightRow key={l.id} light={l} />)
+          <>
+            {lights.map((l) => (
+              <LightRow key={l.id} light={l} />
+            ))}
+            {roomFans.map((f) => (
+              <FanRow key={f.id} fan={f} />
+            ))}
+          </>
         )}
       </div>
     </Section>
   );
+}
+
+/** "1 of 2 lights on · fan on" */
+function roomSubtitle(on: number, total: number, fans: Fan[]) {
+  const parts: string[] = [];
+  if (total) parts.push(`${on} of ${total} ${total === 1 ? 'light' : 'lights'} on`);
+  if (fans.length === 1) parts.push(`fan ${fans[0]!.on ? 'on' : 'off'}`);
+  else if (fans.length > 1) parts.push(`${fans.filter((f) => f.on).length} of ${fans.length} fans on`);
+  return parts.join(' · ');
 }

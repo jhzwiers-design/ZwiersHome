@@ -80,6 +80,22 @@ export interface Light {
   lastChanged: number;
 }
 
+export type FanSpeed = 'low' | 'medium' | 'high';
+
+/** A ceiling or room fan on a wall control. */
+export interface Fan {
+  id: string;
+  deviceId: string;
+  name: string;
+  areaId: string;
+  on: boolean;
+  /** Current speed, or null when the control is on/off only. */
+  speed: FanSpeed | null;
+  /** Speeds the control supports; empty = on/off only. */
+  speeds: FanSpeed[];
+  lastChanged: number;
+}
+
 export type SceneIcon = 'arrive' | 'leave' | 'evening' | 'movie' | 'night' | 'off';
 
 export interface Scene {
@@ -233,6 +249,7 @@ export interface HomeSnapshot {
   integrations: Integration[];
   devices: Device[];
   lights: Light[];
+  fans: Fan[];
   scenes: Scene[];
   climate: ClimateSystem[];
   pool: PoolSystem | null;

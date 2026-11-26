@@ -17,6 +17,12 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 | 2026-11-25 | Stack: React 19, TypeScript 5.9, Vite 8, Tailwind CSS 4 (token-driven), Radix primitives, Zustand, Zod, Lucide icons, Inter (bundled locally, no external font service). |
 
 ## Completed
+- 2026-11-26: **Fans are controllable** on the Lights & fans page (renamed from Lighting).
+  - Checked against the SmartThings device list: all 17 devices are present (11 lights, 2 fans, 2 hubs, the Media Room TV).
+  - **Master Bedroom Fan:** on/off plus Low / Medium / High. It's a confirmed Honeywell Z-Wave fan control.
+  - **Upstairs Fan:** on/off only until its speed support is confirmed.
+  - Fans appear in their room's card and in the map's room panel, and are counted in the page header and on the Overview.
+  - The Living Room light is recorded as a Honeywell Z-Wave dimmer, but it stays on/off only until dimming is confirmed in Home Assistant.
 - 2026-11-25: **Master redesign and experience overhaul.**
   - **Visual identity:**
     - The Apple system font
@@ -145,6 +151,7 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 - [ ] Ring Protect plan
 - [ ] Users / wall tablet model
 - [x] Direction chosen: **one-time purchases, no subscriptions** (Home Assistant Green + Zigbee/Z-Wave adapters; see go-live plan)
+- [ ] Upstairs Fan: does its wall control have speeds (Low/Medium/High) or on/off only?
 - [ ] Later: Dolphin model number
 
 ## Outstanding issues (prototype)

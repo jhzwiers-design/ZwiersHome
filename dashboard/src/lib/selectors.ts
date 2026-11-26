@@ -43,6 +43,12 @@ export function lightsByArea(s: HomeSnapshot, order: string[]): { area: Area; li
     .filter((g) => g.lights.length > 0);
 }
 
+export function fanSummary(s: HomeSnapshot) {
+  const total = s.fans.length;
+  const on = s.fans.filter((f) => f.on && availabilityOf(s, f.deviceId) === 'online').length;
+  return { total, on };
+}
+
 export function lightingSummary(s: HomeSnapshot) {
   const total = s.lights.length;
   const on = s.lights.filter((l) => l.on && availabilityOf(s, l.deviceId) === 'online').length;

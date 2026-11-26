@@ -21,7 +21,7 @@ import { usePreferences } from '@/store/preferences';
 
 export const NAV: { id: Exclude<Route, 'wall'>; label: string; short: string; icon: LucideIcon }[] = [
   { id: 'overview', label: 'Overview', short: 'Home', icon: House },
-  { id: 'lighting', label: 'Lighting', short: 'Lights', icon: Lightbulb },
+  { id: 'lighting', label: 'Lights & fans', short: 'Lights', icon: Lightbulb },
   { id: 'climate', label: 'Climate', short: 'Climate', icon: Thermometer },
   { id: 'pool', label: 'Pool & Spa', short: 'Pool', icon: Waves },
   { id: 'security', label: 'Security', short: 'Security', icon: ShieldCheck },

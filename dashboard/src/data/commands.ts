@@ -5,13 +5,14 @@
  * data source receives them, so the same safety checks will apply when the
  * Home Assistant data source replaces sample data.
  */
-import type { ClimatePreset, FanMode, HomeSnapshot, HvacMode, BodyId } from './types';
+import type { ClimatePreset, FanMode, FanSpeed, HomeSnapshot, HvacMode, BodyId } from './types';
 import type { HomeConfig } from '@/config/schema';
 
 export type Command =
   | { type: 'light.set'; lightId: string; on?: boolean; brightness?: number; colorTempK?: number }
   | { type: 'lights.setArea'; areaId: string; on: boolean }
   | { type: 'lights.allOff' }
+  | { type: 'fan.set'; fanId: string; on?: boolean; speed?: FanSpeed }
   | { type: 'scene.activate'; sceneId: string }
   | { type: 'climate.setMode'; zoneId: string; mode: HvacMode }
   | { type: 'climate.setSetpoints'; zoneId: string; heat?: number; cool?: number }
@@ -45,6 +46,8 @@ export function commandTarget(cmd: Command): string {
       return `area:${cmd.areaId}`;
     case 'lights.allOff':
       return 'lights:all';
+    case 'fan.set':
+      return `fan:${cmd.fanId}`;
     case 'scene.activate':
       return `scene:${cmd.sceneId}`;
     case 'climate.setMode':
@@ -102,6 +105,15 @@ export function validateCommand(cmd: Command, s: HomeSnapshot, config: HomeConfi
         if (!inRange(cmd.colorTempK, ct.minK, ct.maxK)) {
           throw new CommandError(`Colour temperature must be ${ct.minK}–${ct.maxK} K.`, 'validation');
         }
+      }
+      return;
+    }
+    case 'fan.set': {
+      const f = s.fans.find((x) => x.id === cmd.fanId);
+      if (!f) throw new CommandError('Unknown fan.', 'validation');
+      deviceAvailable(f.deviceId, f.name);
+      if (cmd.speed !== undefined && !f.speeds.includes(cmd.speed)) {
+        throw new CommandError(`${f.name} doesn't support that speed.`, 'validation');
       }
       return;
     }

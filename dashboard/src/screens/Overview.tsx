@@ -17,7 +17,7 @@ import { StatusDot } from '@/components/Status';
 import type { HomeSnapshot } from '@/data/types';
 import { useNow } from '@/hooks';
 import { formatDate, formatTemp, formatTime, relativeTime } from '@/lib/format';
-import { climateAreas, deriveAlerts, isStale, lightingSummary, lightsByArea, outdoorTemp, statusSentence } from '@/lib/selectors';
+import { climateAreas, deriveAlerts, fanSummary, isStale, lightingSummary, lightsByArea, outdoorTemp, statusSentence } from '@/lib/selectors';
 import { useHome, usePendingKey } from '@/store/home';
 import { usePreferences } from '@/store/preferences';
 
@@ -168,6 +168,8 @@ function LightingSummary({ s }: { s: HomeSnapshot }) {
   const run = useHome((st) => st.run);
   const allPending = usePendingKey('lights:all');
   const sum = lightingSummary(s);
+  const fans = fanSummary(s);
+  const fansOn = s.fans.filter((f) => f.on);
   const groups = lightsByArea(s, config.areaOrder);
   const litRooms = groups.filter((g) => g.lights.some((l) => l.on));
   const scenes = config.overview.quickScenes.length ? s.scenes.filter((x) => config.overview.quickScenes.includes(x.id)) : s.scenes;
@@ -179,6 +181,11 @@ function LightingSummary({ s }: { s: HomeSnapshot }) {
         <p className="text-h2 font-semibold tracking-[-0.02em] text-fg">
           <span className="num">{sum.on}</span> <span className="font-normal text-muted">of {sum.total} lights on</span>
         </p>
+        {fans.total > 0 && (
+          <p className="text-label text-muted">
+            {fansOn.length ? `Fan on: ${fansOn.map((f) => f.name.replace(/ fan$/i, '')).join(', ')}` : 'Fans off'}
+          </p>
+        )}
         {sum.unreachable > 0 && (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-danger-soft px-3 py-1 text-label text-danger">
             <TriangleAlert aria-hidden className="size-3.5" strokeWidth={2} /> {sum.unreachable} not responding
