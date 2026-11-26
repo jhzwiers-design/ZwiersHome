@@ -1,4 +1,10 @@
-# Sharing the Zwiers Home prototype with family (password-protected, free)
+# Sharing the Zwiers Home prototype with family
+
+> **Current status (25 Nov 2026): PUBLIC demo at https://home.johnzwiers.com**, with no login, at your request.
+> Public builds automatically replace personal details: bedroom names, the real floor plan and equipment model numbers (`__PUBLIC__` in `vite.config.ts`, verified by scanning the built files).
+> The email-code lock pieces still exist in Cloudflare (the **Family** policy and the **One-time PIN** login method), so re-locking means creating a new Access application for the Worker with the Family policy. The email code never arrived during setup; that needs investigating before relying on the lock.
+
+## Original plan: password-protected, free
 
 _25 Nov 2026. A guide. Nothing here has been set up yet: each step happens in your own accounts._
 

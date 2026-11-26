@@ -88,6 +88,8 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 - 2026-11-25: **Fixed white screens**: an error screen if a page fails, a clear "browser too old" message (needs iOS 16.4+), safer code for older Safari, and the home-network link (port 5174) now serves the production build instead of the developer version. Start it with `npm run home`.
 - 2026-11-25: Guide for **password-protected family sharing** at no cost: [docs/03-share-with-family.md](docs/03-share-with-family.md) (Cloudflare Pages + Zero Trust email codes). Not set up yet: it needs your Cloudflare account.
 
+- 2026-11-25: **Live at https://home.johnzwiers.com** (public, Cloudflare Workers, free). It auto-updates on every push to GitHub. The public build shows generic bedroom names, a demo floor plan and no model numbers; the real details stay on your Mac. The login was removed at your request; the email codes never arrived, which is still to investigate. Your portfolio at johnzwiers.com is untouched.
+
 ## Next milestone
 **M2: data-source layer + Home Assistant connection (code only).** Build `HomeAssistantSource` behind the existing interface: login flow, token storage per §3.1a, registry discovery by areas/labels, live state, command mapping, reconnects. It can be developed and unit-tested without a running Home Assistant. A real connection waits for M3, the optional Home Assistant trial on this Mac, **which needs your approval to install**.
 
