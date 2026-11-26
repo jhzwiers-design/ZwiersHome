@@ -85,6 +85,9 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 - 2026-11-25: **Sample home rebuilt from your real SmartThings device list**: 13 lights, 2 fans, 2 hubs and a TV across your SmartThings rooms (Living Room, Kitchen, Master Bedroom, Media Room, Kids Room, Lauren’s, Allie’s and Tim’s rooms, Front Porch, Outside). On/off states match the screenshots; the Media Room TV and second hub show as offline, as they do in SmartThings.
 - 2026-11-25: Fixed the thermostat and pool dials on phones (the temperature now scales with the circle).
 
+- 2026-11-25: **Fixed white screens**: an error screen if a page fails, a clear "browser too old" message (needs iOS 16.4+), safer code for older Safari, and the home-network link (port 5174) now serves the production build instead of the developer version. Start it with `npm run home`.
+- 2026-11-25: Guide for **password-protected family sharing** at no cost: [docs/03-share-with-family.md](docs/03-share-with-family.md) (Cloudflare Pages + Zero Trust email codes). Not set up yet: it needs your Cloudflare account.
+
 ## Next milestone
 **M2: data-source layer + Home Assistant connection (code only).** Build `HomeAssistantSource` behind the existing interface: login flow, token storage per §3.1a, registry discovery by areas/labels, live state, command mapping, reconnects. It can be developed and unit-tested without a running Home Assistant. A real connection waits for M3, the optional Home Assistant trial on this Mac, **which needs your approval to install**.
 

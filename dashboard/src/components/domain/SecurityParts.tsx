@@ -99,7 +99,7 @@ export function EventList({ events, cameras, limit, groupByDay = true }: { event
   const groups: { label: string; items: SecurityEvent[] }[] = [];
   for (const e of list) {
     const label = groupByDay ? dayLabel(e.at, now) : '';
-    const g = groups.at(-1);
+    const g = groups[groups.length - 1];
     if (g && g.label === label) g.items.push(e);
     else groups.push({ label, items: [e] });
   }

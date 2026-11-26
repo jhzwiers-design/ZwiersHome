@@ -5,6 +5,7 @@
 import { useEffect } from 'react';
 import { ConfirmHost } from '@/components/ConfirmDialog';
 import { Toaster } from '@/components/Toaster';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Skeleton } from '@/components/primitives';
 import { useApplyTheme, useRoute, type Route } from '@/hooks';
 import { AppShell } from '@/layout/AppShell';
@@ -45,7 +46,8 @@ export function App() {
   const route = useRoute();
   const snapshot = useHome((s) => s.snapshot);
   const configError = useHome((s) => s.configError);
-  const ready = snapshot && snapshot.connection.status !== 'connecting';
+  const config = useHome((s) => s.config);
+  const ready = !!config && snapshot && snapshot.connection.status !== 'connecting';
 
   useEffect(() => {
     document.title = `${TITLES[route]} · Zwiers Home`;
@@ -59,7 +61,7 @@ export function App() {
   if (route === 'wall') {
     return (
       <>
-        {ready ? <Wall s={snapshot} /> : <LoadingScreen />}
+        <ErrorBoundary resetKey={route}>{ready ? <Wall s={snapshot} /> : <LoadingScreen />}</ErrorBoundary>
         <Toaster placement="top" />
       </>
     );
@@ -71,7 +73,9 @@ export function App() {
       <AppShell route={route}>
         {ready ? (
           <div key={route} className="animate-zh-in">
-            <Screen s={snapshot} />
+            <ErrorBoundary resetKey={route}>
+              <Screen s={snapshot} />
+            </ErrorBoundary>
           </div>
         ) : (
           <LoadingScreen />

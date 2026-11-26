@@ -138,7 +138,8 @@ export class SampleDataSource implements DataSource, PrototypeControls {
 
   /** Copy-on-write update, then notify listeners with the new snapshot. */
   private update(mutate: (draft: HomeSnapshot) => void) {
-    const draft = structuredClone(this.s);
+    // JSON copy instead of structuredClone, for older Safari (snapshot is plain data).
+    const draft: HomeSnapshot = JSON.parse(JSON.stringify(this.s));
     mutate(draft);
     this.s = draft;
     this.emit();

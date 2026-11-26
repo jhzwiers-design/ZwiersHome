@@ -33,6 +33,16 @@ function cspOnBuild(): Plugin {
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), cspOnBuild()],
+  build: {
+    // Transpile modern syntax for older iPhones/iPads (Safari 15+).
+    target: ['es2020', 'safari15', 'chrome100', 'firefox100'],
+  },
+  preview: {
+    // Serves the production build for testing on phones/iPads at home.
+    host: '0.0.0.0',
+    port: 5174,
+    strictPort: true,
+  },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },
