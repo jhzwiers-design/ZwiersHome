@@ -6,7 +6,8 @@
  * requesting a live view.
  */
 import { BellRing, Footprints, Play, VideoOff } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { cameraPhotoLoader } from '@/lib/cameraPhotos';
 import { Button, cx, SampleTag, Spinner } from '@/components/primitives';
 import type { Camera, SecurityEvent } from '@/data/types';
 import { useNow } from '@/hooks';
@@ -19,6 +20,16 @@ export function CameraView({ camera, compact }: { camera: Camera; compact?: bool
   const now = useNow(1000);
   const [state, setState] = useState<'idle' | 'starting' | 'unavailable'>('idle');
   const isSample = useHome((s) => s.snapshot?.source.kind === 'sample');
+  const [photo, setPhoto] = useState<string | null>(null);
+  useEffect(() => {
+    const load = cameraPhotoLoader(camera.id);
+    let alive = true;
+    if (load) load().then((url) => alive && setPhoto(url)).catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [camera.id]);
+  const stand = photo ? 'Sample photo' : 'Illustration';
 
   const start = () => {
     setState('starting');
@@ -27,7 +38,13 @@ export function CameraView({ camera, compact }: { camera: Camera; compact?: bool
 
   return (
     <figure className="relative overflow-hidden rounded-[18px] border border-rule bg-[var(--video-bg)]" aria-label={isSample ? `${camera.name}: camera placeholder, no video connected yet` : camera.name}>
-      {/* Illustrated placeholder view (line drawing per camera), never a fake photo. */}
+      {/* Stand-in view: a sample photo of what the camera faces (private builds), or a line drawing. */}
+      {photo ? (
+        <div className="relative aspect-video w-full" aria-hidden>
+          <img src={photo} alt="" className="absolute inset-0 size-full object-cover" decoding="async" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgb(0_0_0/0.45),transparent_30%,transparent_70%,rgb(0_0_0/0.5))]" />
+        </div>
+      ) : (
       <svg viewBox="0 0 320 180" className="block aspect-video w-full" aria-hidden>
         <defs>
           <radialGradient id={`cam-glow-${camera.id}`} cx="50%" cy="38%" r="75%">
@@ -40,12 +57,13 @@ export function CameraView({ camera, compact }: { camera: Camera; compact?: bool
           <Scene scene={camera.scene} />
         </g>
       </svg>
+      )}
 
       <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-2 p-3">
         <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--video-bg)]/70 px-3 py-1 text-label text-[var(--video-fg)] backdrop-blur">
           <span className="size-1.5 rounded-full bg-[var(--video-muted)]" aria-hidden />
           {camera.name}
-          {isSample && !compact && <span className="text-[var(--video-muted)]">· Illustration, not live</span>}
+          {isSample && !compact && <span className="text-[var(--video-muted)]">· {stand}, not live</span>}
         </span>
         {!compact && <span className="num rounded-full bg-[var(--video-bg)]/70 px-3 py-1 text-label text-[var(--video-muted)] backdrop-blur">{formatTime(now, clock)}</span>}
       </div>
@@ -87,7 +105,7 @@ export function CameraView({ camera, compact }: { camera: Camera; compact?: bool
 
       {isSample && (
         <div className="absolute right-3 bottom-3">
-          <SampleTag className="border-[var(--video-line-2)] text-[var(--video-muted)]">Illustration</SampleTag>
+          <SampleTag className="border-[var(--video-line-2)] text-[var(--video-muted)]">{stand}</SampleTag>
         </div>
       )}
     </figure>

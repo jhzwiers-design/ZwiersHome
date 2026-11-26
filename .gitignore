@@ -17,3 +17,6 @@ dist/
 
 # Process archive: private, stays on this computer only (never GitHub)
 process/
+
+# Real photos of the home: private, local only (never GitHub or the public site)
+dashboard/src/assets/private/
