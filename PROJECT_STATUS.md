@@ -17,7 +17,8 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 | 2026-11-25 | Stack: React 19, TypeScript 5.9, Vite 8, Tailwind CSS 4 (token-driven), Radix primitives, Zustand, Zod, Lucide icons, Inter (bundled locally, no external font service). |
 
 ## Completed
-- 2026-11-26: **Home map redrawn from the architect's first-floor plan** (real proportions, labelled office, foyer, dining, baths, etc.; the upstairs Kids Room as a separate dashed tile). Public builds still show the demo layout.
+- 2026-11-26: **Home map redrawn from the architect's first-floor plan** (real proportions, labelled office, foyer, dining, baths, etc.; the Upstairs as a separate dashed tile). Public builds still show the demo layout.
+- 2026-11-26: **Rooms corrected:** plan Bedroom 5 = Tim's, Bedroom 4 = John's (John's Room Light moved out of the SmartThings "Kids room" group), Upstairs = Upstairs Fan + Upstairs Lights, Man Door Light shown at its own spot outside the garage.
 - 2026-11-26: **All Off** now also turns off the Upstairs Fan; the Master Bedroom fan is deliberately left alone.
 - 2026-11-26: **Home Assistant Green + Connect ZWA-2 purchased.** Setup guide: [docs/05-setup-green-and-zwa2.md](docs/05-setup-green-and-zwa2.md).
 - 2026-11-26: **Fans are controllable** on the Lights & fans page (renamed from Lighting).
@@ -144,7 +145,8 @@ _Running log of completed work, open tasks, and known limitations. Updated each 
 - [x] Monogram: **Gable**
 - [x] Wall iPad: **iPad Air 11", iPadOS 26.6**
 - [x] Floor plan received (architect's first-floor plan); map redrawn.
-- [ ] **Which bedroom is whose?** Plan Bedrooms 2–5 vs Lauren's, Allie's and Tim's rooms (map currently guesses Bedroom 2 = Lauren, 3 = Allie, 4 = Tim; Bedroom 5 unlinked). Is the Media Room the Rec Room?
+- [x] Bedrooms: 4 = John's, 5 = Tim's. Bedroom 2 = Lauren's and 3 = Allie's still assumed; the Media Room is assumed to be the Rec Room.
+- [ ] Which side of the garage is the man door on? (Map shows it on the east wall.)
 - [ ] When the Green + ZWA-2 arrive: follow docs/05 steps 1–2 (you), then we move the two Honeywell Z-Wave controls together.
 - [ ] **Room names.** Some SmartThings labels were cut off in the screenshots (e.g. "Alli… Room", "…n's room"); they're placeholders "Bedroom 2–4" for now.
 - [x] SmartThings device list received

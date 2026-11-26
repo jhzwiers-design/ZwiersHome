@@ -8,9 +8,10 @@
  * Room links: each interactive room links to a Home Assistant Area by
  * `areaId`, so lights and fans appear in the right room automatically.
  *  - Rec Room → "Media Room" area; Back Porch → "Outside" area.
- *  - Plan Bedrooms 2/3/4 → bedroom2/3/4 areas (whose room is whose is still
- *    to confirm). Plan Bedroom 5 isn't linked to an area yet.
- *  - The Kids Room is upstairs, so it is drawn as a separate dashed tile.
+ *  - Plan Bedroom 2 → Lauren's (bedroom2), Bedroom 3 → Allie's (bedroom3),
+ *    Bedroom 4 → John's (bedroom1), Bedroom 5 → Tim's (bedroom4).
+ *  - Upstairs (fan + lights) is drawn as a separate dashed tile.
+ *  - Man Door: the exterior door off the garage, drawn just outside its wall.
  * `spaces` are non-interactive rooms (baths, closets, office…) drawn for context.
  *
  * Public builds use DEMO_PLAN instead, so the real layout never goes online.
@@ -64,7 +65,7 @@ function tracedPlan(): FloorPlan {
   return {
     name: 'First floor',
     note: "Traced from the architect's plan",
-    width: Math.round(970 * S),
+    width: Math.round(1050 * S),
     height: Math.round(905 * S),
     outline: poly([
       [660, 52], [1020, 52], [1020, 490], [1055, 490], [1055, 842], [985, 842], [985, 870], [790, 870], [790, 800],
@@ -79,10 +80,13 @@ function tracedPlan(): FloorPlan {
       { areaId: 'primary', points: box(660, 265, 180, 143) },
       { areaId: 'bedroom3', points: poly([[840, 52], [958, 52], [958, 122], [1020, 122], [1020, 180], [840, 180]]) },
       { areaId: 'bedroom2', points: box(875, 295, 145, 113) },
-      { areaId: 'bedroom4', points: box(255, 722, 105, 120) },
+      { areaId: 'bedroom1', points: box(255, 722, 105, 120) }, // plan Bedroom 4
+      { areaId: 'bedroom4', points: box(105, 548, 133, 112) }, // plan Bedroom 5
       { areaId: 'porch', points: box(215, 845, 215, 65) },
       { areaId: 'garage', points: poly([[830, 490], [1055, 490], [1055, 842], [790, 842], [790, 620], [830, 620]]) },
-      { areaId: 'kids', points: box(125, 95, 150, 115), detached: true, caption: 'Upstairs' },
+      // Drawn after the garage so its label sits on top.
+      { areaId: 'mandoor', points: box(1058, 495, 82, 100) },
+      { areaId: 'upstairs', points: box(125, 95, 150, 115), detached: true },
     ],
     spaces: [
       { points: box(660, 52, 180, 123), label: 'Master bath' },
@@ -99,7 +103,6 @@ function tracedPlan(): FloorPlan {
       { points: box(660, 620, 130, 80), label: 'Pantry' },
       { points: box(660, 700, 130, 100), label: 'Laundry' },
       { points: box(495, 488, 165, 112), label: 'Keeping' },
-      { points: box(105, 548, 133, 112), label: 'Bedroom 5' },
       { points: box(238, 548, 52, 174) },
       { points: box(108, 660, 147, 140), label: 'Bath 3' },
       { points: box(360, 722, 70, 120), label: 'Foyer' },
@@ -121,12 +124,14 @@ const DEMO_PLAN: FloorPlan = {
     { areaId: 'living', points: rect(10, 10, 200, 160) },
     { areaId: 'kitchen', points: rect(210, 10, 170, 160) },
     { areaId: 'media', points: rect(380, 10, 130, 160) },
-    { areaId: 'outside', points: rect(510, 10, 120, 400) },
+    { areaId: 'outside', points: rect(510, 10, 120, 290) },
+    { areaId: 'mandoor', points: rect(510, 300, 120, 110) },
     { areaId: 'primary', points: rect(10, 170, 150, 130) },
-    { areaId: 'kids', points: rect(160, 170, 120, 130) },
+    { areaId: 'upstairs', points: rect(160, 170, 120, 130) },
     { areaId: 'bedroom2', points: rect(280, 170, 115, 130) },
     { areaId: 'bedroom3', points: rect(395, 170, 115, 130) },
-    { areaId: 'bedroom4', points: rect(10, 300, 150, 110) },
+    { areaId: 'bedroom1', points: rect(10, 300, 75, 110) },
+    { areaId: 'bedroom4', points: rect(85, 300, 75, 110) },
     { areaId: 'porch', points: rect(160, 300, 120, 110) },
     { areaId: 'garage', points: rect(280, 300, 230, 110) },
   ],
